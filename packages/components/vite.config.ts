@@ -15,7 +15,6 @@ import { resolve } from 'path';
 // console.log(dirs);
 
 const pakDir = resolve(__dirname, 'src');
-
 export default defineConfig({
     build: {
         target: 'modules',
@@ -67,6 +66,7 @@ export default defineConfig({
                     // chunkFileNames: 'assets/[name].[hash:8].js',
                     manualChunks(id) {
                         // console.log(id);
+                        console.log(id);
                         if (id.startsWith(pakDir)) {
                             // console.log(id);
                             const chunkName = id.replace(pakDir + '/', '').split('/')[0];
