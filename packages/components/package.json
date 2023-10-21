@@ -1,0 +1,57 @@
+{
+    "name": "@aoe/components",
+    "version": "0.0.1",
+    "description": "a vue components ui.",
+    "main": "lib/index.js",
+    "module": "es/index.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "build:rollup": "rm -rf es lib index.d.ts && rollup -c rollup.config.ts -p rollup-plugin-typescript2 --bundleConfigAsCjs && npm run ts:build",
+        "build": "vite build && npm run ts:build",
+        "ts:build": "npx api-extractor run && rm -rf temp tsdoc-metadata.json"
+    },
+    "files": [
+        "dist",
+        "package.json"
+    ],
+    "exports": {
+        ".": {
+            "types": "./index.d.ts",
+            "import": "./es/index.js",
+            "require": "./lib/index.js"
+        },
+        "./*": "./*"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "author": "aoe",
+    "license": "ISC",
+    "dependencies": {
+        "@aoe/utils": "workspace:^",
+        "ant-design-vue": "^4.0.6",
+        "vue": "^3.3.4"
+    },
+    "devDependencies": {
+        "@microsoft/api-extractor": "^7.38.0",
+        "@rollup/plugin-commonjs": "^25.0.7",
+        "@rollup/plugin-json": "^6.0.1",
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-strip": "^3.0.4",
+        "@rollup/plugin-typescript": "^11.1.5",
+        "@rollup/plugin-url": "^8.0.2",
+        "@types/node": "^20.8.7",
+        "@vitejs/plugin-vue": "^4.4.0",
+        "@vitejs/plugin-vue-jsx": "^3.0.2",
+        "node-sass": "^9.0.0",
+        "rollup": "^4.1.4",
+        "rollup-plugin-dts": "^6.1.0",
+        "rollup-plugin-postcss": "^4.0.2",
+        "rollup-plugin-typescript2": "^0.36.0",
+        "rollup-plugin-vue": "6.0.0-beta.11",
+        "sass": "^1.69.4",
+        "unplugin-vue-macros": "^2.6.1",
+        "vite": "^4.5.0",
+        "vite-plugin-dts": "^3.6.0"
+    }
+}

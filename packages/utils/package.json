@@ -1,0 +1,40 @@
+{
+    "name": "@aoe/utils",
+    "version": "0.0.6",
+    "description": "",
+    "main": "lib/index.js",
+    "module": "es/index.js",
+    "types": "index.d.ts",
+    "scripts": {
+        "build": "rm -rf es lib && rollup -c rollup.config.ts -p typescript --bundleConfigAsCjs && rm -rf types"
+    },
+    "files": [
+        "dist",
+        "package.json"
+    ],
+    "exports": {
+        ".": {
+            "types": "./index.d.ts",
+            "import": "./es/index.js",
+            "require": "./lib/index.js"
+        },
+        "./*": "./*"
+    },
+    "publishConfig": {
+        "access": "public"
+    },
+    "author": "aoe",
+    "keywords": [],
+    "license": "ISC",
+    "devDependencies": {
+        "@rollup/plugin-commonjs": "^25.0.7",
+        "@rollup/plugin-json": "^6.0.1",
+        "@rollup/plugin-node-resolve": "^15.2.3",
+        "@rollup/plugin-strip": "^3.0.4",
+        "@rollup/plugin-typescript": "^11.1.5",
+        "rollup": "^4.1.4",
+        "rollup-plugin-dts": "^6.1.0",
+        "rollup-plugin-postcss": "^4.0.2",
+        "rollup-plugin-vue": "^6.0.0"
+    }
+}
