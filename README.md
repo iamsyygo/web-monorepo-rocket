@@ -1,4 +1,12 @@
-# 🏕️ monorepo
+# 🚀 monorepo
+
+🚀 monorepo for `aoe`
+
+-   👑 基于 pnpm 的 monorepo
+-   🛟 规范开发、协作效率、代码一致性
+-   🏖️ 共享工程配置、依赖、模块代码
+-   📖 提供开发文档、规范、示例...
+-   ⏳ ...
 
 ### 📦 发布 workspace 包
 
@@ -6,12 +14,12 @@
 
 ```json
 {
-  "dependencies": {
-    "foo": "workspace:*",
-    "bar": "workspace:~",
-    "qar": "workspace:^",
-    "zoo": "workspace:^1.5.0"
-  }
+    "dependencies": {
+        "foo": "workspace:*",
+        "bar": "workspace:~",
+        "qar": "workspace:^",
+        "zoo": "workspace:^1.5.0"
+    }
 }
 ```
 
@@ -19,11 +27,11 @@
 
 ```json
 {
-  "dependencies": {
-    "foo": "1.5.0",
-    "bar": "~1.5.0",
-    "qar": "^1.5.0",
-    "zoo": "^1.5.0"
-  }
+    "dependencies": {
+        "foo": "1.5.0",
+        "bar": "~1.5.0",
+        "qar": "^1.5.0",
+        "zoo": "^1.5.0"
+    }
 }
 ```

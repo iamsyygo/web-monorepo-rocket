@@ -5,16 +5,18 @@
     "bundledPackages": [],
     "compiler": {},
     "apiReport": {
-        "enabled": true
+        "enabled": false
     },
     "docModel": {
-        "enabled": true
+        "enabled": false
     },
     "dtsRollup": {
         "enabled": true,
         "untrimmedFilePath": "<projectFolder>/index.d.ts"
     },
-    "tsdocMetadata": {},
+    "tsdocMetadata": {
+        "enabled": false
+    },
     "messages": {
         "compilerMessageReporting": { "default": { "logLevel": "warning" } },
         "extractorMessageReporting": { "default": { "logLevel": "warning" } },
