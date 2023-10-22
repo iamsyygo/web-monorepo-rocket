@@ -7,6 +7,8 @@ node_modules
 
 # Bundle
 dist
+es
+lib
 
 # local env files
 *.local
@@ -16,4 +18,4 @@ cypress/videos/*
 tmp
 
 # packages
-packages/*/dist
+dist

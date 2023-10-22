@@ -4,7 +4,7 @@ import dts from 'vite-plugin-dts';
 import Unocss from 'unocss/vite';
 // import glob from 'fast-glob';
 import { presetUno, presetAttributify, presetIcons } from 'unocss';
-import { resolve } from 'path';
+import { resolve, normalize } from 'path';
 
 // const dirs = glob.sync('**/*.{js,ts,vue}', {
 //     cwd: 'src',
@@ -14,8 +14,7 @@ import { resolve } from 'path';
 // });
 // console.log(dirs);
 
-const pakDir = resolve(__dirname, 'src');
-
+const pakDir = normalize(resolve(__dirname, 'src'));
 export default defineConfig({
     build: {
         target: 'modules',
@@ -66,10 +65,9 @@ export default defineConfig({
 
                     // chunkFileNames: 'assets/[name].[hash:8].js',
                     manualChunks(id) {
-                        // console.log(id);
+                        id = normalize(id);
                         if (id.startsWith(pakDir)) {
-                            // console.log(id);
-                            const chunkName = id.replace(pakDir + '/', '').split('/')[0];
+                            const chunkName = id.replace(pakDir, '').split(/[\\/]/)[1];
                             // return chunkName;
                             // return 'components/' + chunkName;
                             return chunkName + '/' + chunkName;

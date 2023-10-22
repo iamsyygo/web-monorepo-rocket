@@ -10,11 +10,4 @@ declare const withInstallFunction: <T>(fn: T, name: string) => SFCInstallWithCon
 declare const withInstallDirective: <T extends Directive>(directive: T, name: string) => SFCWithInstall<T>;
 declare const withNoopInstall: <T>(component: T) => SFCWithInstall<T>;
 
-export {
-    type SFCInstallWithContext,
-    type SFCWithInstall,
-    withInstall,
-    withInstallDirective,
-    withInstallFunction,
-    withNoopInstall,
-};
+export { type SFCInstallWithContext, type SFCWithInstall, withInstall, withInstallDirective, withInstallFunction, withNoopInstall };
