@@ -5,8 +5,8 @@ import { resolve } from 'path';
 import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import symbols from './src/plugins/get-symbols';
 
+const iconfontFiles = glob.sync(resolve(__dirname, 'src/iconfonts/*.js'));
 const pakDir = resolve(__dirname, 'src');
-
 export default defineConfig({
     build: {
         target: 'modules',
@@ -55,7 +55,9 @@ export default defineConfig({
             symbolId: 'aoe-[name]',
             // customDomId: 'aoe-[name]',
         }),
-        symbols(),
+        symbols({
+            extends: iconfontFiles,
+        }),
         // dts({}),
     ],
 });

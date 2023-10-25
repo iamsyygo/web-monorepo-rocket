@@ -30,7 +30,6 @@
 
 <script lang="ts" setup>
 import { onMounted, ref } from 'vue';
-// import { message } from 'ant-design-vue';
 import AInput from 'ant-design-vue/es/input';
 import AButton from 'ant-design-vue/es/button';
 import ACheckbox from 'ant-design-vue/es/checkbox';

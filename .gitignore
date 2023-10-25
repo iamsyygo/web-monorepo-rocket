@@ -6,9 +6,9 @@ node_modules
 .pnpm-debug.log*
 
 # Bundle
-dist
-es
-lib
+# dist
+# es
+# lib
 
 # local env files
 *.local

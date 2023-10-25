@@ -2,9 +2,24 @@
     "name": "@aoe/icons",
     "version": "0.0.1",
     "description": "📦 for svg icons.",
+    "module": "es/index.js",
     "scripts": {
         "build": "vite build",
         "build:icons": "vite build"
+    },
+    "files": [
+        "es",
+        "lib",
+        "types"
+    ],
+    "exports": {
+        ".": {
+            "import": "./es/index.js",
+            "require": "./lib/index.js"
+        },
+        "./es": "./es/index.js",
+        "./lib": "./lib/index.js",
+        "./types": "./types/index.d.ts"
     },
     "devDependencies": {
         "@types/node": "^20.8.7",

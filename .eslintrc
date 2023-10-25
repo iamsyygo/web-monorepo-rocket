@@ -4,6 +4,6 @@
     "overrides": [],
     "parser": "@typescript-eslint/parser",
     "parserOptions": { "ecmaVersion": "latest" },
-    "plugins": ["@typescript-eslint"],
+    "plugins": ["@typescript-eslint", "sort-keys-fix"],
     "rules": {}
 }
