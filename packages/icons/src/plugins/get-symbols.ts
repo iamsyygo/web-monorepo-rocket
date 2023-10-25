@@ -46,7 +46,7 @@ export default function (options: Options = {}): Plugin {
         transform(code, id) {
             if (id === 'virtual:svg-icons-register' && hasExtends) {
                 const { content } = getIconFontFileSymbolContent(options.extends!);
-                const injectCode = `\nsymbolDom.innerHTML += \`${content}\`;\n`;
+                const injectCode = `\nsvgDom.innerHTML += \`${content}\`;\n`;
                 code = code.replace(/body\.insertBefore/, injectCode + 'body.insertBefore');
                 return code;
             }

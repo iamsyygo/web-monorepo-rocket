@@ -1,7 +1,7 @@
 {
-    "name": "@aoe/components",
+    "name": "@aoe/ant-components",
     "version": "0.0.1",
-    "description": "a vue components ui.",
+    "description": "a vue ant components ui.",
     "main": "lib/index.js",
     "module": "es/index.js",
     "types": "index.d.ts",
