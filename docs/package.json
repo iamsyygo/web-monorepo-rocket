@@ -1,0 +1,16 @@
+{
+    "name": "@aoe/docs",
+    "version": "0.0.1",
+    "description": "A document about aoe engineering architecture specifications.",
+    "scripts": {
+        "docs:dev": "vitepress dev .",
+        "docs:build": "vitepress build .",
+        "docs:preview": "vitepress preview ."
+    },
+    "private": true,
+    "keywords": [],
+    "author": "aoe",
+    "license": "ISC",
+    "dependencies": {},
+    "devDependencies": {}
+}
