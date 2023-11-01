@@ -7,7 +7,8 @@
     "types": "index.d.ts",
     "scripts": {
         "build": "vite build && npm run ts:build",
-        "ts:build": "npx api-extractor run && rm -rf temp tsdoc-metadata.json"
+        "ts:build": "npx api-extractor run && rm -rf temp tsdoc-metadata.json",
+        "dev": "vite build --watch"
     },
     "files": [
         "dist",
@@ -27,6 +28,7 @@
     "author": "aoe",
     "license": "ISC",
     "dependencies": {
+        "animate.css": "^4.1.1",
         "element-plus": "^2.4.1",
         "vue": "^3.3.4"
     },

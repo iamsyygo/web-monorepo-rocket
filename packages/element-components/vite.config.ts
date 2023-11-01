@@ -8,12 +8,12 @@ import { resolve, normalize } from 'path';
 const pakDir = normalize(resolve(__dirname, 'src'));
 export default defineConfig({
     build: {
+        // watch: { include: 'src/**' },
         target: 'modules',
         outDir: 'es',
         minify: false,
         cssCodeSplit: true,
         chunkSizeWarningLimit: 8 * 1024,
-
         rollupOptions: {
             plugins: [],
             external: ['vue', /^ant-design-vue\/es\/.*/],
@@ -22,27 +22,19 @@ export default defineConfig({
                 {
                     format: 'es',
                     entryFileNames: '[name].js',
-                    // preserveModules: true,
-
-                    //配置打包根目录
                     dir: 'es',
                     preserveModulesRoot: 'src',
-                    // assetFileNames: 'assets/[ext]/[name].[hash:8].[extname]',
                     assetFileNames: '[ext]/[name][extname]',
                     chunkFileNames: '[name].js',
-
                     manualChunks(id) {
                         id = normalize(id);
                         if (id.startsWith(pakDir)) {
                             const chunkName = id.replace(pakDir, '').split(/[\\/]/)[1];
-                            // return chunkName;
-                            // return 'components/' + chunkName;
                             return chunkName + '/' + chunkName;
                         } else {
                             return 'vendor';
                         }
 
-                        // console.log(...arguments);
                         // if (id.includes('node_modules')) {
                         //     return 'vendor';
                         // }
@@ -73,13 +65,10 @@ export default defineConfig({
                 propsDestructure: true,
                 defineModel: true,
             },
-            // style: { trim: true, },
         }),
         Unocss({
             presets: [presetUno(), presetAttributify(), presetIcons()],
         }),
-        dts({
-            //指定使用的tsconfig.json为我们整个项目根目录下掉,如果不配置,你也可以在components下新建tsconfig.json
-        }),
+        dts({}),
     ],
 });

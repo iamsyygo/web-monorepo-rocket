@@ -1,0 +1,28 @@
+.el-tree-line-wrap[data-v-f709bb20] {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+}
+.el-tree-line--vertical[data-v-f709bb20] {
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+  bottom: 0;
+  width: 1px;
+  display: inline-block;
+  border-left: #c0c4cc dashed 1px;
+}
+.el-tree-line--hzorizontal[data-v-f709bb20] {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 1px;
+  transform: translateY(-50%);
+  display: inline-block;
+  border-bottom: #c0c4cc dashed 1px;
+}
