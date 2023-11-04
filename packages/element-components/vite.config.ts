@@ -16,7 +16,7 @@ export default defineConfig({
         chunkSizeWarningLimit: 8 * 1024,
         rollupOptions: {
             plugins: [],
-            external: ['vue', /^ant-design-vue\/es\/.*/],
+            external: ['vue', /^ant-design-vue\/es\/.*/, 'vue-router'],
             input: ['src/index.ts'],
             output: [
                 {
@@ -40,6 +40,7 @@ export default defineConfig({
                         // }
                         // 其他包根据目录名称
                     },
+                    sourcemap: true,
                 },
                 // {
                 //     format: 'cjs',

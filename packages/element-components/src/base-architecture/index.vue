@@ -1,8 +1,12 @@
 <template>
-    <div :class="`system-base-architecture--${layout.typography}`">
-        <el-header class="el-header--custom" :style="headerStyle"> <slot name="header"> </slot> </el-header>
+    <div :class="`system-base-architecture--${option.typography}`">
+        <el-header class="el-header--custom" :style="{ ...option.headerStyle, height: option.headerHeight }">
+            <slot name="header"> </slot>
+        </el-header>
         <el-container>
-            <el-aside class="el-aside--custom"> <slot name="aside"></slot> </el-aside>
+            <el-aside class="el-aside--custom" :style="{ ...option.asideStyle, width: option.asideWidth }">
+                <slot name="aside"></slot>
+            </el-aside>
             <el-main class="el-main--custom"> <slot name="main"></slot> </el-main>
         </el-container>
     </div>
@@ -11,67 +15,65 @@
 <script lang="ts" setup>
 import { ElAside, ElContainer, ElHeader, ElMain } from 'element-plus';
 // import 'element-plus/theme-chalk/el-container.css';
-import { watch, computed } from 'vue';
-export interface LayoutOption {
+import { watch } from 'vue';
+export interface ArchitectureOption {
     headerHeight: number;
     asideWidth: number;
-    /**computed,
+    /**
      * ham: header aside main
      * ahm: aside header main
      * hm: header main
      * am: aside main
      */
     typography: 'ham' | 'ahm' | 'hm' | 'am';
-    backgroundColor?: string;
-    headerStyle: Partial<CSSStyleDeclaration>;
+    headerStyle?: Partial<CSSStyleDeclaration>;
+    asideStyle?: Partial<CSSStyleDeclaration>;
 }
 
-const { layout = { headerHeight: 60, asideWidth: 200, typography: 'ham' } } = defineProps<{
-    layout: LayoutOption;
+const { option = { headerHeight: 60, asideWidth: 200, typography: 'ham' } } = defineProps<{
+    option: ArchitectureOption;
 }>();
 
 watch(
-    () => layout,
+    () => option,
     (val) => {
         localStorage.setItem('layout-option', JSON.stringify(val));
     },
 );
 </script>
 <style scoped lang="scss">
-$--header-height: calc(v-bind('layout.headerHeight') * 1px);
-$--aside-width: calc(v-bind('layout.asideWidth') * 1px);
+$--header-height: calc(v-bind('option.headerHeight') * 1px);
+$--aside-width: calc(v-bind('option.asideWidth') * 1px);
 
-.system-base-architecture {
-    &--ham,
-    &--ahm,
-    &--hm,
-    &--am {
-        position: relative;
-        width: 100%;
-        height: 100%;
-    }
-
-    &--ham,
-    &--ahm,
-    &--hm {
-        & > .el-container {
-            height: calc(100% - #{$--header-height});
-        }
-    }
-    &--am > .el-container {
-        height: 100%;
-    }
+.system-base-architecture--ham,
+.system-base-architecture--ahm,
+.system-base-architecture--hm,
+.system-base-architecture--am {
+    position: relative;
+    width: 100%;
+    height: 100%;
+}
+.system-base-architecture--ham > .el-container,
+.system-base-architecture--ahm > .el-container,
+.system-base-architecture--hm > .el-container {
+    height: calc(100% - #{$--header-height});
+}
+.system-base-architecture--am > .el-container {
+    height: 100%;
 }
 
 .el-header--custom,
 .el-aside--custom,
 .el-main--custom {
     position: relative;
+    padding: 0;
     transition: all 0.3s;
 }
 
-.el-main--custom {
-    padding: 10px;
+.el-aside--custom {
+    z-index: 999;
+    overflow-y: scroll;
+    transition: width 0.3;
 }
 
 .system-base-architecture--ham {
@@ -99,7 +101,7 @@ $--aside-width: calc(v-bind('layout.asideWidth') * 1px);
     }
 
     .el-aside--custom {
-        transform: translateY(calc(v-bind('layout.headerHeight') * -1px));
+        transform: translateY(calc(v-bind('option.headerHeight') * -1px));
         width: $--aside-width;
         height: calc(100% + #{$--header-height});
     }

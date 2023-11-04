@@ -27,7 +27,7 @@ new (...args: any[]): {
 $: ComponentInternalInstance;
 $data: {};
 $props: {
-readonly layout: LayoutOption;
+readonly option: ArchitectureOption;
 style?: unknown;
 key?: string | number | symbol | undefined;
 ref?: VNodeRef | undefined;
@@ -87,8 +87,8 @@ $parent: ComponentPublicInstance<    {}, {}, {}, {}, {}, {}, {}, {}, false, Comp
 $emit: (event: string, ...args: any[]) => void;
 $el: any;
 $options: ComponentOptionsBase<Readonly<ExtractPropTypes<    {
-layout: {
-type: PropType<LayoutOption>;
+option: {
+type: PropType<ArchitectureOption>;
 required: true;
 };
 }>>, {}, unknown, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, {}, {}, string, {}> & {
@@ -112,8 +112,8 @@ $forceUpdate: () => void;
 $nextTick: nextTick;
 $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (args_0: R, args_1: R) => any : (...args: any) => any, options?: WatchOptions<boolean> | undefined): WatchStopHandle;
 } & Readonly<ExtractPropTypes<    {
-layout: {
-type: PropType<LayoutOption>;
+option: {
+type: PropType<ArchitectureOption>;
 required: true;
 };
 }>> & ShallowUnwrapRef<    {}> & {} & ComponentCustomProperties & {};
@@ -121,8 +121,8 @@ __isFragment?: undefined;
 __isTeleport?: undefined;
 __isSuspense?: undefined;
 } & ComponentOptionsBase<Readonly<ExtractPropTypes<    {
-layout: {
-type: PropType<LayoutOption>;
+option: {
+type: PropType<ArchitectureOption>;
 required: true;
 };
 }>>, {}, unknown, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, {}, {}, string, {}> & VNodeProps & AllowedComponentProps & ComponentCustomProps & (new () => {
@@ -134,6 +134,8 @@ main?(_: {}): any;
 })> & Record<string, any>;
 
 export declare const AoeForm: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>>, {}, {}>> & Record<string, any>;
+
+export declare const AoeMain: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>>, {}, {}>> & Record<string, any>;
 
 export declare const AoeSymbolIcon: SFCWithInstall<DefineComponent<    {
 name: {
@@ -282,7 +284,7 @@ default?(_: {}): any;
 };
 })> & Record<string, any>;
 
-declare interface LayoutOption {
+declare interface ArchitectureOption {
     headerHeight: number;
     asideWidth: number;
     /**
@@ -292,6 +294,8 @@ declare interface LayoutOption {
      * am: aside main
      */
     typography: 'ham' | 'ahm' | 'hm' | 'am';
+    backgroundColor?: string;
+    headerStyle: Partial<CSSStyleDeclaration>;
 }
 
 export { }

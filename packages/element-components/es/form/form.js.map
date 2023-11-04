@@ -1,0 +1,1 @@
+{"version":3,"file":"form.js","sources":["../../src/form/index.ts"],"sourcesContent":["import { withInstall } from '@aoe/utils';\nimport Form from './index.vue';\n\nexport const AoeForm = withInstall(Form);\nexport default AoeForm;\n\n// export * from './type.d';\n"],"names":[],"mappings":";;;;;;;;AAGa,MAAA,UAAU,YAAY,IAAI;"}

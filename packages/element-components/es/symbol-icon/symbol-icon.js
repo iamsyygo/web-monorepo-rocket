@@ -27,3 +27,4 @@ const AoeSymbolIcon = withInstall(Icon);
 export {
   AoeSymbolIcon as A
 };
+//# sourceMappingURL=symbol-icon.js.map

@@ -1,70 +1,78 @@
-.system-base-architecture--ham[data-v-0b80f4a9], .system-base-architecture--ahm[data-v-0b80f4a9], .system-base-architecture--hm[data-v-0b80f4a9], .system-base-architecture--am[data-v-0b80f4a9] {
+.system-base-architecture--ham[data-v-9ab008cd],
+.system-base-architecture--ahm[data-v-9ab008cd],
+.system-base-architecture--hm[data-v-9ab008cd],
+.system-base-architecture--am[data-v-9ab008cd] {
   position: relative;
   width: 100%;
   height: 100%;
 }
-.system-base-architecture--ham > .el-container[data-v-0b80f4a9], .system-base-architecture--ahm > .el-container[data-v-0b80f4a9], .system-base-architecture--hm > .el-container[data-v-0b80f4a9] {
-  height: calc(100% - calc(var(--72d4bc1c) * 1px));
+.system-base-architecture--ham > .el-container[data-v-9ab008cd],
+.system-base-architecture--ahm > .el-container[data-v-9ab008cd],
+.system-base-architecture--hm > .el-container[data-v-9ab008cd] {
+  height: calc(100% - calc(var(--d0089fd0) * 1px));
 }
-.system-base-architecture--am > .el-container[data-v-0b80f4a9] {
+.system-base-architecture--am > .el-container[data-v-9ab008cd] {
   height: 100%;
 }
-.el-header--custom[data-v-0b80f4a9],
-.el-aside--custom[data-v-0b80f4a9],
-.el-main--custom[data-v-0b80f4a9] {
+.el-header--custom[data-v-9ab008cd],
+.el-aside--custom[data-v-9ab008cd],
+.el-main--custom[data-v-9ab008cd] {
   position: relative;
+  padding: 0;
   transition: all 0.3s;
 }
-.el-main--custom[data-v-0b80f4a9] {
-  padding: 10px;
+.el-aside--custom[data-v-9ab008cd] {
+  z-index: 999;
+  overflow-y: scroll;
+  transition: width 0.3;
 }
-.system-base-architecture--ham .el-header--custom[data-v-0b80f4a9] {
+.system-base-architecture--ham .el-header--custom[data-v-9ab008cd] {
   width: 100%;
-  height: calc(var(--72d4bc1c) * 1px);
+  height: calc(var(--d0089fd0) * 1px);
 }
-.system-base-architecture--ham .el-aside--custom[data-v-0b80f4a9] {
-  width: calc(var(--13f97acc) * 1px);
+.system-base-architecture--ham .el-aside--custom[data-v-9ab008cd] {
+  width: calc(var(--508e4b1c) * 1px);
   height: 100%;
 }
-.system-base-architecture--ham .el-main--custom[data-v-0b80f4a9] {
-  width: calc(100% - calc(var(--13f97acc) * 1px));
+.system-base-architecture--ham .el-main--custom[data-v-9ab008cd] {
+  width: calc(100% - calc(var(--508e4b1c) * 1px));
   height: 100%;
 }
-.system-base-architecture--ahm .el-header--custom[data-v-0b80f4a9] {
-  transform: translateX(calc(var(--13f97acc) * 1px));
-  width: calc(100% - calc(var(--13f97acc) * 1px));
-  height: calc(var(--72d4bc1c) * 1px);
+.system-base-architecture--ahm .el-header--custom[data-v-9ab008cd] {
+  transform: translateX(calc(var(--508e4b1c) * 1px));
+  width: calc(100% - calc(var(--508e4b1c) * 1px));
+  height: calc(var(--d0089fd0) * 1px);
 }
-.system-base-architecture--ahm .el-aside--custom[data-v-0b80f4a9] {
-  transform: translateY(calc(var(--72d4bc1c) * -1px));
-  width: calc(var(--13f97acc) * 1px);
-  height: calc(100% + calc(var(--72d4bc1c) * 1px));
+.system-base-architecture--ahm .el-aside--custom[data-v-9ab008cd] {
+  transform: translateY(calc(var(--d0089fd0) * -1px));
+  width: calc(var(--508e4b1c) * 1px);
+  height: calc(100% + calc(var(--d0089fd0) * 1px));
 }
-.system-base-architecture--ahm .el-main--custom[data-v-0b80f4a9] {
-  width: calc(100% - calc(var(--13f97acc) * 1px));
+.system-base-architecture--ahm .el-main--custom[data-v-9ab008cd] {
+  width: calc(100% - calc(var(--508e4b1c) * 1px));
   height: 100%;
 }
-.system-base-architecture--hm .el-header--custom[data-v-0b80f4a9] {
+.system-base-architecture--hm .el-header--custom[data-v-9ab008cd] {
   width: 100%;
-  height: calc(var(--72d4bc1c) * 1px);
+  height: calc(var(--d0089fd0) * 1px);
 }
-.system-base-architecture--hm .el-main--custom[data-v-0b80f4a9] {
+.system-base-architecture--hm .el-main--custom[data-v-9ab008cd] {
   width: 100%;
   height: 100%;
 }
-.system-base-architecture--hm .el-aside--custom[data-v-0b80f4a9] {
+.system-base-architecture--hm .el-aside--custom[data-v-9ab008cd] {
   width: 0;
   overflow: hidden;
 }
-.system-base-architecture--am .el-aside--custom[data-v-0b80f4a9] {
-  width: calc(var(--13f97acc) * 1px);
+.system-base-architecture--am .el-aside--custom[data-v-9ab008cd] {
+  width: calc(var(--508e4b1c) * 1px);
   height: 100%;
 }
-.system-base-architecture--am .el-main--custom[data-v-0b80f4a9] {
+.system-base-architecture--am .el-main--custom[data-v-9ab008cd] {
   width: 100%;
   height: 100%;
 }
-.system-base-architecture--am .el-header--custom[data-v-0b80f4a9] {
+.system-base-architecture--am .el-header--custom[data-v-9ab008cd] {
   height: 0;
   overflow: hidden;
 }

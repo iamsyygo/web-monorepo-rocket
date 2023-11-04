@@ -3,7 +3,7 @@ export declare const AoeBaseArchitecture: import("@aoe/utils").SFCWithInstall<{
         $: import("vue").ComponentInternalInstance;
         $data: {};
         $props: {
-            readonly layout: import("./index.vue").LayoutOption;
+            readonly option: import("./index.vue").ArchitectureOption;
             style?: unknown;
             key?: string | number | symbol | undefined;
             ref?: import("vue").VNodeRef | undefined;
@@ -63,8 +63,8 @@ export declare const AoeBaseArchitecture: import("@aoe/utils").SFCWithInstall<{
         $emit: (event: string, ...args: any[]) => void;
         $el: any;
         $options: import("vue").ComponentOptionsBase<Readonly<import("vue").ExtractPropTypes<{
-            layout: {
-                type: import("vue").PropType<import("./index.vue").LayoutOption>;
+            option: {
+                type: import("vue").PropType<import("./index.vue").ArchitectureOption>;
                 required: true;
             };
         }>>, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, {}, {}, string, {}> & {
@@ -88,8 +88,8 @@ export declare const AoeBaseArchitecture: import("@aoe/utils").SFCWithInstall<{
         $nextTick: typeof import("vue").nextTick;
         $watch<T extends string | ((...args: any) => any)>(source: T, cb: T extends (...args: any) => infer R ? (args_0: R, args_1: R) => any : (...args: any) => any, options?: import("vue").WatchOptions<boolean> | undefined): import("vue").WatchStopHandle;
     } & Readonly<import("vue").ExtractPropTypes<{
-        layout: {
-            type: import("vue").PropType<import("./index.vue").LayoutOption>;
+        option: {
+            type: import("vue").PropType<import("./index.vue").ArchitectureOption>;
             required: true;
         };
     }>> & import("vue").ShallowUnwrapRef<{}> & {} & import("vue").ComponentCustomProperties & {};
@@ -97,15 +97,13 @@ export declare const AoeBaseArchitecture: import("@aoe/utils").SFCWithInstall<{
     __isTeleport?: undefined;
     __isSuspense?: undefined;
 } & import("vue").ComponentOptionsBase<Readonly<import("vue").ExtractPropTypes<{
-    layout: {
-        type: import("vue").PropType<import("./index.vue").LayoutOption>;
+    option: {
+        type: import("vue").PropType<import("./index.vue").ArchitectureOption>;
         required: true;
     };
 }>>, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, {}, {}, string, {}> & import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps & (new () => {
     $slots: {
-        header?(_: {
-            style: any;
-        }): any;
+        header?(_: {}): any;
         aside?(_: {}): any;
         main?(_: {}): any;
     };
