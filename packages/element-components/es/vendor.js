@@ -1,4 +1,4 @@
-import { getCurrentScope, onScopeDispose, ref, readonly, unref, getCurrentInstance, onMounted, nextTick, watch, openBlock, createElementBlock, createElementVNode, warn, isVNode, inject, computed, shallowRef, onBeforeUnmount, onBeforeMount, provide, defineComponent, mergeProps, renderSlot, normalizeClass, normalizeStyle, withDirectives, cloneVNode, Fragment, Text, Comment, createVNode, createBlock, withCtx, createCommentVNode, toRef, Teleport, Transition, vShow, onDeactivated, toDisplayString, toHandlers, useSlots, reactive, h, watchEffect, resolveComponent, createTextVNode } from "vue";
+import { getCurrentScope, onScopeDispose, ref, readonly, unref, getCurrentInstance, onMounted, nextTick, watch, openBlock, createElementBlock, createElementVNode, warn, isVNode, inject, computed, shallowRef, onBeforeUnmount, onBeforeMount, provide, defineComponent, mergeProps, renderSlot, normalizeClass, normalizeStyle, withDirectives, cloneVNode, Fragment, Text, Comment, createVNode, createBlock, withCtx, createCommentVNode, toRef, Teleport, Transition, vShow, onDeactivated, toDisplayString, useSlots, resolveDynamicComponent, reactive, toHandlers, h, watchEffect, resolveComponent, createTextVNode } from "vue";
 !!(process.env.NODE_ENV !== "production") ? Object.freeze({}) : {};
 !!(process.env.NODE_ENV !== "production") ? Object.freeze([]) : [];
 const withInstall$1 = (main, extra) => {
@@ -442,6 +442,28 @@ function _sfc_render10(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_110, _hoisted_310);
 }
 var arrow_right_default = /* @__PURE__ */ export_helper_default(arrow_right_vue_vue_type_script_lang_default, [["render", _sfc_render10], ["__file", "arrow-right.vue"]]);
+var loading_vue_vue_type_script_lang_default = {
+  name: "Loading"
+};
+var _hoisted_1150 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_2150 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M512 64a32 32 0 0 1 32 32v192a32 32 0 0 1-64 0V96a32 32 0 0 1 32-32zm0 640a32 32 0 0 1 32 32v192a32 32 0 1 1-64 0V736a32 32 0 0 1 32-32zm448-192a32 32 0 0 1-32 32H736a32 32 0 1 1 0-64h192a32 32 0 0 1 32 32zm-640 0a32 32 0 0 1-32 32H96a32 32 0 0 1 0-64h192a32 32 0 0 1 32 32zM195.2 195.2a32 32 0 0 1 45.248 0L376.32 331.008a32 32 0 0 1-45.248 45.248L195.2 240.448a32 32 0 0 1 0-45.248zm452.544 452.544a32 32 0 0 1 45.248 0L828.8 783.552a32 32 0 0 1-45.248 45.248L647.744 692.992a32 32 0 0 1 0-45.248zM828.8 195.264a32 32 0 0 1 0 45.184L692.992 376.32a32 32 0 0 1-45.248-45.248l135.808-135.808a32 32 0 0 1 45.248 0zm-452.544 452.48a32 32 0 0 1 0 45.248L240.448 828.8a32 32 0 0 1-45.248-45.248l135.808-135.808a32 32 0 0 1 45.248 0z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_3149 = [
+  _hoisted_2150
+];
+function _sfc_render150(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_1150, _hoisted_3149);
+}
+var loading_default = /* @__PURE__ */ export_helper_default(loading_vue_vue_type_script_lang_default, [["render", _sfc_render150], ["__file", "loading.vue"]]);
 var more_vue_vue_type_script_lang_default = {
   name: "More"
 };
@@ -542,6 +564,7 @@ const EVENT_CODE = {
   home: "Home",
   end: "End"
 };
+const componentSizes = ["", "default", "small", "large"];
 const flattedChildren = (children) => {
   const vNodes = isArray(children) ? children : [children];
   const result = [];
@@ -767,6 +790,13 @@ const createModelToggleComposable = (name) => {
   };
 };
 createModelToggleComposable("modelValue");
+const useProp = (name) => {
+  const vm = getCurrentInstance();
+  return computed(() => {
+    var _a2, _b;
+    return (_b = (_a2 = vm == null ? void 0 : vm.proxy) == null ? void 0 : _a2.$props) == null ? void 0 : _b[name];
+  });
+};
 var E = "top", R = "bottom", W = "right", P = "left", me = "auto", G = [E, R, W, P], U = "start", J = "end", Xe = "clippingParents", je = "viewport", K = "popper", Ye = "reference", De = G.reduce(function(t, e) {
   return t.concat([e + "-" + U, e + "-" + J]);
 }, []), Ee = [].concat(G, [me]).reduce(function(t, e) {
@@ -1585,6 +1615,31 @@ const useZIndex = (zIndexOverrides) => {
     nextZIndex
   };
 };
+const useSizeProp = buildProp({
+  type: String,
+  values: componentSizes,
+  required: false
+});
+const SIZE_INJECTION_KEY = Symbol("size");
+const useGlobalSize = () => {
+  const injectedSize = inject(SIZE_INJECTION_KEY, {});
+  return computed(() => {
+    return unref(injectedSize.size) || "";
+  });
+};
+const configProviderContextKey = Symbol();
+const globalConfig = ref();
+function useGlobalConfig(key, defaultValue = void 0) {
+  const config = getCurrentInstance() ? inject(configProviderContextKey, globalConfig) : globalConfig;
+  if (key) {
+    return computed(() => {
+      var _a2, _b;
+      return (_b = (_a2 = config.value) == null ? void 0 : _a2[key]) != null ? _b : defaultValue;
+    });
+  } else {
+    return config;
+  }
+}
 var _export_sfc = (sfc, props) => {
   const target = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
@@ -1600,12 +1655,12 @@ const iconProps = buildProps({
     type: String
   }
 });
-const __default__$d = defineComponent({
+const __default__$f = defineComponent({
   name: "ElIcon",
   inheritAttrs: false
 });
-const _sfc_main$h = /* @__PURE__ */ defineComponent({
-  ...__default__$d,
+const _sfc_main$j = /* @__PURE__ */ defineComponent({
+  ...__default__$f,
   props: iconProps,
   setup(__props) {
     const props = __props;
@@ -1629,9 +1684,31 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Icon = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/icon/src/icon.vue"]]);
+var Icon = /* @__PURE__ */ _export_sfc(_sfc_main$j, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/icon/src/icon.vue"]]);
 const ElIcon = withInstall(Icon);
+const formContextKey = Symbol("formContextKey");
 const formItemContextKey = Symbol("formItemContextKey");
+const useFormSize = (fallback, ignore = {}) => {
+  const emptyRef = ref(void 0);
+  const size = ignore.prop ? emptyRef : useProp("size");
+  const globalConfig2 = ignore.global ? emptyRef : useGlobalSize();
+  const form = ignore.form ? { size: void 0 } : inject(formContextKey, void 0);
+  const formItem = ignore.formItem ? { size: void 0 } : inject(formItemContextKey, void 0);
+  return computed(() => size.value || unref(fallback) || (formItem == null ? void 0 : formItem.size) || (form == null ? void 0 : form.size) || globalConfig2.value || "");
+};
+const useFormDisabled = (fallback) => {
+  const disabled = useProp("disabled");
+  const form = inject(formContextKey, void 0);
+  return computed(() => disabled.value || unref(fallback) || (form == null ? void 0 : form.disabled) || false);
+};
+const useFormItem = () => {
+  const form = inject(formContextKey, void 0);
+  const formItem = inject(formItemContextKey, void 0);
+  return {
+    form,
+    formItem
+  };
+};
 const POPPER_INJECTION_KEY = Symbol("popper");
 const POPPER_CONTENT_INJECTION_KEY = Symbol("popperContent");
 const roleTypes = [
@@ -1651,12 +1728,12 @@ const popperProps = buildProps({
     default: "tooltip"
   }
 });
-const __default__$c = defineComponent({
+const __default__$e = defineComponent({
   name: "ElPopper",
   inheritAttrs: false
 });
-const _sfc_main$g = /* @__PURE__ */ defineComponent({
-  ...__default__$c,
+const _sfc_main$i = /* @__PURE__ */ defineComponent({
+  ...__default__$e,
   props: popperProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -1679,19 +1756,19 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Popper = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/popper.vue"]]);
+var Popper = /* @__PURE__ */ _export_sfc(_sfc_main$i, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/popper.vue"]]);
 const popperArrowProps = buildProps({
   arrowOffset: {
     type: Number,
     default: 5
   }
 });
-const __default__$b = defineComponent({
+const __default__$d = defineComponent({
   name: "ElPopperArrow",
   inheritAttrs: false
 });
-const _sfc_main$f = /* @__PURE__ */ defineComponent({
-  ...__default__$b,
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
+  ...__default__$d,
   props: popperArrowProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -1717,7 +1794,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperArrow = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/arrow.vue"]]);
+var ElPopperArrow = /* @__PURE__ */ _export_sfc(_sfc_main$h, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/arrow.vue"]]);
 const NAME = "ElOnlyChild";
 const OnlyChild = defineComponent({
   name: NAME,
@@ -1803,12 +1880,12 @@ const popperTriggerProps = buildProps({
   id: String,
   open: Boolean
 });
-const __default__$a = defineComponent({
+const __default__$c = defineComponent({
   name: "ElPopperTrigger",
   inheritAttrs: false
 });
-const _sfc_main$e = /* @__PURE__ */ defineComponent({
-  ...__default__$a,
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
+  ...__default__$c,
   props: popperTriggerProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -1906,7 +1983,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperTrigger = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/trigger.vue"]]);
+var ElPopperTrigger = /* @__PURE__ */ _export_sfc(_sfc_main$g, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/trigger.vue"]]);
 const FOCUS_AFTER_TRAPPED = "focus-trap.focus-after-trapped";
 const FOCUS_AFTER_RELEASED = "focus-trap.focus-after-released";
 const FOCUSOUT_PREVENTED = "focus-trap.focusout-prevented";
@@ -2055,7 +2132,7 @@ const createFocusOutPreventedEvent = (detail) => {
     detail
   });
 };
-const _sfc_main$d = defineComponent({
+const _sfc_main$f = defineComponent({
   name: "ElFocusTrap",
   inheritAttrs: false,
   props: {
@@ -2294,7 +2371,7 @@ const _sfc_main$d = defineComponent({
 function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   return renderSlot(_ctx.$slots, "default", { handleKeydown: _ctx.onKeydown });
 }
-var ElFocusTrap = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["render", _sfc_render$3], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/focus-trap/src/focus-trap.vue"]]);
+var ElFocusTrap = /* @__PURE__ */ _export_sfc(_sfc_main$f, [["render", _sfc_render$3], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/focus-trap/src/focus-trap.vue"]]);
 const POSITIONING_STRATEGIES = ["fixed", "absolute"];
 const popperCoreConfigProps = buildProps({
   boundariesPadding: {
@@ -2579,11 +2656,11 @@ const usePopperContentFocusTrap = (props, emit) => {
     onReleaseRequested
   };
 };
-const __default__$9 = defineComponent({
+const __default__$b = defineComponent({
   name: "ElPopperContent"
 });
-const _sfc_main$c = /* @__PURE__ */ defineComponent({
-  ...__default__$9,
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
+  ...__default__$b,
   props: popperContentProps,
   emits: popperContentEmits,
   setup(__props, { expose, emit }) {
@@ -2699,7 +2776,7 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperContent = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/content.vue"]]);
+var ElPopperContent = /* @__PURE__ */ _export_sfc(_sfc_main$e, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/content.vue"]]);
 const ElPopper = withInstall(Popper);
 const TOOLTIP_INJECTION_KEY = Symbol("elTooltip");
 const useTooltipContentProps = buildProps({
@@ -2777,11 +2854,11 @@ const whenTrigger = (trigger, type, handler) => {
     isTriggerType(unref(trigger), type) && handler(e);
   };
 };
-const __default__$8 = defineComponent({
+const __default__$a = defineComponent({
   name: "ElTooltipTrigger"
 });
-const _sfc_main$b = /* @__PURE__ */ defineComponent({
-  ...__default__$8,
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
+  ...__default__$a,
   props: useTooltipTriggerProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -2840,13 +2917,13 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElTooltipTrigger = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/trigger.vue"]]);
-const __default__$7 = defineComponent({
+var ElTooltipTrigger = /* @__PURE__ */ _export_sfc(_sfc_main$d, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/trigger.vue"]]);
+const __default__$9 = defineComponent({
   name: "ElTooltipContent",
   inheritAttrs: false
 });
-const _sfc_main$a = /* @__PURE__ */ defineComponent({
-  ...__default__$7,
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
+  ...__default__$9,
   props: useTooltipContentProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -3007,14 +3084,14 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElTooltipContent = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/content.vue"]]);
+var ElTooltipContent = /* @__PURE__ */ _export_sfc(_sfc_main$c, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/content.vue"]]);
 const _hoisted_1 = ["innerHTML"];
 const _hoisted_2 = { key: 1 };
-const __default__$6 = defineComponent({
+const __default__$8 = defineComponent({
   name: "ElTooltip"
 });
-const _sfc_main$9 = /* @__PURE__ */ defineComponent({
-  ...__default__$6,
+const _sfc_main$b = /* @__PURE__ */ defineComponent({
+  ...__default__$8,
   props: useTooltipProps,
   emits: tooltipEmits,
   setup(__props, { expose, emit }) {
@@ -3166,8 +3243,121 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Tooltip = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/tooltip.vue"]]);
+var Tooltip = /* @__PURE__ */ _export_sfc(_sfc_main$b, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/tooltip.vue"]]);
 const ElTooltip = withInstall(Tooltip);
+const buttonGroupContextKey = Symbol("buttonGroupContextKey");
+const useButton = (props, emit) => {
+  useDeprecated({
+    from: "type.text",
+    replacement: "link",
+    version: "3.0.0",
+    scope: "props",
+    ref: "https://element-plus.org/en-US/component/button.html#button-attributes"
+  }, computed(() => props.type === "text"));
+  const buttonGroupContext = inject(buttonGroupContextKey, void 0);
+  const globalConfig2 = useGlobalConfig("button");
+  const { form } = useFormItem();
+  const _size = useFormSize(computed(() => buttonGroupContext == null ? void 0 : buttonGroupContext.size));
+  const _disabled = useFormDisabled();
+  const _ref = ref();
+  const slots = useSlots();
+  const _type = computed(() => props.type || (buttonGroupContext == null ? void 0 : buttonGroupContext.type) || "");
+  const autoInsertSpace = computed(() => {
+    var _a2, _b, _c;
+    return (_c = (_b = props.autoInsertSpace) != null ? _b : (_a2 = globalConfig2.value) == null ? void 0 : _a2.autoInsertSpace) != null ? _c : false;
+  });
+  const _props = computed(() => {
+    if (props.tag === "button") {
+      return {
+        ariaDisabled: _disabled.value || props.loading,
+        disabled: _disabled.value || props.loading,
+        autofocus: props.autofocus,
+        type: props.nativeType
+      };
+    }
+    return {};
+  });
+  const shouldAddSpace = computed(() => {
+    var _a2;
+    const defaultSlot = (_a2 = slots.default) == null ? void 0 : _a2.call(slots);
+    if (autoInsertSpace.value && (defaultSlot == null ? void 0 : defaultSlot.length) === 1) {
+      const slot = defaultSlot[0];
+      if ((slot == null ? void 0 : slot.type) === Text) {
+        const text = slot.children;
+        return /^\p{Unified_Ideograph}{2}$/u.test(text.trim());
+      }
+    }
+    return false;
+  });
+  const handleClick = (evt) => {
+    if (props.nativeType === "reset") {
+      form == null ? void 0 : form.resetFields();
+    }
+    emit("click", evt);
+  };
+  return {
+    _disabled,
+    _size,
+    _type,
+    _ref,
+    _props,
+    shouldAddSpace,
+    handleClick
+  };
+};
+const buttonTypes = [
+  "default",
+  "primary",
+  "success",
+  "warning",
+  "info",
+  "danger",
+  "text",
+  ""
+];
+const buttonNativeTypes = ["button", "submit", "reset"];
+const buttonProps = buildProps({
+  size: useSizeProp,
+  disabled: Boolean,
+  type: {
+    type: String,
+    values: buttonTypes,
+    default: ""
+  },
+  icon: {
+    type: iconPropType
+  },
+  nativeType: {
+    type: String,
+    values: buttonNativeTypes,
+    default: "button"
+  },
+  loading: Boolean,
+  loadingIcon: {
+    type: iconPropType,
+    default: () => loading_default
+  },
+  plain: Boolean,
+  text: Boolean,
+  link: Boolean,
+  bg: Boolean,
+  autofocus: Boolean,
+  round: Boolean,
+  circle: Boolean,
+  color: String,
+  dark: Boolean,
+  autoInsertSpace: {
+    type: Boolean,
+    default: void 0
+  },
+  tag: {
+    type: definePropType([String, Object]),
+    default: "button"
+  }
+});
+const buttonEmits = {
+  click: (evt) => evt instanceof MouseEvent
+};
 function bound01(n, max) {
   if (isOnePointZero(n)) {
     n = "100%";
@@ -4051,6 +4241,160 @@ var TinyColor = (
     return TinyColor2;
   }()
 );
+function darken(color, amount = 20) {
+  return color.mix("#141414", amount).toString();
+}
+function useButtonCustomStyle(props) {
+  const _disabled = useFormDisabled();
+  const ns = useNamespace("button");
+  return computed(() => {
+    let styles = {};
+    const buttonColor = props.color;
+    if (buttonColor) {
+      const color = new TinyColor(buttonColor);
+      const activeBgColor = props.dark ? color.tint(20).toString() : darken(color, 20);
+      if (props.plain) {
+        styles = ns.cssVarBlock({
+          "bg-color": props.dark ? darken(color, 90) : color.tint(90).toString(),
+          "text-color": buttonColor,
+          "border-color": props.dark ? darken(color, 50) : color.tint(50).toString(),
+          "hover-text-color": `var(${ns.cssVarName("color-white")})`,
+          "hover-bg-color": buttonColor,
+          "hover-border-color": buttonColor,
+          "active-bg-color": activeBgColor,
+          "active-text-color": `var(${ns.cssVarName("color-white")})`,
+          "active-border-color": activeBgColor
+        });
+        if (_disabled.value) {
+          styles[ns.cssVarBlockName("disabled-bg-color")] = props.dark ? darken(color, 90) : color.tint(90).toString();
+          styles[ns.cssVarBlockName("disabled-text-color")] = props.dark ? darken(color, 50) : color.tint(50).toString();
+          styles[ns.cssVarBlockName("disabled-border-color")] = props.dark ? darken(color, 80) : color.tint(80).toString();
+        }
+      } else {
+        const hoverBgColor = props.dark ? darken(color, 30) : color.tint(30).toString();
+        const textColor = color.isDark() ? `var(${ns.cssVarName("color-white")})` : `var(${ns.cssVarName("color-black")})`;
+        styles = ns.cssVarBlock({
+          "bg-color": buttonColor,
+          "text-color": textColor,
+          "border-color": buttonColor,
+          "hover-bg-color": hoverBgColor,
+          "hover-text-color": textColor,
+          "hover-border-color": hoverBgColor,
+          "active-bg-color": activeBgColor,
+          "active-border-color": activeBgColor
+        });
+        if (_disabled.value) {
+          const disabledButtonColor = props.dark ? darken(color, 50) : color.tint(50).toString();
+          styles[ns.cssVarBlockName("disabled-bg-color")] = disabledButtonColor;
+          styles[ns.cssVarBlockName("disabled-text-color")] = props.dark ? "rgba(255, 255, 255, 0.5)" : `var(${ns.cssVarName("color-white")})`;
+          styles[ns.cssVarBlockName("disabled-border-color")] = disabledButtonColor;
+        }
+      }
+    }
+    return styles;
+  });
+}
+const __default__$7 = defineComponent({
+  name: "ElButton"
+});
+const _sfc_main$a = /* @__PURE__ */ defineComponent({
+  ...__default__$7,
+  props: buttonProps,
+  emits: buttonEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const buttonStyle = useButtonCustomStyle(props);
+    const ns = useNamespace("button");
+    const { _ref, _size, _type, _disabled, _props, shouldAddSpace, handleClick } = useButton(props, emit);
+    expose({
+      ref: _ref,
+      size: _size,
+      type: _type,
+      disabled: _disabled,
+      shouldAddSpace
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(resolveDynamicComponent(_ctx.tag), mergeProps({
+        ref_key: "_ref",
+        ref: _ref
+      }, unref(_props), {
+        class: [
+          unref(ns).b(),
+          unref(ns).m(unref(_type)),
+          unref(ns).m(unref(_size)),
+          unref(ns).is("disabled", unref(_disabled)),
+          unref(ns).is("loading", _ctx.loading),
+          unref(ns).is("plain", _ctx.plain),
+          unref(ns).is("round", _ctx.round),
+          unref(ns).is("circle", _ctx.circle),
+          unref(ns).is("text", _ctx.text),
+          unref(ns).is("link", _ctx.link),
+          unref(ns).is("has-bg", _ctx.bg)
+        ],
+        style: unref(buttonStyle),
+        onClick: unref(handleClick)
+      }), {
+        default: withCtx(() => [
+          _ctx.loading ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+            _ctx.$slots.loading ? renderSlot(_ctx.$slots, "loading", { key: 0 }) : (openBlock(), createBlock(unref(ElIcon), {
+              key: 1,
+              class: normalizeClass(unref(ns).is("loading"))
+            }, {
+              default: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent(_ctx.loadingIcon)))
+              ]),
+              _: 1
+            }, 8, ["class"]))
+          ], 64)) : _ctx.icon || _ctx.$slots.icon ? (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
+            default: withCtx(() => [
+              _ctx.icon ? (openBlock(), createBlock(resolveDynamicComponent(_ctx.icon), { key: 0 })) : renderSlot(_ctx.$slots, "icon", { key: 1 })
+            ]),
+            _: 3
+          })) : createCommentVNode("v-if", true),
+          _ctx.$slots.default ? (openBlock(), createElementBlock("span", {
+            key: 2,
+            class: normalizeClass({ [unref(ns).em("text", "expand")]: unref(shouldAddSpace) })
+          }, [
+            renderSlot(_ctx.$slots, "default")
+          ], 2)) : createCommentVNode("v-if", true)
+        ]),
+        _: 3
+      }, 16, ["class", "style", "onClick"]);
+    };
+  }
+});
+var Button = /* @__PURE__ */ _export_sfc(_sfc_main$a, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/button/src/button.vue"]]);
+const buttonGroupProps = {
+  size: buttonProps.size,
+  type: buttonProps.type
+};
+const __default__$6 = defineComponent({
+  name: "ElButtonGroup"
+});
+const _sfc_main$9 = /* @__PURE__ */ defineComponent({
+  ...__default__$6,
+  props: buttonGroupProps,
+  setup(__props) {
+    const props = __props;
+    provide(buttonGroupContextKey, reactive({
+      size: toRef(props, "size"),
+      type: toRef(props, "type")
+    }));
+    const ns = useNamespace("button");
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass(`${unref(ns).b("group")}`)
+      }, [
+        renderSlot(_ctx.$slots, "default")
+      ], 2);
+    };
+  }
+});
+var ButtonGroup = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/button/src/button-group.vue"]]);
+const ElButton = withInstall(Button, {
+  ButtonGroup
+});
+withNoopInstall(ButtonGroup);
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
@@ -5880,6 +6224,6 @@ export {
   ElIcon as e,
   ElMenuItem as f,
   ElMenu as g,
+  ElButton as h,
   withInstall$1 as w
 };
-//# sourceMappingURL=vendor.js.map

@@ -1,11 +1,11 @@
-import type { RouteLocationNormalizedLoaded } from 'vue-router';
+import type { Router } from 'vue-router';
 declare const _default: import("vue").DefineComponent<{
     menus: {
         type: import("vue").PropType<import("./src/aside/type").Menu[]>;
         required: true;
     };
-    route: {
-        type: import("vue").PropType<RouteLocationNormalizedLoaded>;
+    router: {
+        type: import("vue").PropType<Router>;
         required: true;
     };
 }, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {}, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
@@ -13,8 +13,8 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<import("./src/aside/type").Menu[]>;
         required: true;
     };
-    route: {
-        type: import("vue").PropType<RouteLocationNormalizedLoaded>;
+    router: {
+        type: import("vue").PropType<Router>;
         required: true;
     };
 }>>, {}, {}>;

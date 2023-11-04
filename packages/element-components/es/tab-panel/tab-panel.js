@@ -421,4 +421,3 @@ const AoeTabPanel = withInstall(TabPanel);
 export {
   AoeTabPanel as A
 };
-//# sourceMappingURL=tab-panel.js.map

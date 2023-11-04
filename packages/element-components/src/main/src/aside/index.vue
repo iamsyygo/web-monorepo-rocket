@@ -1,36 +1,38 @@
 <template>
-    <Menu :aside-width="asideWidth" :menus="menus" :default-menu-path-active="defaultMenuPathActive"></Menu>
+    <Menu
+        :aside-width="asideWidth"
+        :menus="menus"
+        :default-menu-path-active="activeMenuKey"
+        :collapse="collapse"
+    ></Menu>
+    <el-button type="primary" size="small" @click="onCollapse"></el-button>
 </template>
 
 <script setup lang="ts">
+import { ElButton } from 'element-plus';
 import { ref } from 'vue';
 import Menu from './Menu.vue';
 import { AsideProps } from './type';
 
-const { asideWidth = 200, menus = [], defaultMenuPathActive } = defineProps<AsideProps>();
+const { asideWidth = 200, menus = [], activeMenuKey } = defineProps<AsideProps>();
 
 const emits = defineEmits<{
     collapse: [width: number];
 }>();
 
+// 侧边栏收缩的宽度
 const miniMenuWidth = 64;
+
+// 侧边栏收缩，被 Aside 组件调用改变 option.asideWidth
 const diffWidth = asideWidth - miniMenuWidth;
 const collapse = ref(false);
+
+// 侧边栏收缩
 const onCollapse = () => {
     collapse.value = !collapse.value;
     const width = collapse.value ? miniMenuWidth : miniMenuWidth + diffWidth;
     emits('collapse', width);
 };
-
-// const handleMenuSelect = (path: string, indexPath, item, routePm) => {
-//     // console.log(path, indexPath, item, routePm);
-//     defaultMenuPathActive.value = path;
-// };
-
-// const defaultMenuPathActive = ref('');
-// const pathname = location.pathname;
-// // TODO 可能不存在当前路由，需要处理
-// defaultMenuPathActive.value = pathname || '/';
 </script>
 
 <style scoped lang="scss">

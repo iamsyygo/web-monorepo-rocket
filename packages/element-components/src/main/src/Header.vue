@@ -2,8 +2,6 @@
     <div></div>
 </template>
 
-<script setup lang="ts">
-import TabLabel from 'vue3-tabs-chrome';
-</script>
+<script setup lang="ts"></script>
 
 <style scoped></style>

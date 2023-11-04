@@ -5,18 +5,29 @@
             class="main-tabs--box"
             :tabs="tabs"
             @click="handleTabClick"
+            @remove="emits('remove-tab', activeTabIndex, $event.tab, $event.index)"
             v-model="activeTabIndex"
             insert-to-after
         >
         </TabPanel>
         <div class="main-content--box">
-            <router-view></router-view>
+            <router-view v-slot="{ Component, route }">
+                <Transition
+                    mode="out-in"
+                    leave-to-class="animate__animated animate__pulse"
+                    enter-to-class="animate__animated animate__fadeIn"
+                >
+                    <keep-alive :max="10">
+                        <component :is="Component" :key="route.fullPath"></component>
+                    </keep-alive>
+                </Transition>
+            </router-view>
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, shallowRef, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
 import TabPanel from '../../tab-panel';
 import { Tab } from '../../tab-panel/index.vue';
@@ -31,31 +42,30 @@ const { backgroundColor = '#fff', route } = defineProps<{
 
 const emits = defineEmits<{
     'click-tab': [e: MouseEvent, tab: Tab, index: number];
+    'remove-tab': [lastKey: string, tab: Tab, index: number];
 }>();
 const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
     emits('click-tab', e, tab, index);
 };
 
 const tabs = ref<Tab[]>([]);
-const activeTabIndex = ref<string | number>('');
+const activeTabIndex = ref<string>('');
 
 activeTabIndex.value = route.path;
 tabs.value.push({
-    // @ts-expect-error
-    label: route.meta.title,
+    label: (route.meta.title || '') as string,
     key: route.path,
-    icon: route.meta.icon,
+    icon: (route.meta.icon || '') as string,
 });
 
-const tabPanelRef = ref<InstanceType<typeof TabPanel> | null>();
+const tabPanelRef = shallowRef<InstanceType<typeof TabPanel> | null>();
 watch(
     () => route.path,
     (path) => {
         tabPanelRef.value?.addTab({
-            // @ts-expect-error
-            label: route.meta.title,
+            label: (route.meta.title || '') as string,
             key: path,
-            icon: route.meta.icon,
+            icon: (route.meta.icon || '') as string,
         });
         activeTabIndex.value = path;
     },
@@ -74,7 +84,7 @@ watch(
 }
 .main-content--box {
     flex: 1;
-    padding: 10px;
+    padding: 10px 10px 0;
     background-color: v-bind(backgroundColor);
 }
 </style>

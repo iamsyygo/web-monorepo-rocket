@@ -84,21 +84,21 @@ export declare const AoeTabPanel: import("@aoe/utils").SFCWithInstall<import("vu
         default: boolean;
     };
 }>> & {
-    onDragend?: ((...args: any[]) => any) | undefined;
-    onDragstart?: ((...args: any[]) => any) | undefined;
     onClick?: ((...args: any[]) => any) | undefined;
-    onContextmenu?: ((...args: any[]) => any) | undefined;
     "onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
     onRemove?: ((...args: any[]) => any) | undefined;
+    onDragstart?: ((...args: any[]) => any) | undefined;
     onDragging?: ((...args: any[]) => any) | undefined;
+    onDragend?: ((...args: any[]) => any) | undefined;
     onSwap?: ((...args: any[]) => any) | undefined;
+    onContextmenu?: ((...args: any[]) => any) | undefined;
 }, {
-    gap: number;
-    maxWidth: number;
-    minWidth: number;
     modelValue: string | number;
     tabs: import("./index.vue").Tab[];
     autoHiddenCloseIconWidth: number;
+    minWidth: number;
+    maxWidth: number;
+    gap: number;
     insertToAfter: boolean;
     isMousedownActive: boolean;
 }, {}>> & Record<string, any>;

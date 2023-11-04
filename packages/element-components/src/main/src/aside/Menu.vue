@@ -19,11 +19,28 @@ const { menus = [], defaultMenuPathActive, collapse } = defineProps<MenuProps>()
 </script>
 
 <style lang="scss">
+$--menu-radius: 4px;
 .el-aside--custom.el-aside {
-    .el-menu.el-menu--vertical {
+    .el-menu.el-menu--vertical,
+    .el-sub-menu .el-menu-item {
+        --el-menu-item-height: 40px;
+        --el-menu-sub-item-height: 40px;
+        /* padding: 5px 10px; */
         border-right: none;
         user-select: none;
-        height: 100%;
+    }
+    .el-menu.el-menu--collapse {
+        /* padding: 5px 0; */
+    }
+
+    .el-menu-item.is-active {
+        background-color: var(--el-color-primary-light-7);
+        border-radius: $--menu-radius;
+    }
+    .el-menu-item:hover,
+    .el-sub-menu__title:hover {
+        background-color: var(--el-color-primary-light-9);
+        border-radius: $--menu-radius;
     }
 }
 .base-menu--content .el-sub-menu__title > .el-icon {

@@ -1,3 +1,4 @@
+import { RouteLocationNormalizedLoaded } from 'vue-router';
 export type Menu = {
     name: string;
     path: string;
@@ -9,7 +10,7 @@ export type Menu = {
 export type AsideProps = {
     asideWidth?: number;
     menus: Menu[];
-    defaultMenuPathActive: string;
+    activeMenuKey: string;
 };
 
 export type MenuProps = {

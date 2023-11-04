@@ -7,41 +7,45 @@
             <Aside
                 :aside-width="option.asideWidth"
                 :menus="menus"
-                :default-menu-path-active="defaultMenuPathActive"
+                :activeMenuKey="route.path"
                 @collapse="handleMenuCollapse"
             ></Aside>
         </template>
         <template #main>
-            <Main :route="route" @click-tab="handleTabClick"></Main>
+            <Main :route="route" @click-tab="handleTabClick" @remove-tab="handleTabRemove"></Main>
         </template>
     </BaseArchitecture>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue';
+import { Tab } from '@/tab-panel/index.vue';
+import { computed, ref } from 'vue';
+import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import BaseArchitecture from '../base-architecture';
 import { ArchitectureOption } from '../base-architecture/index.vue';
-import Main from './src/Main.vue';
 import Header from './src/Header.vue';
+import Main from './src/Main.vue';
 import Aside from './src/aside/index.vue';
 import { AsideProps } from './src/aside/type';
-import type { RouteLocationNormalizedLoaded } from 'vue-router';
-import { Tab } from '@/tab-panel/index.vue';
 // import '../css/base-architecture.css';
 
-const { menus, route } = defineProps<{
+const { menus, router } = defineProps<{
     menus: AsideProps['menus'];
-    route: RouteLocationNormalizedLoaded;
+    router: Router;
 }>();
-const defaultMenuPathActive = ref<string>('');
-defaultMenuPathActive.value = route.path;
 
+// 获取当前路由
+const route = computed<RouteLocationNormalizedLoaded>(() => {
+    return router.currentRoute.value;
+});
+
+// 布局配置
 const option = ref<ArchitectureOption>({
     asideWidth: 200,
     headerHeight: 60,
     typography: 'ham',
     headerStyle: {
-        backgroundColor: '#c6c6c6',
+        background: 'linear-gradient(90deg, #102EFF 0%, #53A8FF 100%)',
         boxShadow: '0 1px 4px rgba(0, 21, 41, .08)',
     },
     asideStyle: {
@@ -50,12 +54,16 @@ const option = ref<ArchitectureOption>({
     },
 });
 
+// 侧边栏收缩，被 Aside 组件调用改变 option.asideWidth
 const handleMenuCollapse = (width: number) => {
     option.value.asideWidth = width;
 };
+
+// 点击 tab 页签，被 Main 组件调用
 const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
-    defaultMenuPathActive.value = tab.key;
+    router.push(tab.key);
+};
+const handleTabRemove = (lastKey: string, tab: Tab, index: number) => {
+    router.push(lastKey);
 };
 </script>
-
-<style scoped></style>

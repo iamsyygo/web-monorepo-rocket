@@ -3,7 +3,9 @@ export declare const AoeTreeLine: import("@aoe/utils").SFCWithInstall<{
         $: import("vue").ComponentInternalInstance;
         $data: {};
         $props: {
-            style?: unknown;
+            readonly node: import("element-plus/es/components/tree/src/model/node.mjs").default;
+            readonly indent: number;
+            readonly showCheckbox: boolean;
             key?: string | number | symbol | undefined;
             ref?: import("vue").VNodeRef | undefined;
             ref_for?: boolean | undefined;
@@ -47,9 +49,7 @@ export declare const AoeTreeLine: import("@aoe/utils").SFCWithInstall<{
                 [key: string]: any;
             }>) => void)[] | undefined;
             class?: unknown;
-            readonly node: import("element-plus/es/components/tree/src/model/node.mjs").default;
-            readonly indent: number;
-            readonly showCheckbox: boolean;
+            style?: unknown;
         };
         $attrs: {
             [x: string]: unknown;

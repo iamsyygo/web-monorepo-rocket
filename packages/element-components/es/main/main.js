@@ -1,20 +1,25 @@
-import { _ as _export_sfc, d as ElSubMenu, e as ElIcon, f as ElMenuItem, g as ElMenu, w as withInstall } from "../vendor.js";
-import { defineComponent, useCssVars, ref, watch, resolveComponent, openBlock, createElementBlock, createVNode, unref, createElementVNode, Fragment, renderList, createBlock, withCtx, toDisplayString, mergeProps } from "vue";
+import { _ as _export_sfc, d as ElSubMenu, e as ElIcon, f as ElMenuItem, g as ElMenu, h as ElButton, w as withInstall } from "../vendor.js";
+import { openBlock, createElementBlock, defineComponent, useCssVars, ref, shallowRef, watch, resolveComponent, createVNode, unref, createElementVNode, withCtx, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps, computed } from "vue";
 import { A as AoeBaseArchitecture } from "../base-architecture/base-architecture.js";
 import { A as AoeTabPanel } from "../tab-panel/tab-panel.js";
 import { A as AoeSymbolIcon } from "../symbol-icon/symbol-icon.js";
+const _sfc_main$5 = {};
+function _sfc_render(_ctx, _cache) {
+  return openBlock(), createElementBlock("div");
+}
+const Header = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["render", _sfc_render]]);
 const _hoisted_1 = { class: "base-main--wrapper" };
 const _hoisted_2 = { class: "main-content--box" };
-const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   __name: "Main",
   props: {
     route: {},
     backgroundColor: { default: "#fff" }
   },
-  emits: ["click-tab"],
+  emits: ["click-tab", "remove-tab"],
   setup(__props, { emit: __emit }) {
     useCssVars((_ctx) => ({
-      "0cb74c4e": _ctx.backgroundColor
+      "2b4f68f8": _ctx.backgroundColor
     }));
     const emits = __emit;
     const handleTabClick = (e, tab, index) => {
@@ -24,21 +29,19 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
     const activeTabIndex = ref("");
     activeTabIndex.value = __props.route.path;
     tabs.value.push({
-      // @ts-expect-error
-      label: __props.route.meta.title,
+      label: __props.route.meta.title || "",
       key: __props.route.path,
-      icon: __props.route.meta.icon
+      icon: __props.route.meta.icon || ""
     });
-    const tabPanelRef = ref();
+    const tabPanelRef = shallowRef();
     watch(
       () => __props.route.path,
       (path) => {
         var _a;
         (_a = tabPanelRef.value) == null ? void 0 : _a.addTab({
-          // @ts-expect-error
-          label: __props.route.meta.title,
+          label: __props.route.meta.title || "",
           key: path,
-          icon: __props.route.meta.icon
+          icon: __props.route.meta.icon || ""
         });
         activeTabIndex.value = path;
       }
@@ -52,27 +55,38 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
           class: "main-tabs--box",
           tabs: tabs.value,
           onClick: handleTabClick,
+          onRemove: _cache[0] || (_cache[0] = ($event) => emits("remove-tab", activeTabIndex.value, $event.tab, $event.index)),
           modelValue: activeTabIndex.value,
-          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => activeTabIndex.value = $event),
+          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => activeTabIndex.value = $event),
           "insert-to-after": ""
         }, null, 8, ["tabs", "modelValue"]),
         createElementVNode("div", _hoisted_2, [
-          createVNode(_component_router_view)
+          createVNode(_component_router_view, null, {
+            default: withCtx(({ Component, route }) => [
+              createVNode(Transition, {
+                mode: "out-in",
+                "leave-to-class": "animate__animated animate__pulse",
+                "enter-to-class": "animate__animated animate__fadeIn"
+              }, {
+                default: withCtx(() => [
+                  (openBlock(), createBlock(KeepAlive, { max: 10 }, [
+                    (openBlock(), createBlock(resolveDynamicComponent(Component), {
+                      key: route.fullPath
+                    }))
+                  ], 1024))
+                ]),
+                _: 2
+              }, 1024)
+            ]),
+            _: 1
+          })
         ])
       ]);
     };
   }
 });
-const Main_vue_vue_type_style_index_0_scoped_a68396ae_lang = "";
-const Main = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-a68396ae"]]);
-const _sfc_main$4 = /* @__PURE__ */ defineComponent({
-  __name: "Header",
-  setup(__props) {
-    return (_ctx, _cache) => {
-      return openBlock(), createElementBlock("div");
-    };
-  }
-});
+const Main_vue_vue_type_style_index_0_scoped_a57de4b9_lang = "";
+const Main = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-a57de4b9"]]);
 const iconSize = 18;
 const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   ...{
@@ -166,38 +180,53 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   props: {
     asideWidth: { default: 200 },
     menus: { default: () => [] },
-    defaultMenuPathActive: {}
+    activeMenuKey: {}
   },
   emits: ["collapse"],
   setup(__props, { emit: __emit }) {
-    __props.asideWidth - miniMenuWidth;
-    ref(false);
+    const emits = __emit;
+    const diffWidth = __props.asideWidth - miniMenuWidth;
+    const collapse = ref(false);
+    const onCollapse = () => {
+      collapse.value = !collapse.value;
+      const width = collapse.value ? miniMenuWidth : miniMenuWidth + diffWidth;
+      emits("collapse", width);
+    };
     return (_ctx, _cache) => {
-      return openBlock(), createBlock(_sfc_main$2, {
-        "aside-width": _ctx.asideWidth,
-        menus: _ctx.menus,
-        "default-menu-path-active": _ctx.defaultMenuPathActive
-      }, null, 8, ["aside-width", "menus", "default-menu-path-active"]);
+      return openBlock(), createElementBlock(Fragment, null, [
+        createVNode(_sfc_main$2, {
+          "aside-width": _ctx.asideWidth,
+          menus: _ctx.menus,
+          "default-menu-path-active": _ctx.activeMenuKey,
+          collapse: collapse.value
+        }, null, 8, ["aside-width", "menus", "default-menu-path-active", "collapse"]),
+        createVNode(unref(ElButton), {
+          type: "primary",
+          size: "small",
+          onClick: onCollapse
+        })
+      ], 64);
     };
   }
 });
-const index_vue_vue_type_style_index_0_scoped_abbd248f_lang = "";
-const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-abbd248f"]]);
+const index_vue_vue_type_style_index_0_scoped_3577d2d5_lang = "";
+const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-3577d2d5"]]);
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "index",
   props: {
     menus: {},
-    route: {}
+    router: {}
   },
   setup(__props) {
-    const defaultMenuPathActive = ref("");
-    defaultMenuPathActive.value = __props.route.path;
+    const route = computed(() => {
+      return __props.router.currentRoute.value;
+    });
     const option = ref({
       asideWidth: 200,
       headerHeight: 60,
       typography: "ham",
       headerStyle: {
-        backgroundColor: "#c6c6c6",
+        background: "linear-gradient(90deg, #102EFF 0%, #53A8FF 100%)",
         boxShadow: "0 1px 4px rgba(0, 21, 41, .08)"
       },
       asideStyle: {
@@ -209,25 +238,29 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       option.value.asideWidth = width;
     };
     const handleTabClick = (e, tab, index) => {
-      defaultMenuPathActive.value = tab.key;
+      __props.router.push(tab.key);
+    };
+    const handleTabRemove = (lastKey, tab, index) => {
+      __props.router.push(lastKey);
     };
     return (_ctx, _cache) => {
       return openBlock(), createBlock(unref(AoeBaseArchitecture), { option: option.value }, {
         header: withCtx(() => [
-          createVNode(_sfc_main$4)
+          createVNode(Header)
         ]),
         aside: withCtx(() => [
           createVNode(Aside, {
             "aside-width": option.value.asideWidth,
             menus: _ctx.menus,
-            "default-menu-path-active": defaultMenuPathActive.value,
+            activeMenuKey: route.value.path,
             onCollapse: handleMenuCollapse
-          }, null, 8, ["aside-width", "menus", "default-menu-path-active"])
+          }, null, 8, ["aside-width", "menus", "activeMenuKey"])
         ]),
         main: withCtx(() => [
           createVNode(Main, {
-            route: _ctx.route,
-            onClickTab: handleTabClick
+            route: route.value,
+            onClickTab: handleTabClick,
+            onRemoveTab: handleTabRemove
           }, null, 8, ["route"])
         ]),
         _: 1
@@ -239,4 +272,3 @@ const AoeMain = withInstall(_sfc_main);
 export {
   AoeMain as A
 };
-//# sourceMappingURL=main.js.map

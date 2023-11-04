@@ -40,7 +40,7 @@ export default defineConfig({
                         // }
                         // 其他包根据目录名称
                     },
-                    sourcemap: true,
+                    // sourcemap: true,
                 },
                 // {
                 //     format: 'cjs',

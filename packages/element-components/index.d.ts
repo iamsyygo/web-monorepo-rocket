@@ -9,10 +9,13 @@ import { DebuggerEvent } from 'vue';
 import { default as default_2 } from 'element-plus/es/components/tree/src/model/node.mjs';
 import { DefineComponent } from 'vue';
 import { ExtractPropTypes } from 'vue';
+import { Menu } from './src/aside/type';
 import { nextTick } from 'vue';
 import { PropType } from 'vue';
+import { Ref } from 'vue';
 import { RendererElement } from 'vue';
 import { RendererNode } from 'vue';
+import { Router } from 'vue-router';
 import { SFCWithInstall } from '@aoe/utils';
 import { ShallowUnwrapRef } from 'vue';
 import { Slot } from 'vue';
@@ -135,7 +138,25 @@ main?(_: {}): any;
 
 export declare const AoeForm: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>>, {}, {}>> & Record<string, any>;
 
-export declare const AoeMain: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>>, {}, {}>> & Record<string, any>;
+export declare const AoeMain: SFCWithInstall<DefineComponent<    {
+menus: {
+type: PropType<Menu[]>;
+required: true;
+};
+router: {
+type: PropType<Router>;
+required: true;
+};
+}, {}, unknown, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {
+menus: {
+type: PropType<Menu[]>;
+required: true;
+};
+router: {
+type: PropType<Router>;
+required: true;
+};
+}>>, {}, {}>> & Record<string, any>;
 
 export declare const AoeSymbolIcon: SFCWithInstall<DefineComponent<    {
 name: {
@@ -148,6 +169,111 @@ type: PropType<any>;
 required: true;
 };
 }>>, {}, {}>> & Record<string, any>;
+
+export declare const AoeTabPanel: SFCWithInstall<DefineComponent<    {
+modelValue: {
+type: (StringConstructor | NumberConstructor)[];
+default: string;
+};
+tabs: {
+type: PropType<Tab[]>;
+default: () => never[];
+};
+autoHiddenCloseIconWidth: {
+type: NumberConstructor;
+default: number;
+};
+minWidth: {
+type: NumberConstructor;
+default: number;
+};
+maxWidth: {
+type: NumberConstructor;
+default: number;
+};
+gap: {
+type: NumberConstructor;
+default: number;
+};
+onClose: {
+type: FunctionConstructor;
+};
+insertToAfter: {
+type: BooleanConstructor;
+default: boolean;
+};
+isMousedownActive: {
+type: BooleanConstructor;
+default: boolean;
+};
+}, {
+setTabRef: (el: Element | ComponentPublicInstance | null, tab: Tab) => void;
+setContentRef: (el: Element | ComponentPublicInstance | null) => void;
+setAfterRef: (el: Element | ComponentPublicInstance | null) => void;
+tabWidth: Ref<number>;
+handleDelete: (tab: Tab, i: number) => false | undefined;
+handleContextMenu: (e: Event, tab: Tab, i: number) => void;
+showTabCloseIcon: (tab: Tab) => boolean;
+handleNativeClick: (e: Event, tab: Tab, i: number) => void;
+doLayout: () => void;
+init: () => void;
+addTab: (tab: Tab) => void;
+removeTab: (tabKey: string | number) => void;
+}, unknown, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, ("click" | "update:modelValue" | "remove" | "dragstart" | "dragging" | "dragend" | "swap" | "contextmenu")[], "click" | "update:modelValue" | "remove" | "dragstart" | "dragging" | "dragend" | "swap" | "contextmenu", VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {
+modelValue: {
+type: (StringConstructor | NumberConstructor)[];
+default: string;
+};
+tabs: {
+type: PropType<Tab[]>;
+default: () => never[];
+};
+autoHiddenCloseIconWidth: {
+type: NumberConstructor;
+default: number;
+};
+minWidth: {
+type: NumberConstructor;
+default: number;
+};
+maxWidth: {
+type: NumberConstructor;
+default: number;
+};
+gap: {
+type: NumberConstructor;
+default: number;
+};
+onClose: {
+type: FunctionConstructor;
+};
+insertToAfter: {
+type: BooleanConstructor;
+default: boolean;
+};
+isMousedownActive: {
+type: BooleanConstructor;
+default: boolean;
+};
+}>> & {
+onDragend?: ((...args: any[]) => any) | undefined;
+onDragstart?: ((...args: any[]) => any) | undefined;
+onClick?: ((...args: any[]) => any) | undefined;
+onContextmenu?: ((...args: any[]) => any) | undefined;
+"onUpdate:modelValue"?: ((...args: any[]) => any) | undefined;
+onRemove?: ((...args: any[]) => any) | undefined;
+onDragging?: ((...args: any[]) => any) | undefined;
+onSwap?: ((...args: any[]) => any) | undefined;
+}, {
+gap: number;
+maxWidth: number;
+minWidth: number;
+modelValue: string | number;
+tabs: Tab[];
+autoHiddenCloseIconWidth: number;
+insertToAfter: boolean;
+isMousedownActive: boolean;
+}, {}>> & Record<string, any>;
 
 export declare const AoeTreeLine: SFCWithInstall<    {
 new (...args: any[]): {
@@ -294,8 +420,21 @@ declare interface ArchitectureOption {
      * am: aside main
      */
     typography: 'ham' | 'ahm' | 'hm' | 'am';
-    backgroundColor?: string;
-    headerStyle: Partial<CSSStyleDeclaration>;
+    headerStyle?: Partial<CSSStyleDeclaration>;
+    asideStyle?: Partial<CSSStyleDeclaration>;
+}
+
+declare interface Tab {
+    label: string;
+    key: string;
+    favico?: string;
+    icon?: string;
+    closable?: boolean;
+    swappable?: boolean;
+    dragable?: boolean;
+    $el?: HTMLElement;
+    _instance?: any;
+    _x?: number;
 }
 
 export { }

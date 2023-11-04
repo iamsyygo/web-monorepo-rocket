@@ -1,20 +1,35 @@
-.base-main--wrapper[data-v-a68396ae] {
+.base-main--wrapper[data-v-a57de4b9] {
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-.main-tabs--box[data-v-a68396ae] {
+.main-tabs--box[data-v-a57de4b9] {
   height: 35px;
   width: 100%;
 }
-.main-content--box[data-v-a68396ae] {
+.main-content--box[data-v-a57de4b9] {
   flex: 1;
-  padding: 10px;
-  background-color: var(--0cb74c4e);
-}.el-aside--custom.el-aside .el-menu.el-menu--vertical {
+  padding: 10px 10px 0;
+  background-color: var(--2b4f68f8);
+}.el-aside--custom.el-aside .el-menu.el-menu--vertical,
+.el-aside--custom.el-aside .el-sub-menu .el-menu-item {
+  --el-menu-item-height: 40px;
+  --el-menu-sub-item-height: 40px;
+  /* padding: 5px 10px; */
   border-right: none;
   user-select: none;
-  height: 100%;
+}
+.el-aside--custom.el-aside .el-menu.el-menu--collapse {
+  /* padding: 5px 0; */
+}
+.el-aside--custom.el-aside .el-menu-item.is-active {
+  background-color: var(--el-color-primary-light-7);
+  border-radius: 4px;
+}
+.el-aside--custom.el-aside .el-menu-item:hover,
+.el-aside--custom.el-aside .el-sub-menu__title:hover {
+  background-color: var(--el-color-primary-light-9);
+  border-radius: 4px;
 }
 .base-menu--content .el-sub-menu__title > .el-icon > span {
   font-style: normal;
@@ -23,16 +38,16 @@
 .horizontal-collapse-transition .el-sub-menu__title > span {
   opacity: 0;
   transition: all 0.3s;
-}.el-aside--custom.el-aside .el-menu.el-menu--vertical[data-v-abbd248f] {
+}.el-aside--custom.el-aside .el-menu.el-menu--vertical[data-v-3577d2d5] {
   border-right: none;
   user-select: none;
   height: 100%;
 }
-.base-menu--content .el-sub-menu__title > .el-icon > span[data-v-abbd248f] {
+.base-menu--content .el-sub-menu__title > .el-icon > span[data-v-3577d2d5] {
   font-style: normal;
 }
-.horizontal-collapse-transition .el-menu-item > span[data-v-abbd248f]:nth-child(2),
-.horizontal-collapse-transition .el-sub-menu__title > span[data-v-abbd248f] {
+.horizontal-collapse-transition .el-menu-item > span[data-v-3577d2d5]:nth-child(2),
+.horizontal-collapse-transition .el-sub-menu__title > span[data-v-3577d2d5] {
   opacity: 0;
   transition: all 0.3s;
 }

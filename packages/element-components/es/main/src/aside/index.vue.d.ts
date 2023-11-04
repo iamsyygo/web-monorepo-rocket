@@ -6,7 +6,7 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<import("./type").Menu[]>;
         required: true;
     };
-    defaultMenuPathActive: {
+    activeMenuKey: {
         type: import("vue").PropType<string>;
         required: true;
     };
@@ -20,7 +20,7 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<import("./type").Menu[]>;
         required: true;
     };
-    defaultMenuPathActive: {
+    activeMenuKey: {
         type: import("vue").PropType<string>;
         required: true;
     };

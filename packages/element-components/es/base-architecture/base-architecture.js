@@ -59,4 +59,3 @@ const AoeBaseArchitecture = withInstall(BaseArchitecture);
 export {
   AoeBaseArchitecture as A
 };
-//# sourceMappingURL=base-architecture.js.map
