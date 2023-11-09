@@ -17,8 +17,10 @@
         "@aoe/utils": "workspace:^",
         "animate.css": "^4.1.1",
         "ant-design-vue": "^4.0.6",
+        "draggabilly": "^3.0.0",
         "element-plus": "^2.4.1",
-        "vue": "^3.3.4"
+        "vue": "^3.3.4",
+        "vue-router": "4"
     },
     "devDependencies": {
         "@aoe/icons": "workspace:^",
