@@ -19,12 +19,13 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   emits: ["click-tab", "remove-tab"],
   setup(__props, { emit: __emit }) {
     useCssVars((_ctx) => ({
-      "2b4f68f8": _ctx.backgroundColor
+      "58b219b8": _ctx.backgroundColor
     }));
     const emits = __emit;
     const handleTabClick = (e, tab, index) => {
       emits("click-tab", e, tab, index);
     };
+    const include = ref([]);
     const tabs = ref([]);
     const activeTabIndex = ref("");
     activeTabIndex.value = __props.route.path;
@@ -65,15 +66,17 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
             default: withCtx(({ Component, route }) => [
               createVNode(Transition, {
                 mode: "out-in",
-                "leave-to-class": "animate__animated animate__pulse",
-                "enter-to-class": "animate__animated animate__fadeIn"
+                name: "base-view--transition"
               }, {
                 default: withCtx(() => [
-                  (openBlock(), createBlock(KeepAlive, { max: 10 }, [
+                  (openBlock(), createBlock(KeepAlive, {
+                    max: 10,
+                    include: include.value
+                  }, [
                     (openBlock(), createBlock(resolveDynamicComponent(Component), {
                       key: route.fullPath
                     }))
-                  ], 1024))
+                  ], 1032, ["include"]))
                 ]),
                 _: 2
               }, 1024)
@@ -85,8 +88,8 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const Main_vue_vue_type_style_index_0_scoped_a57de4b9_lang = "";
-const Main = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-a57de4b9"]]);
+const Main_vue_vue_type_style_index_0_scoped_3eeb769f_lang = "";
+const Main = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-3eeb769f"]]);
 const iconSize = 18;
 const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   ...{

@@ -3,6 +3,8 @@ export declare const AoeBaseArchitecture: import("@aoe/utils").SFCWithInstall<{
         $: import("vue").ComponentInternalInstance;
         $data: {};
         $props: {
+            readonly option: import("./index.vue").ArchitectureOption;
+            style?: unknown;
             key?: string | number | symbol | undefined;
             ref?: import("vue").VNodeRef | undefined;
             ref_for?: boolean | undefined;
@@ -46,8 +48,6 @@ export declare const AoeBaseArchitecture: import("@aoe/utils").SFCWithInstall<{
                 [key: string]: any;
             }>) => void)[] | undefined;
             class?: unknown;
-            style?: unknown;
-            readonly option: import("./index.vue").ArchitectureOption;
         };
         $attrs: {
             [x: string]: unknown;

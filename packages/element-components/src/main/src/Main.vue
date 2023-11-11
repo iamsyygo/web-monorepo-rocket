@@ -12,12 +12,9 @@
         </TabPanel>
         <div class="main-content--box">
             <router-view v-slot="{ Component, route }">
-                <Transition
-                    mode="out-in"
-                    leave-to-class="animate__animated animate__pulse"
-                    enter-to-class="animate__animated animate__fadeIn"
-                >
-                    <keep-alive :max="10">
+                <Transition mode="out-in" name="base-view--transition">
+                    <!-- TODO 不是缓存10个，是缓存tab栏10个 -->
+                    <keep-alive :max="10" :include="include">
                         <component :is="Component" :key="route.fullPath"></component>
                     </keep-alive>
                 </Transition>
@@ -25,7 +22,6 @@
         </div>
     </div>
 </template>
-
 <script setup lang="ts">
 import { ref, shallowRef, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
@@ -48,6 +44,7 @@ const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
     emits('click-tab', e, tab, index);
 };
 
+const include = ref<string[]>([]);
 const tabs = ref<Tab[]>([]);
 const activeTabIndex = ref<string>('');
 
@@ -86,5 +83,22 @@ watch(
     flex: 1;
     padding: 10px 10px 0;
     background-color: v-bind(backgroundColor);
+}
+
+.base-view--transition-enter-active,
+.base-view--transition-leave-active {
+    transition: all 0.3s;
+}
+
+.base-view--transition-enter-from,
+.base-view--transition-leave-to {
+    opacity: 0;
+    transform: translateX(10px);
+}
+
+.base-view--transition-enter-to,
+.base-view--transition-leave-from {
+    opacity: 1;
+    transform: translateX(0);
 }
 </style>

@@ -32,12 +32,14 @@
         "@rollup/plugin-node-resolve": "^15.2.3",
         "@rollup/plugin-strip": "^3.0.4",
         "@rollup/plugin-typescript": "^11.1.5",
+        "@types/color": "^3.0.5",
         "rollup": "^4.1.4",
         "rollup-plugin-dts": "^6.1.0",
         "rollup-plugin-postcss": "^4.0.2",
         "rollup-plugin-vue": "^6.0.0"
     },
     "dependencies": {
-        "@vue/shared": "^3.3.6"
+        "@vue/shared": "^3.3.6",
+        "color": "^4.2.3"
     }
 }

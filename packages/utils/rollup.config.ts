@@ -26,6 +26,7 @@ export default rollup.defineConfig([
         ],
         // preserveModules: true,
         plugins: [
+            commonjs(),
             strip(),
             typescript(),
             json(),
@@ -42,7 +43,6 @@ export default rollup.defineConfig([
             //     },
             // }),
             nodeResolve(),
-            commonjs({ include: 'node_modules/**' }),
         ],
         external: ['vue'],
     },
