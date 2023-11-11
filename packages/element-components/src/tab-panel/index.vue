@@ -84,6 +84,8 @@ export interface Tab {
     // eslint-disable-next-line
     _instance?: any;
     _x?: number;
+
+    [key: string]: any;
 }
 
 export interface Refs {

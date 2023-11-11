@@ -158,6 +158,8 @@ required: true;
 };
 }>>, {}, {}>> & Record<string, any>;
 
+export declare const AoeNotFound: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>>, {}, {}>> & Record<string, any>;
+
 export declare const AoeSymbolIcon: SFCWithInstall<DefineComponent<    {
 name: {
 type: PropType<any>;
@@ -435,6 +437,7 @@ declare interface Tab {
     $el?: HTMLElement;
     _instance?: any;
     _x?: number;
+    [key: string]: any;
 }
 
 export { }

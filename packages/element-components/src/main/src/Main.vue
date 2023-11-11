@@ -23,7 +23,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ref, shallowRef, watch } from 'vue';
+import { computed, ref, shallowRef, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
 import TabPanel from '../../tab-panel';
 import { Tab } from '../../tab-panel/index.vue';
@@ -44,15 +44,20 @@ const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
     emits('click-tab', e, tab, index);
 };
 
-const include = ref<string[]>([]);
 const tabs = ref<Tab[]>([]);
 const activeTabIndex = ref<string>('');
+
+// const include = ref<string[]>([]);
+const include = computed(() => {
+    return tabs.value.map((tab) => tab.name);
+});
 
 activeTabIndex.value = route.path;
 tabs.value.push({
     label: (route.meta.title || '') as string,
     key: route.path,
     icon: (route.meta.icon || '') as string,
+    name: route.name as string,
 });
 
 const tabPanelRef = shallowRef<InstanceType<typeof TabPanel> | null>();
@@ -63,6 +68,7 @@ watch(
             label: (route.meta.title || '') as string,
             key: path,
             icon: (route.meta.icon || '') as string,
+            name: route.name as string,
         });
         activeTabIndex.value = path;
     },

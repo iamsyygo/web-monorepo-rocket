@@ -1,5 +1,5 @@
 import { _ as _export_sfc, d as ElSubMenu, e as ElIcon, f as ElMenuItem, g as ElMenu, h as ElButton, w as withInstall } from "../vendor.js";
-import { openBlock, createElementBlock, defineComponent, useCssVars, ref, shallowRef, watch, resolveComponent, createVNode, unref, createElementVNode, withCtx, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps, computed } from "vue";
+import { openBlock, createElementBlock, defineComponent, useCssVars, ref, computed, shallowRef, watch, resolveComponent, createVNode, unref, createElementVNode, withCtx, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps } from "vue";
 import { A as AoeBaseArchitecture } from "../base-architecture/base-architecture.js";
 import { A as AoeTabPanel } from "../tab-panel/tab-panel.js";
 import { A as AoeSymbolIcon } from "../symbol-icon/symbol-icon.js";
@@ -19,20 +19,23 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   emits: ["click-tab", "remove-tab"],
   setup(__props, { emit: __emit }) {
     useCssVars((_ctx) => ({
-      "58b219b8": _ctx.backgroundColor
+      "340aaefa": _ctx.backgroundColor
     }));
     const emits = __emit;
     const handleTabClick = (e, tab, index) => {
       emits("click-tab", e, tab, index);
     };
-    const include = ref([]);
     const tabs = ref([]);
     const activeTabIndex = ref("");
+    const include = computed(() => {
+      return tabs.value.map((tab) => tab.name);
+    });
     activeTabIndex.value = __props.route.path;
     tabs.value.push({
       label: __props.route.meta.title || "",
       key: __props.route.path,
-      icon: __props.route.meta.icon || ""
+      icon: __props.route.meta.icon || "",
+      name: __props.route.name
     });
     const tabPanelRef = shallowRef();
     watch(
@@ -42,7 +45,8 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
         (_a = tabPanelRef.value) == null ? void 0 : _a.addTab({
           label: __props.route.meta.title || "",
           key: path,
-          icon: __props.route.meta.icon || ""
+          icon: __props.route.meta.icon || "",
+          name: __props.route.name
         });
         activeTabIndex.value = path;
       }
@@ -88,8 +92,8 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const Main_vue_vue_type_style_index_0_scoped_3eeb769f_lang = "";
-const Main = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-3eeb769f"]]);
+const Main_vue_vue_type_style_index_0_scoped_4a39472a_lang = "";
+const Main = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-4a39472a"]]);
 const iconSize = 18;
 const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   ...{

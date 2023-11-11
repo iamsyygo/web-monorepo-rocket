@@ -16,7 +16,6 @@ export default function vitePluginPageName(option: PageNameOption = {}): Plugin 
     // 不能使用 __dirname
     const { include = '' } = option;
     // const __dirname = dirname(fileURLToPath(import.meta.url))
-
     // const root = process.cwd();
 
     const config = {
