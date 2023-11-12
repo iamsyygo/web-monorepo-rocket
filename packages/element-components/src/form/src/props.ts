@@ -1,6 +1,18 @@
-import { FormItemProps, ColProps, inputProps, ElSelect, ElForm, ElRadio } from 'element-plus';
-import SelectProps from 'element-plus/es/components/select/src/select.vue';
-import { DefineComponent, ExtractPropTypes, PropType } from 'vue';
+import {
+    ColProps,
+    ElForm,
+    ElRadio,
+    ElSelect,
+    FormItemProps,
+    checkboxProps,
+    colorPickerProps,
+    inputProps,
+    sliderProps,
+    switchProps,
+    datePickerProps,
+} from 'element-plus';
+import { IDatePickerType } from 'element-plus/es/components/date-picker/src/date-picker.type.mjs';
+import { ExtractPropTypes, PropType } from 'vue';
 
 /**
  * ExtractPropTypes 用于提取组件的 props 类型
@@ -20,27 +32,22 @@ import { DefineComponent, ExtractPropTypes, PropType } from 'vue';
 
 export type FormItemType =
     | 'input'
+    | 'inputNumber'
+    | 'textarea'
     | 'select'
     | 'radio'
     | 'checkbox'
     | 'switch'
-    | 'date'
-    | 'time'
     | 'rate'
-    | 'color'
+    | 'color-picker'
     | 'slider'
-    | 'upload'
-    | 'cascader'
-    | 'transfer'
-    | 'inputNumber'
-    | 'autocomplete'
+    // | 'upload'
+    // | 'cascader'
+    // | 'transfer'
+    // | 'autocomplete'
     | 'checkboxButton'
-    | 'radioButton'
-    | 'option'
-    | 'optionGroup'
-    | 'button'
-    | 'textarea'
-    | 'form';
+    // | 'radioButton'
+    | IDatePickerType;
 
 // 表单响应式布局
 export type Span = Omit<ColProps, 'tag' | 'push' | 'span' | 'offset' | 'pull'>;
@@ -89,6 +96,7 @@ type FormItemTypeProp<T extends FormItemType, P> = CommonFormItemProp & {
     prop: string;
     defaultValue?: any;
     placeholder?: string;
+    tooltip?: string;
     span?: Span | number;
     props?: P;
     controller?: Controller;
@@ -106,10 +114,12 @@ type Controller = (data: { value: any; option: FormItemTypeProps }) => boolean;
 export type ObjectPropType<T extends any[], K extends keyof T[number]> = T[number][K];
 /** 获取数组对象中的某个属性的值组成的组合类型 */
 
-type MultipleFormItemProp = FormItemTypeProp<
-    'input' | 'textarea' | 'switch' | 'slider',
+type InputProp = FormItemTypeProp<
+    'input' | 'textarea' | 'inputNumber',
     PartialOmitElementProp<typeof inputProps, 'modelValue' | 'placeholder' | 'size'>
 >;
+type SwitchProp = FormItemTypeProp<'switch', PartialOmitElementProp<typeof switchProps, 'modelValue' | 'size'>>;
+type SlidermProp = FormItemTypeProp<'slider', PartialOmitElementProp<typeof sliderProps, 'modelValue' | 'size'>>;
 
 // type SwitchProp = FormItemTypeProp<
 //     'switch',
@@ -142,7 +152,35 @@ type RadioProp = FormItemTypeProp<
     };
 };
 
-export type FormItemTypeProps = MultipleFormItemProp | SelectProp | RadioProp;
+type CheckboxProp = FormItemTypeProp<
+    'checkbox' | 'checkboxButton',
+    OmitElementProp<typeof checkboxProps, 'modelValue' | 'label' | 'size'>
+> & {
+    options: PromiseFunctionArray;
+    optionProps?: {
+        value: string;
+        label: string;
+        key?: string;
+        disabled?: boolean;
+    };
+};
+
+type ColorPickerProp = FormItemTypeProp<
+    'color-picker',
+    OmitElementProp<typeof colorPickerProps, 'modelValue' | 'size'>
+>;
+
+type DatePickerProp = FormItemTypeProp<IDatePickerType, OmitElementProp<typeof datePickerProps, 'modelValue' | 'size'>>;
+
+export type FormItemTypeProps =
+    | InputProp
+    | SelectProp
+    | RadioProp
+    | SwitchProp
+    | SlidermProp
+    | CheckboxProp
+    | ColorPickerProp
+    | DatePickerProp;
 
 export type FormProps = OmitElementProp<InstanceType<typeof ElForm>['$props'], 'model'> & {
     spans?: Span | number;

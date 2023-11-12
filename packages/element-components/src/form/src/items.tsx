@@ -1,7 +1,21 @@
-import { ElInput, ElRadio, ElRadioGroup, ElSelect, ElSlider, ElSwitch } from 'element-plus';
+import {
+    ElCheckbox,
+    ElCheckboxButton,
+    ElCheckboxGroup,
+    ElColorPicker,
+    ElDatePicker,
+    ElInput,
+    ElInputNumber,
+    ElRadio,
+    ElRadioGroup,
+    ElSelect,
+    ElSlider,
+    ElSwitch,
+} from 'element-plus';
 import { PropType, defineComponent, onMounted, reactive } from 'vue';
 import { FormItemType, FormItemTypeProps } from './props';
 import { useDefineModel } from '../../hooks/defineModel.h';
+import { IDatePickerType } from 'element-plus/es/components/date-picker/src/date-picker.type.mjs';
 
 export default defineComponent({
     props: {
@@ -28,7 +42,12 @@ export default defineComponent({
             list: [],
         });
 
-        if (props.option.type === 'select' || 'radio' === props.option.type) {
+        if (
+            props.option.type === 'select' ||
+            'radio' === props.option.type ||
+            'checkbox' === props.option.type ||
+            'checkboxButton' === props.option.type
+        ) {
             if (Array.isArray(props.option.options)) {
                 selectOptions.list = props.option.options;
             } else {
@@ -51,9 +70,18 @@ export default defineComponent({
         return () => {
             const itemAttrs = Object.assign({}, props.option, attrs);
             const option = props.option;
+
+            if (['date', 'datetime', 'daterange', 'datetimerange', 'year', 'month'].includes(option.type)) {
+                // itemAttrs['value-format'] = itemAttrs['value-format'] ?? 'yyyy-MM-dd HH:mm:ss';
+                // @ts-expect-error
+                return <ElDatePicker v-model={modelValueCopy.value} {...itemAttrs} type={option.type}></ElDatePicker>;
+            }
+
             switch (option.type) {
                 case 'input':
                     return <ElInput v-model={modelValueCopy.value} {...itemAttrs}></ElInput>;
+                case 'inputNumber':
+                    return <ElInputNumber v-model={modelValueCopy.value} {...itemAttrs}></ElInputNumber>;
                 case 'select':
                     // 这里处理会循环渲染 render 函数，导致无限循环
                     // selectOptions.list = option.options;
@@ -61,7 +89,12 @@ export default defineComponent({
                     // if(option.options instanceof Function) {}
 
                     return (
-                        <ElSelect v-model={modelValueCopy.value} {...itemAttrs} loading={selectOptions.state}>
+                        <ElSelect
+                            v-model={modelValueCopy.value}
+                            style={{ width: '100%' }}
+                            {...itemAttrs}
+                            loading={selectOptions.state}
+                        >
                             {selectOptions.list?.map((item) => {
                                 const { label = 'label', value = 'value', key } = option.optionProps || {};
                                 return (
@@ -74,10 +107,6 @@ export default defineComponent({
                             })}
                         </ElSelect>
                     );
-                // case 'color':
-                //     return <ElColorPicker v-model={value.value} {...option}></ElColorPicker>;
-                // case 'checkbox':
-                //     return <ElCheckbox v-model={value.value} {...option}></ElCheckbox>;
 
                 case 'switch':
                     return <ElSwitch v-model={modelValueCopy.value} {...itemAttrs}></ElSwitch>;
@@ -100,6 +129,41 @@ export default defineComponent({
                     );
                 case 'slider':
                     return <ElSlider v-model={modelValueCopy.value} {...itemAttrs}></ElSlider>;
+
+                case 'checkbox':
+                    return (
+                        <ElCheckboxGroup v-model={modelValueCopy.value} {...itemAttrs}>
+                            {selectOptions.list?.map((item) => {
+                                const { label = 'label', value = 'value', key } = option.optionProps || {};
+                                return (
+                                    <ElCheckbox label={item[value]} key={item[key || value]}>
+                                        {item[label]}
+                                    </ElCheckbox>
+                                );
+                            })}
+                        </ElCheckboxGroup>
+                    );
+
+                case 'checkboxButton':
+                    return (
+                        <ElCheckboxGroup v-model={modelValueCopy.value} {...itemAttrs}>
+                            {selectOptions.list?.map((item) => {
+                                const { label = 'label', value = 'value', key } = option.optionProps || {};
+                                return (
+                                    <ElCheckboxButton label={item[value]} key={item[key || value]}>
+                                        {item[label]}
+                                    </ElCheckboxButton>
+                                );
+                            })}
+                        </ElCheckboxGroup>
+                    );
+
+                case 'color-picker':
+                    return <ElColorPicker v-model={modelValueCopy.value} {...itemAttrs}></ElColorPicker>;
+
+                // date | datetime | daterange | datetimerange | year | month
+                // case ['date', 'datetime', 'daterange', 'datetimerange', 'year', 'month'].includes(option.type):
+                //     return <ElInput v-model={modelValueCopy.value} {...itemAttrs}></ElInput>;
 
                 default:
                     return <ElInput v-model={modelValueCopy.value} {...itemAttrs}></ElInput>;

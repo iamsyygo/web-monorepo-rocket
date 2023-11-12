@@ -1,4 +1,4 @@
-import { ref, onMounted, watchEffect, watch, getCurrentScope, onScopeDispose, readonly, unref, getCurrentInstance, nextTick, openBlock, createElementBlock, createElementVNode, warn, isVNode, computed, inject, isRef, shallowRef, onBeforeUnmount, onBeforeMount, provide, defineComponent, mergeProps, renderSlot, toRef, onUnmounted, reactive, toRefs, normalizeClass, onUpdated, createVNode, Fragment, useSlots, withCtx, createBlock, resolveDynamicComponent, normalizeStyle, createTextVNode, toDisplayString, createCommentVNode, TransitionGroup, useAttrs as useAttrs$1, withDirectives, withModifiers, vShow, Transition, cloneVNode, Text, Comment, Teleport, onDeactivated, vModelRadio, toHandlers, withKeys, h, resolveComponent, toRaw, triggerRef, resolveDirective, renderList, vModelText, createSlots } from "vue";
+import { ref, onMounted, watchEffect, watch, getCurrentScope, onScopeDispose, readonly, unref, getCurrentInstance, nextTick, openBlock, createElementBlock, createElementVNode, warn, isVNode, computed, inject, isRef, shallowRef, onBeforeUnmount, onBeforeMount, provide, defineComponent, renderSlot, mergeProps, toRef, onUnmounted, reactive, toRefs, normalizeClass, onUpdated, createVNode, Fragment, useSlots, withCtx, createBlock, resolveDynamicComponent, normalizeStyle, createTextVNode, toDisplayString, createCommentVNode, TransitionGroup, useAttrs as useAttrs$1, withDirectives, withModifiers, vShow, Transition, cloneVNode, Text, Comment, Teleport, onDeactivated, renderList, toRaw, vModelCheckbox, vModelRadio, toHandlers, withKeys, h, resolveComponent, triggerRef, resolveDirective, vModelText, createSlots } from "vue";
 const parents = /* @__PURE__ */ new Set();
 const coords = /* @__PURE__ */ new WeakMap();
 const siblings = /* @__PURE__ */ new WeakMap();
@@ -1663,9 +1663,9 @@ for (const model of Object.keys(convert)) {
   hashedModelKeys[[...convert[model].labels].sort().join("")] = model;
 }
 const limiters = {};
-function Color(object4, model) {
-  if (!(this instanceof Color)) {
-    return new Color(object4, model);
+function Color$1(object4, model) {
+  if (!(this instanceof Color$1)) {
+    return new Color$1(object4, model);
   }
   if (model && model in skippedModels) {
     model = null;
@@ -1679,7 +1679,7 @@ function Color(object4, model) {
     this.model = "rgb";
     this.color = [0, 0, 0];
     this.valpha = 1;
-  } else if (object4 instanceof Color) {
+  } else if (object4 instanceof Color$1) {
     this.model = object4.model;
     this.color = [...object4.color];
     this.valpha = object4.valpha;
@@ -1739,7 +1739,7 @@ function Color(object4, model) {
     Object.freeze(this);
   }
 }
-Color.prototype = {
+Color$1.prototype = {
   toString() {
     return this.string();
   },
@@ -1794,11 +1794,11 @@ Color.prototype = {
   },
   round(places) {
     places = Math.max(places || 0, 0);
-    return new Color([...this.color.map(roundToPlace(places)), this.valpha], this.model);
+    return new Color$1([...this.color.map(roundToPlace(places)), this.valpha], this.model);
   },
   alpha(value) {
     if (value !== void 0) {
-      return new Color([...this.color, Math.max(0, Math.min(1, value))], this.model);
+      return new Color$1([...this.color, Math.max(0, Math.min(1, value))], this.model);
     }
     return this.valpha;
   },
@@ -1827,19 +1827,19 @@ Color.prototype = {
   b: getset("lab", 2),
   keyword(value) {
     if (value !== void 0) {
-      return new Color(value);
+      return new Color$1(value);
     }
     return convert[this.model].keyword(this.color);
   },
   hex(value) {
     if (value !== void 0) {
-      return new Color(value);
+      return new Color$1(value);
     }
     return colorString.to.hex(this.rgb().round().color);
   },
   hexa(value) {
     if (value !== void 0) {
-      return new Color(value);
+      return new Color$1(value);
     }
     const rgbArray = this.rgb().round().color;
     let alphaHex = Math.round(this.valpha * 255).toString(16).toUpperCase();
@@ -1924,7 +1924,7 @@ Color.prototype = {
   grayscale() {
     const rgb = this.rgb().color;
     const value = rgb[0] * 0.3 + rgb[1] * 0.59 + rgb[2] * 0.11;
-    return Color.rgb(value, value, value);
+    return Color$1.rgb(value, value, value);
   },
   fade(ratio) {
     return this.alpha(this.valpha - this.valpha * ratio);
@@ -1951,7 +1951,7 @@ Color.prototype = {
     const a = color1.alpha() - color2.alpha();
     const w1 = ((w * a === -1 ? w : (w + a) / (1 + w * a)) + 1) / 2;
     const w2 = 1 - w1;
-    return Color.rgb(
+    return Color$1.rgb(
       w1 * color1.red() + w2 * color2.red(),
       w1 * color1.green() + w2 * color2.green(),
       w1 * color1.blue() + w2 * color2.blue(),
@@ -1964,21 +1964,21 @@ for (const model of Object.keys(convert)) {
     continue;
   }
   const { channels } = convert[model];
-  Color.prototype[model] = function(...args) {
+  Color$1.prototype[model] = function(...args) {
     if (this.model === model) {
-      return new Color(this);
+      return new Color$1(this);
     }
     if (args.length > 0) {
-      return new Color(args, model);
+      return new Color$1(args, model);
     }
-    return new Color([...assertArray(convert[this.model][model].raw(this.color)), this.valpha], model);
+    return new Color$1([...assertArray(convert[this.model][model].raw(this.color)), this.valpha], model);
   };
-  Color[model] = function(...args) {
+  Color$1[model] = function(...args) {
     let color = args[0];
     if (typeof color === "number") {
       color = zeroArray(args, channels);
     }
-    return new Color(color, model);
+    return new Color$1(color, model);
   };
 }
 function roundTo(number4, places) {
@@ -2377,6 +2377,24 @@ __spreadValues({
   linear: identity$1
 }, _TransitionPresets);
 const isFirefox = () => isClient && /firefox/i.test(window.navigator.userAgent);
+const getClientXY = (event) => {
+  let clientX;
+  let clientY;
+  if (event.type === "touchend") {
+    clientY = event.changedTouches[0].clientY;
+    clientX = event.changedTouches[0].clientX;
+  } else if (event.type.startsWith("touch")) {
+    clientY = event.touches[0].clientY;
+    clientX = event.touches[0].clientX;
+  } else {
+    clientY = event.clientY;
+    clientX = event.clientX;
+  }
+  return {
+    clientX,
+    clientY
+  };
+};
 !!(process.env.NODE_ENV !== "production") ? Object.freeze({}) : {};
 !!(process.env.NODE_ENV !== "production") ? Object.freeze([]) : [];
 const NOOP = () => {
@@ -2384,6 +2402,7 @@ const NOOP = () => {
 const hasOwnProperty$c = Object.prototype.hasOwnProperty;
 const hasOwn = (val, key) => hasOwnProperty$c.call(val, key);
 const isArray$2 = Array.isArray;
+const isDate = (val) => toTypeString(val) === "[object Date]";
 const isFunction$1 = (val) => typeof val === "function";
 const isString = (val) => typeof val === "string";
 const isObject$1 = (val) => val !== null && typeof val === "object";
@@ -2395,6 +2414,17 @@ const toTypeString = (value) => objectToString$1.call(value);
 const toRawType = (value) => {
   return toTypeString(value).slice(8, -1);
 };
+const cacheStringFunction = (fn2) => {
+  const cache = /* @__PURE__ */ Object.create(null);
+  return (str) => {
+    const hit = cache[str];
+    return hit || (cache[str] = fn2(str));
+  };
+};
+const camelizeRE = /-(\w)/g;
+const camelize = cacheStringFunction((str) => {
+  return str.replace(camelizeRE, (_, c) => c ? c.toUpperCase() : "");
+});
 var freeGlobal = typeof global == "object" && global && global.Object === Object && global;
 const freeGlobal$1 = freeGlobal;
 var freeSelf = typeof self == "object" && self && self.Object === Object && self;
@@ -2598,6 +2628,19 @@ var baseCreate = function() {
   };
 }();
 const baseCreate$1 = baseCreate;
+function apply(func, thisArg, args) {
+  switch (args.length) {
+    case 0:
+      return func.call(thisArg);
+    case 1:
+      return func.call(thisArg, args[0]);
+    case 2:
+      return func.call(thisArg, args[0], args[1]);
+    case 3:
+      return func.call(thisArg, args[0], args[1], args[2]);
+  }
+  return func.apply(thisArg, args);
+}
 function copyArray(source, array4) {
   var index = -1, length = source.length;
   array4 || (array4 = Array(length));
@@ -2605,6 +2648,28 @@ function copyArray(source, array4) {
     array4[index] = source[index];
   }
   return array4;
+}
+var HOT_COUNT = 800, HOT_SPAN = 16;
+var nativeNow = Date.now;
+function shortOut(func) {
+  var count = 0, lastCalled = 0;
+  return function() {
+    var stamp = nativeNow(), remaining = HOT_SPAN - (stamp - lastCalled);
+    lastCalled = stamp;
+    if (remaining > 0) {
+      if (++count >= HOT_COUNT) {
+        return arguments[0];
+      }
+    } else {
+      count = 0;
+    }
+    return func.apply(void 0, arguments);
+  };
+}
+function constant(value) {
+  return function() {
+    return value;
+  };
 }
 var defineProperty = function() {
   try {
@@ -2615,6 +2680,17 @@ var defineProperty = function() {
   }
 }();
 const defineProperty$1 = defineProperty;
+var baseSetToString = !defineProperty$1 ? identity : function(func, string3) {
+  return defineProperty$1(func, "toString", {
+    "configurable": true,
+    "enumerable": false,
+    "value": constant(string3),
+    "writable": true
+  });
+};
+const baseSetToString$1 = baseSetToString;
+var setToString = shortOut(baseSetToString$1);
+const setToString$1 = setToString;
 function arrayEach(array4, iteratee) {
   var index = -1, length = array4 == null ? 0 : array4.length;
   while (++index < length) {
@@ -2680,6 +2756,23 @@ function copyObject(source, props, object4, customizer) {
     }
   }
   return object4;
+}
+var nativeMax$2 = Math.max;
+function overRest(func, start, transform) {
+  start = nativeMax$2(start === void 0 ? func.length - 1 : start, 0);
+  return function() {
+    var args = arguments, index = -1, length = nativeMax$2(args.length - start, 0), array4 = Array(length);
+    while (++index < length) {
+      array4[index] = args[start + index];
+    }
+    index = -1;
+    var otherArgs = Array(start + 1);
+    while (++index < start) {
+      otherArgs[index] = args[index];
+    }
+    otherArgs[start] = transform(array4);
+    return apply(func, this, otherArgs);
+  };
 }
 var MAX_SAFE_INTEGER = 9007199254740991;
 function isLength(value) {
@@ -3063,9 +3156,38 @@ function arrayPush(array4, values) {
   }
   return array4;
 }
+var spreadableSymbol = Symbol$2 ? Symbol$2.isConcatSpreadable : void 0;
+function isFlattenable(value) {
+  return isArray$1(value) || isArguments$1(value) || !!(spreadableSymbol && value && value[spreadableSymbol]);
+}
+function baseFlatten(array4, depth, predicate, isStrict, result) {
+  var index = -1, length = array4.length;
+  predicate || (predicate = isFlattenable);
+  result || (result = []);
+  while (++index < length) {
+    var value = array4[index];
+    if (depth > 0 && predicate(value)) {
+      if (depth > 1) {
+        baseFlatten(value, depth - 1, predicate, isStrict, result);
+      } else {
+        arrayPush(result, value);
+      }
+    } else if (!isStrict) {
+      result[result.length] = value;
+    }
+  }
+  return result;
+}
+function flatten(array4) {
+  var length = array4 == null ? 0 : array4.length;
+  return length ? baseFlatten(array4, 1) : [];
+}
+function flatRest(func) {
+  return setToString$1(overRest(func, void 0, flatten), func + "");
+}
 var getPrototype = overArg(Object.getPrototypeOf, Object);
 const getPrototype$1 = getPrototype;
-function castArray() {
+function castArray$1() {
   if (!arguments.length) {
     return [];
   }
@@ -3853,12 +3975,32 @@ function baseSet(object4, path, value, customizer) {
   }
   return object4;
 }
+function basePickBy(object4, paths, predicate) {
+  var index = -1, length = paths.length, result = {};
+  while (++index < length) {
+    var path = paths[index], value = baseGet(object4, path);
+    if (predicate(value, path)) {
+      baseSet(result, castPath(path, object4), value);
+    }
+  }
+  return result;
+}
+function basePick(object4, paths) {
+  return basePickBy(object4, paths, function(value, path) {
+    return hasIn(object4, path);
+  });
+}
+var pick = flatRest(function(object4, paths) {
+  return object4 == null ? {} : basePick(object4, paths);
+});
+const pick$1 = pick;
 function set(object4, path, value) {
   return object4 == null ? object4 : baseSet(object4, path, value);
 }
 const isUndefined = (val) => val === void 0;
 const isBoolean = (val) => typeof val === "boolean";
 const isNumber = (val) => typeof val === "number";
+const isEmpty = (val) => !val && val !== 0 || isArray$2(val) && val.length === 0 || isObject$1(val) && !Object.keys(val).length;
 const isElement = (e) => {
   if (typeof Element === "undefined")
     return false;
@@ -3871,6 +4013,7 @@ const isStringNumber = (val) => {
   return !Number.isNaN(Number(val));
 };
 const escapeStringRegexp = (string3 = "") => string3.replace(/[|\\{}()[\]^$+*?.]/g, "\\$&").replace(/-/g, "\\x2d");
+const keysOf = (arr) => Object.keys(arr);
 const getProp = (obj, path, defaultValue) => {
   return {
     get value() {
@@ -3914,6 +4057,23 @@ const removeClass = (el, cls) => {
   if (!el || !cls.trim())
     return;
   el.classList.remove(...classNameToArray(cls));
+};
+const getStyle = (element, styleName) => {
+  var _a2;
+  if (!isClient || !element || !styleName)
+    return "";
+  let key = camelize(styleName);
+  if (key === "float")
+    key = "cssFloat";
+  try {
+    const style = element.style[key];
+    if (style)
+      return style;
+    const computed2 = (_a2 = document.defaultView) == null ? void 0 : _a2.getComputedStyle(element, "");
+    return computed2 ? computed2[key] : "";
+  } catch (e) {
+    return element.style[key];
+  }
 };
 function addUnit(value, defaultUnit = "px") {
   if (!value)
@@ -3977,6 +4137,28 @@ function _sfc_render6(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_16, _hoisted_36);
 }
 var arrow_down_default = /* @__PURE__ */ export_helper_default(arrow_down_vue_vue_type_script_lang_default, [["render", _sfc_render6], ["__file", "arrow-down.vue"]]);
+var arrow_left_vue_vue_type_script_lang_default = {
+  name: "ArrowLeft"
+};
+var _hoisted_18 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_28 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M609.408 149.376 277.76 489.6a32 32 0 0 0 0 44.672l331.648 340.352a29.12 29.12 0 0 0 41.728 0 30.592 30.592 0 0 0 0-42.752L339.264 511.936l311.872-319.872a30.592 30.592 0 0 0 0-42.688 29.12 29.12 0 0 0-41.728 0z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_38 = [
+  _hoisted_28
+];
+function _sfc_render8(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_18, _hoisted_38);
+}
+var arrow_left_default = /* @__PURE__ */ export_helper_default(arrow_left_vue_vue_type_script_lang_default, [["render", _sfc_render8], ["__file", "arrow-left.vue"]]);
 var arrow_right_vue_vue_type_script_lang_default = {
   name: "ArrowRight"
 };
@@ -4021,6 +4203,28 @@ function _sfc_render12(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_112, _hoisted_312);
 }
 var arrow_up_default = /* @__PURE__ */ export_helper_default(arrow_up_vue_vue_type_script_lang_default, [["render", _sfc_render12], ["__file", "arrow-up.vue"]]);
+var calendar_vue_vue_type_script_lang_default = {
+  name: "Calendar"
+};
+var _hoisted_129 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_229 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M128 384v512h768V192H768v32a32 32 0 1 1-64 0v-32H320v32a32 32 0 0 1-64 0v-32H128v128h768v64H128zm192-256h384V96a32 32 0 1 1 64 0v32h160a32 32 0 0 1 32 32v768a32 32 0 0 1-32 32H96a32 32 0 0 1-32-32V160a32 32 0 0 1 32-32h160V96a32 32 0 0 1 64 0v32zm-32 384h64a32 32 0 0 1 0 64h-64a32 32 0 0 1 0-64zm0 192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64zm192-192h64a32 32 0 0 1 0 64h-64a32 32 0 0 1 0-64zm0 192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64zm192-192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64zm0 192h64a32 32 0 1 1 0 64h-64a32 32 0 1 1 0-64z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_328 = [
+  _hoisted_229
+];
+function _sfc_render29(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_129, _hoisted_328);
+}
+var calendar_default = /* @__PURE__ */ export_helper_default(calendar_vue_vue_type_script_lang_default, [["render", _sfc_render29], ["__file", "calendar.vue"]]);
 var circle_check_vue_vue_type_script_lang_default = {
   name: "CircleCheck"
 };
@@ -4085,6 +4289,48 @@ function _sfc_render51(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_151, _hoisted_416);
 }
 var circle_close_default = /* @__PURE__ */ export_helper_default(circle_close_vue_vue_type_script_lang_default, [["render", _sfc_render51], ["__file", "circle-close.vue"]]);
+var clock_vue_vue_type_script_lang_default = {
+  name: "Clock"
+};
+var _hoisted_154 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_254 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M512 896a384 384 0 1 0 0-768 384 384 0 0 0 0 768zm0 64a448 448 0 1 1 0-896 448 448 0 0 1 0 896z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_353 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M480 256a32 32 0 0 1 32 32v256a32 32 0 0 1-64 0V288a32 32 0 0 1 32-32z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_418 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M480 512h256q32 0 32 32t-32 32H480q-32 0-32-32t32-32z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_56 = [
+  _hoisted_254,
+  _hoisted_353,
+  _hoisted_418
+];
+function _sfc_render54(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_154, _hoisted_56);
+}
+var clock_default = /* @__PURE__ */ export_helper_default(clock_vue_vue_type_script_lang_default, [["render", _sfc_render54], ["__file", "clock.vue"]]);
 var close_vue_vue_type_script_lang_default = {
   name: "Close"
 };
@@ -4107,6 +4353,50 @@ function _sfc_render56(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_156, _hoisted_355);
 }
 var close_default = /* @__PURE__ */ export_helper_default(close_vue_vue_type_script_lang_default, [["render", _sfc_render56], ["__file", "close.vue"]]);
+var d_arrow_left_vue_vue_type_script_lang_default = {
+  name: "DArrowLeft"
+};
+var _hoisted_172 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_272 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M529.408 149.376a29.12 29.12 0 0 1 41.728 0 30.592 30.592 0 0 1 0 42.688L259.264 511.936l311.872 319.936a30.592 30.592 0 0 1-.512 43.264 29.12 29.12 0 0 1-41.216-.512L197.76 534.272a32 32 0 0 1 0-44.672l331.648-340.224zm256 0a29.12 29.12 0 0 1 41.728 0 30.592 30.592 0 0 1 0 42.688L515.264 511.936l311.872 319.936a30.592 30.592 0 0 1-.512 43.264 29.12 29.12 0 0 1-41.216-.512L453.76 534.272a32 32 0 0 1 0-44.672l331.648-340.224z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_371 = [
+  _hoisted_272
+];
+function _sfc_render72(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_172, _hoisted_371);
+}
+var d_arrow_left_default = /* @__PURE__ */ export_helper_default(d_arrow_left_vue_vue_type_script_lang_default, [["render", _sfc_render72], ["__file", "d-arrow-left.vue"]]);
+var d_arrow_right_vue_vue_type_script_lang_default = {
+  name: "DArrowRight"
+};
+var _hoisted_173 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_273 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M452.864 149.312a29.12 29.12 0 0 1 41.728.064L826.24 489.664a32 32 0 0 1 0 44.672L494.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L764.736 512 452.864 192a30.592 30.592 0 0 1 0-42.688zm-256 0a29.12 29.12 0 0 1 41.728.064L570.24 489.664a32 32 0 0 1 0 44.672L238.592 874.624a29.12 29.12 0 0 1-41.728 0 30.592 30.592 0 0 1 0-42.752L508.736 512 196.864 192a30.592 30.592 0 0 1 0-42.688z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_372 = [
+  _hoisted_273
+];
+function _sfc_render73(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_173, _hoisted_372);
+}
+var d_arrow_right_default = /* @__PURE__ */ export_helper_default(d_arrow_right_vue_vue_type_script_lang_default, [["render", _sfc_render73], ["__file", "d-arrow-right.vue"]]);
 var hide_vue_vue_type_script_lang_default = {
   name: "Hide"
 };
@@ -4332,6 +4622,17 @@ const EVENT_CODE = {
   home: "Home",
   end: "End"
 };
+const datePickTypes = [
+  "year",
+  "month",
+  "date",
+  "dates",
+  "week",
+  "datetime",
+  "datetimerange",
+  "daterange",
+  "monthrange"
+];
 const UPDATE_MODEL_EVENT = "update:modelValue";
 const CHANGE_EVENT = "change";
 const INPUT_EVENT = "input";
@@ -4362,6 +4663,11 @@ const flattedChildren = (children) => {
     }
   });
   return result;
+};
+const castArray = (arr) => {
+  if (!arr && arr !== 0)
+    return [];
+  return Array.isArray(arr) ? arr : [arr];
 };
 const isKorean = (text) => /([\uAC00-\uD7AF\u3130-\u318F])+/gi.test(text);
 const mutable = (val) => val;
@@ -5685,6 +5991,96 @@ function useFocusController(target2, { afterFocus, beforeBlur, afterBlur } = {})
     handleBlur
   };
 }
+const configProviderContextKey = Symbol();
+const globalConfig = ref();
+function useGlobalConfig(key, defaultValue = void 0) {
+  const config = getCurrentInstance() ? inject(configProviderContextKey, globalConfig) : globalConfig;
+  if (key) {
+    return computed(() => {
+      var _a2, _b;
+      return (_b = (_a2 = config.value) == null ? void 0 : _a2[key]) != null ? _b : defaultValue;
+    });
+  } else {
+    return config;
+  }
+}
+const provideGlobalConfig = (config, app, global2 = false) => {
+  var _a2;
+  const inSetup = !!getCurrentInstance();
+  const oldConfig = inSetup ? useGlobalConfig() : void 0;
+  const provideFn = (_a2 = app == null ? void 0 : app.provide) != null ? _a2 : inSetup ? provide : void 0;
+  if (!provideFn) {
+    debugWarn("provideGlobalConfig", "provideGlobalConfig() can only be used inside setup().");
+    return;
+  }
+  const context = computed(() => {
+    const cfg = unref(config);
+    if (!(oldConfig == null ? void 0 : oldConfig.value))
+      return cfg;
+    return mergeConfig(oldConfig.value, cfg);
+  });
+  provideFn(configProviderContextKey, context);
+  provideFn(localeContextKey, computed(() => context.value.locale));
+  provideFn(namespaceContextKey, computed(() => context.value.namespace));
+  provideFn(zIndexContextKey, computed(() => context.value.zIndex));
+  provideFn(SIZE_INJECTION_KEY, {
+    size: computed(() => context.value.size || "")
+  });
+  if (global2 || !globalConfig.value) {
+    globalConfig.value = context.value;
+  }
+  return context;
+};
+const mergeConfig = (a, b) => {
+  var _a2;
+  const keys2 = [.../* @__PURE__ */ new Set([...keysOf(a), ...keysOf(b)])];
+  const obj = {};
+  for (const key of keys2) {
+    obj[key] = (_a2 = b[key]) != null ? _a2 : a[key];
+  }
+  return obj;
+};
+const configProviderProps = buildProps({
+  a11y: {
+    type: Boolean,
+    default: true
+  },
+  locale: {
+    type: definePropType(Object)
+  },
+  size: useSizeProp,
+  button: {
+    type: definePropType(Object)
+  },
+  experimentalFeatures: {
+    type: definePropType(Object)
+  },
+  keyboardNavigation: {
+    type: Boolean,
+    default: true
+  },
+  message: {
+    type: definePropType(Object)
+  },
+  zIndex: Number,
+  namespace: {
+    type: String,
+    default: "el"
+  }
+});
+const messageConfig = {};
+const ConfigProvider = defineComponent({
+  name: "ElConfigProvider",
+  props: configProviderProps,
+  setup(props, { slots }) {
+    watch(() => props.message, (val) => {
+      Object.assign(messageConfig, val != null ? val : {});
+    }, { immediate: true, deep: true });
+    const config = provideGlobalConfig(props);
+    return () => renderSlot(slots, "default", { config: config == null ? void 0 : config.value });
+  }
+});
+const ElConfigProvider = withInstall(ConfigProvider);
 var _export_sfc$1 = (sfc, props) => {
   const target2 = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
@@ -5700,12 +6096,12 @@ const iconProps = buildProps({
     type: String
   }
 });
-const __default__$r = defineComponent({
+const __default__$A = defineComponent({
   name: "ElIcon",
   inheritAttrs: false
 });
-const _sfc_main$B = /* @__PURE__ */ defineComponent({
-  ...__default__$r,
+const _sfc_main$U = /* @__PURE__ */ defineComponent({
+  ...__default__$A,
   props: iconProps,
   setup(__props) {
     const props = __props;
@@ -5729,17 +6125,17 @@ const _sfc_main$B = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Icon = /* @__PURE__ */ _export_sfc$1(_sfc_main$B, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/icon/src/icon.vue"]]);
+var Icon = /* @__PURE__ */ _export_sfc$1(_sfc_main$U, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/icon/src/icon.vue"]]);
 const ElIcon = withInstall(Icon);
 const formContextKey = Symbol("formContextKey");
 const formItemContextKey = Symbol("formItemContextKey");
 const useFormSize = (fallback, ignore = {}) => {
   const emptyRef = ref(void 0);
   const size = ignore.prop ? emptyRef : useProp("size");
-  const globalConfig = ignore.global ? emptyRef : useGlobalSize();
+  const globalConfig2 = ignore.global ? emptyRef : useGlobalSize();
   const form = ignore.form ? { size: void 0 } : inject(formContextKey, void 0);
   const formItem = ignore.formItem ? { size: void 0 } : inject(formItemContextKey, void 0);
-  return computed(() => size.value || unref(fallback) || (formItem == null ? void 0 : formItem.size) || (form == null ? void 0 : form.size) || globalConfig.value || "");
+  return computed(() => size.value || unref(fallback) || (formItem == null ? void 0 : formItem.size) || (form == null ? void 0 : form.size) || globalConfig2.value || "");
 };
 const useFormDisabled = (fallback) => {
   const disabled = useProp("disabled");
@@ -5884,15 +6280,15 @@ function useFormLabelWidth() {
   };
 }
 const filterFields = (fields, props) => {
-  const normalized = castArray(props);
+  const normalized = castArray$1(props);
   return normalized.length > 0 ? fields.filter((field) => field.prop && normalized.includes(field.prop)) : fields;
 };
-const COMPONENT_NAME$8 = "ElForm";
-const __default__$q = defineComponent({
-  name: COMPONENT_NAME$8
+const COMPONENT_NAME$9 = "ElForm";
+const __default__$z = defineComponent({
+  name: COMPONENT_NAME$9
 });
-const _sfc_main$A = /* @__PURE__ */ defineComponent({
-  ...__default__$q,
+const _sfc_main$T = /* @__PURE__ */ defineComponent({
+  ...__default__$z,
   props: formProps,
   emits: formEmits,
   setup(__props, { expose, emit }) {
@@ -5921,7 +6317,7 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     };
     const resetFields = (properties = []) => {
       if (!props.model) {
-        debugWarn(COMPONENT_NAME$8, "model is required for resetFields to work.");
+        debugWarn(COMPONENT_NAME$9, "model is required for resetFields to work.");
         return;
       }
       filterFields(fields, properties).forEach((field) => field.resetField());
@@ -5932,7 +6328,7 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     const isValidatable = computed(() => {
       const hasModel = !!props.model;
       if (!hasModel) {
-        debugWarn(COMPONENT_NAME$8, "model is required for validate to work.");
+        debugWarn(COMPONENT_NAME$9, "model is required for validate to work.");
       }
       return hasModel;
     });
@@ -5941,7 +6337,7 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
         return [];
       const filteredFields = filterFields(fields, props2);
       if (!filteredFields.length) {
-        debugWarn(COMPONENT_NAME$8, "please pass correct props!");
+        debugWarn(COMPONENT_NAME$9, "please pass correct props!");
         return [];
       }
       return filteredFields;
@@ -6025,7 +6421,7 @@ const _sfc_main$A = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Form = /* @__PURE__ */ _export_sfc$1(_sfc_main$A, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form.vue"]]);
+var Form = /* @__PURE__ */ _export_sfc$1(_sfc_main$T, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form.vue"]]);
 function _extends() {
   _extends = Object.assign ? Object.assign.bind() : function(target2) {
     for (var i = 1; i < arguments.length; i++) {
@@ -6694,7 +7090,7 @@ var pattern2 = function pattern3(rule, value, callback, source, options2) {
   }
   callback(errors);
 };
-var date2 = function date3(rule, value, callback, source, options2) {
+var date$1 = function date2(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
@@ -6761,7 +7157,7 @@ var validators = {
   object: object2,
   "enum": enumerable2,
   pattern: pattern2,
-  date: date2,
+  date: date$1,
   url: type2,
   hex: type2,
   email: type2,
@@ -7120,9 +7516,9 @@ const formItemProps = buildProps({
     values: componentSizes
   }
 });
-const COMPONENT_NAME$7 = "ElLabelWrap";
+const COMPONENT_NAME$8 = "ElLabelWrap";
 var FormLabelWrap = defineComponent({
-  name: COMPONENT_NAME$7,
+  name: COMPONENT_NAME$8,
   props: {
     isAutoWidth: Boolean,
     updateAll: Boolean
@@ -7133,7 +7529,7 @@ var FormLabelWrap = defineComponent({
     const formContext = inject(formContextKey, void 0);
     const formItemContext = inject(formItemContextKey);
     if (!formItemContext)
-      throwError(COMPONENT_NAME$7, "usage: <el-form-item><label-wrap /></el-form-item>");
+      throwError(COMPONENT_NAME$8, "usage: <el-form-item><label-wrap /></el-form-item>");
     const ns = useNamespace("form");
     const el = ref();
     const computedWidth = ref(0);
@@ -7205,12 +7601,12 @@ var FormLabelWrap = defineComponent({
     };
   }
 });
-const _hoisted_1$b = ["role", "aria-labelledby"];
-const __default__$p = defineComponent({
+const _hoisted_1$o = ["role", "aria-labelledby"];
+const __default__$y = defineComponent({
   name: "ElFormItem"
 });
-const _sfc_main$z = /* @__PURE__ */ defineComponent({
-  ...__default__$p,
+const _sfc_main$S = /* @__PURE__ */ defineComponent({
+  ...__default__$y,
   props: formItemProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -7291,13 +7687,13 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
       const { required: required4 } = props;
       const rules2 = [];
       if (props.rules) {
-        rules2.push(...castArray(props.rules));
+        rules2.push(...castArray$1(props.rules));
       }
       const formRules = formContext == null ? void 0 : formContext.rules;
       if (formRules && props.prop) {
         const _rules = getProp(formRules, props.prop).value;
         if (_rules) {
-          rules2.push(...castArray(_rules));
+          rules2.push(...castArray$1(_rules));
         }
       }
       if (required4 !== void 0) {
@@ -7501,11 +7897,11 @@ const _sfc_main$z = /* @__PURE__ */ defineComponent({
             _: 3
           }, 8, ["name"])
         ], 6)
-      ], 10, _hoisted_1$b);
+      ], 10, _hoisted_1$o);
     };
   }
 });
-var FormItem = /* @__PURE__ */ _export_sfc$1(_sfc_main$z, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form-item.vue"]]);
+var FormItem = /* @__PURE__ */ _export_sfc$1(_sfc_main$S, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form-item.vue"]]);
 const ElForm = withInstall(Form, {
   FormItem
 });
@@ -7687,15 +8083,15 @@ const inputEmits = {
   compositionupdate: (evt) => evt instanceof CompositionEvent,
   compositionend: (evt) => evt instanceof CompositionEvent
 };
-const _hoisted_1$a = ["role"];
-const _hoisted_2$5 = ["id", "type", "disabled", "formatter", "parser", "readonly", "autocomplete", "tabindex", "aria-label", "placeholder", "form", "autofocus"];
-const _hoisted_3$2 = ["id", "tabindex", "disabled", "readonly", "autocomplete", "aria-label", "placeholder", "form", "autofocus"];
-const __default__$o = defineComponent({
+const _hoisted_1$n = ["role"];
+const _hoisted_2$h = ["id", "type", "disabled", "formatter", "parser", "readonly", "autocomplete", "tabindex", "aria-label", "placeholder", "form", "autofocus"];
+const _hoisted_3$8 = ["id", "tabindex", "disabled", "readonly", "autocomplete", "aria-label", "placeholder", "form", "autofocus"];
+const __default__$x = defineComponent({
   name: "ElInput",
   inheritAttrs: false
 });
-const _sfc_main$y = /* @__PURE__ */ defineComponent({
-  ...__default__$o,
+const _sfc_main$R = /* @__PURE__ */ defineComponent({
+  ...__default__$x,
   props: inputProps,
   emits: inputEmits,
   setup(__props, { expose, emit }) {
@@ -8009,7 +8405,7 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
               onBlur: _cache[1] || (_cache[1] = (...args) => unref(handleBlur) && unref(handleBlur)(...args)),
               onChange: handleChange,
               onKeydown: handleKeydown
-            }), null, 16, _hoisted_2$5),
+            }), null, 16, _hoisted_2$h),
             createCommentVNode(" suffix slot "),
             unref(suffixVisible) ? (openBlock(), createElementBlock("span", {
               key: 1,
@@ -8107,20 +8503,20 @@ const _sfc_main$y = /* @__PURE__ */ defineComponent({
             onBlur: _cache[3] || (_cache[3] = (...args) => unref(handleBlur) && unref(handleBlur)(...args)),
             onChange: handleChange,
             onKeydown: handleKeydown
-          }), null, 16, _hoisted_3$2),
+          }), null, 16, _hoisted_3$8),
           unref(isWordLimitVisible) ? (openBlock(), createElementBlock("span", {
             key: 0,
             style: normalizeStyle(countStyle.value),
             class: normalizeClass(unref(nsInput).e("count"))
           }, toDisplayString(unref(textLength)) + " / " + toDisplayString(unref(attrs).maxlength), 7)) : createCommentVNode("v-if", true)
         ], 64))
-      ], 16, _hoisted_1$a)), [
+      ], 16, _hoisted_1$n)), [
         [vShow, _ctx.type !== "hidden"]
       ]);
     };
   }
 });
-var Input = /* @__PURE__ */ _export_sfc$1(_sfc_main$y, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/input/src/input.vue"]]);
+var Input = /* @__PURE__ */ _export_sfc$1(_sfc_main$R, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/input/src/input.vue"]]);
 const ElInput = withInstall(Input);
 const GAP = 4;
 const BAR_MAP = {
@@ -8164,8 +8560,8 @@ const thumbProps = buildProps({
   },
   always: Boolean
 });
-const COMPONENT_NAME$6 = "Thumb";
-const _sfc_main$x = /* @__PURE__ */ defineComponent({
+const COMPONENT_NAME$7 = "Thumb";
+const _sfc_main$Q = /* @__PURE__ */ defineComponent({
   __name: "thumb",
   props: thumbProps,
   setup(__props) {
@@ -8173,7 +8569,7 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
     const scrollbar = inject(scrollbarContextKey);
     const ns = useNamespace("scrollbar");
     if (!scrollbar)
-      throwError(COMPONENT_NAME$6, "can not inject scrollbar context");
+      throwError(COMPONENT_NAME$7, "can not inject scrollbar context");
     const instance = ref();
     const thumb = ref();
     const thumbState = ref({});
@@ -8284,7 +8680,7 @@ const _sfc_main$x = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Thumb = /* @__PURE__ */ _export_sfc$1(_sfc_main$x, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/thumb.vue"]]);
+var Thumb = /* @__PURE__ */ _export_sfc$1(_sfc_main$Q, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/thumb.vue"]]);
 const barProps = buildProps({
   always: {
     type: Boolean,
@@ -8301,7 +8697,7 @@ const barProps = buildProps({
     default: 1
   }
 });
-const _sfc_main$w = /* @__PURE__ */ defineComponent({
+const _sfc_main$P = /* @__PURE__ */ defineComponent({
   __name: "bar",
   props: barProps,
   setup(__props, { expose }) {
@@ -8338,7 +8734,7 @@ const _sfc_main$w = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Bar = /* @__PURE__ */ _export_sfc$1(_sfc_main$w, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/bar.vue"]]);
+var Bar = /* @__PURE__ */ _export_sfc$1(_sfc_main$P, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/bar.vue"]]);
 const scrollbarProps = buildProps({
   height: {
     type: [String, Number],
@@ -8392,12 +8788,12 @@ const scrollbarEmits = {
     scrollLeft
   }) => [scrollTop, scrollLeft].every(isNumber)
 };
-const COMPONENT_NAME$5 = "ElScrollbar";
-const __default__$n = defineComponent({
-  name: COMPONENT_NAME$5
+const COMPONENT_NAME$6 = "ElScrollbar";
+const __default__$w = defineComponent({
+  name: COMPONENT_NAME$6
 });
-const _sfc_main$v = /* @__PURE__ */ defineComponent({
-  ...__default__$n,
+const _sfc_main$O = /* @__PURE__ */ defineComponent({
+  ...__default__$w,
   props: scrollbarProps,
   emits: scrollbarEmits,
   setup(__props, { expose, emit }) {
@@ -8450,14 +8846,14 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     }
     const setScrollTop = (value) => {
       if (!isNumber(value)) {
-        debugWarn(COMPONENT_NAME$5, "value must be a number");
+        debugWarn(COMPONENT_NAME$6, "value must be a number");
         return;
       }
       wrapRef.value.scrollTop = value;
     };
     const setScrollLeft = (value) => {
       if (!isNumber(value)) {
-        debugWarn(COMPONENT_NAME$5, "value must be a number");
+        debugWarn(COMPONENT_NAME$6, "value must be a number");
         return;
       }
       wrapRef.value.scrollLeft = value;
@@ -8557,7 +8953,7 @@ const _sfc_main$v = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Scrollbar = /* @__PURE__ */ _export_sfc$1(_sfc_main$v, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/scrollbar.vue"]]);
+var Scrollbar = /* @__PURE__ */ _export_sfc$1(_sfc_main$O, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/scrollbar.vue"]]);
 const ElScrollbar = withInstall(Scrollbar);
 const POPPER_INJECTION_KEY = Symbol("popper");
 const POPPER_CONTENT_INJECTION_KEY = Symbol("popperContent");
@@ -8578,12 +8974,12 @@ const popperProps = buildProps({
     default: "tooltip"
   }
 });
-const __default__$m = defineComponent({
+const __default__$v = defineComponent({
   name: "ElPopper",
   inheritAttrs: false
 });
-const _sfc_main$u = /* @__PURE__ */ defineComponent({
-  ...__default__$m,
+const _sfc_main$N = /* @__PURE__ */ defineComponent({
+  ...__default__$v,
   props: popperProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -8606,19 +9002,19 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Popper = /* @__PURE__ */ _export_sfc$1(_sfc_main$u, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/popper.vue"]]);
+var Popper = /* @__PURE__ */ _export_sfc$1(_sfc_main$N, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/popper.vue"]]);
 const popperArrowProps = buildProps({
   arrowOffset: {
     type: Number,
     default: 5
   }
 });
-const __default__$l = defineComponent({
+const __default__$u = defineComponent({
   name: "ElPopperArrow",
   inheritAttrs: false
 });
-const _sfc_main$t = /* @__PURE__ */ defineComponent({
-  ...__default__$l,
+const _sfc_main$M = /* @__PURE__ */ defineComponent({
+  ...__default__$u,
   props: popperArrowProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -8644,7 +9040,7 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperArrow = /* @__PURE__ */ _export_sfc$1(_sfc_main$t, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/arrow.vue"]]);
+var ElPopperArrow = /* @__PURE__ */ _export_sfc$1(_sfc_main$M, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/arrow.vue"]]);
 const NAME = "ElOnlyChild";
 const OnlyChild = defineComponent({
   name: NAME,
@@ -8730,12 +9126,12 @@ const popperTriggerProps = buildProps({
   id: String,
   open: Boolean
 });
-const __default__$k = defineComponent({
+const __default__$t = defineComponent({
   name: "ElPopperTrigger",
   inheritAttrs: false
 });
-const _sfc_main$s = /* @__PURE__ */ defineComponent({
-  ...__default__$k,
+const _sfc_main$L = /* @__PURE__ */ defineComponent({
+  ...__default__$t,
   props: popperTriggerProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -8833,7 +9229,7 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$s, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/trigger.vue"]]);
+var ElPopperTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$L, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/trigger.vue"]]);
 const FOCUS_AFTER_TRAPPED = "focus-trap.focus-after-trapped";
 const FOCUS_AFTER_RELEASED = "focus-trap.focus-after-released";
 const FOCUSOUT_PREVENTED = "focus-trap.focusout-prevented";
@@ -8982,7 +9378,7 @@ const createFocusOutPreventedEvent = (detail) => {
     detail
   });
 };
-const _sfc_main$r = defineComponent({
+const _sfc_main$K = defineComponent({
   name: "ElFocusTrap",
   inheritAttrs: false,
   props: {
@@ -9218,10 +9614,10 @@ const _sfc_main$r = defineComponent({
     };
   }
 });
-function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+function _sfc_render$a(_ctx, _cache, $props, $setup, $data, $options) {
   return renderSlot(_ctx.$slots, "default", { handleKeydown: _ctx.onKeydown });
 }
-var ElFocusTrap = /* @__PURE__ */ _export_sfc$1(_sfc_main$r, [["render", _sfc_render$7], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/focus-trap/src/focus-trap.vue"]]);
+var ElFocusTrap = /* @__PURE__ */ _export_sfc$1(_sfc_main$K, [["render", _sfc_render$a], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/focus-trap/src/focus-trap.vue"]]);
 const POSITIONING_STRATEGIES = ["fixed", "absolute"];
 const popperCoreConfigProps = buildProps({
   boundariesPadding: {
@@ -9506,11 +9902,11 @@ const usePopperContentFocusTrap = (props, emit) => {
     onReleaseRequested
   };
 };
-const __default__$j = defineComponent({
+const __default__$s = defineComponent({
   name: "ElPopperContent"
 });
-const _sfc_main$q = /* @__PURE__ */ defineComponent({
-  ...__default__$j,
+const _sfc_main$J = /* @__PURE__ */ defineComponent({
+  ...__default__$s,
   props: popperContentProps,
   emits: popperContentEmits,
   setup(__props, { expose, emit }) {
@@ -9626,7 +10022,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$q, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/content.vue"]]);
+var ElPopperContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$J, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/content.vue"]]);
 const ElPopper = withInstall(Popper);
 const TOOLTIP_INJECTION_KEY = Symbol("elTooltip");
 const useTooltipContentProps = buildProps({
@@ -9704,11 +10100,11 @@ const whenTrigger = (trigger, type4, handler) => {
     isTriggerType(unref(trigger), type4) && handler(e);
   };
 };
-const __default__$i = defineComponent({
+const __default__$r = defineComponent({
   name: "ElTooltipTrigger"
 });
-const _sfc_main$p = /* @__PURE__ */ defineComponent({
-  ...__default__$i,
+const _sfc_main$I = /* @__PURE__ */ defineComponent({
+  ...__default__$r,
   props: useTooltipTriggerProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -9767,13 +10163,13 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElTooltipTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$p, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/trigger.vue"]]);
-const __default__$h = defineComponent({
+var ElTooltipTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$I, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/trigger.vue"]]);
+const __default__$q = defineComponent({
   name: "ElTooltipContent",
   inheritAttrs: false
 });
-const _sfc_main$o = /* @__PURE__ */ defineComponent({
-  ...__default__$h,
+const _sfc_main$H = /* @__PURE__ */ defineComponent({
+  ...__default__$q,
   props: useTooltipContentProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -9934,14 +10330,14 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElTooltipContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$o, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/content.vue"]]);
-const _hoisted_1$9 = ["innerHTML"];
-const _hoisted_2$4 = { key: 1 };
-const __default__$g = defineComponent({
+var ElTooltipContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$H, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/content.vue"]]);
+const _hoisted_1$m = ["innerHTML"];
+const _hoisted_2$g = { key: 1 };
+const __default__$p = defineComponent({
   name: "ElTooltip"
 });
-const _sfc_main$n = /* @__PURE__ */ defineComponent({
-  ...__default__$g,
+const _sfc_main$G = /* @__PURE__ */ defineComponent({
+  ...__default__$p,
   props: useTooltipProps,
   emits: tooltipEmits,
   setup(__props, { expose, emit }) {
@@ -10078,7 +10474,7 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
                 _ctx.rawContent ? (openBlock(), createElementBlock("span", {
                   key: 0,
                   innerHTML: _ctx.content
-                }, null, 8, _hoisted_1$9)) : (openBlock(), createElementBlock("span", _hoisted_2$4, toDisplayString(_ctx.content), 1))
+                }, null, 8, _hoisted_1$m)) : (openBlock(), createElementBlock("span", _hoisted_2$g, toDisplayString(_ctx.content), 1))
               ]),
               _ctx.showArrow ? (openBlock(), createBlock(unref(ElPopperArrow), {
                 key: 0,
@@ -10093,13 +10489,126 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Tooltip = /* @__PURE__ */ _export_sfc$1(_sfc_main$n, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/tooltip.vue"]]);
+var Tooltip = /* @__PURE__ */ _export_sfc$1(_sfc_main$G, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/tooltip.vue"]]);
 const ElTooltip = withInstall(Tooltip);
-function bound01(n, max) {
-  if (isOnePointZero(n)) {
+const buttonGroupContextKey = Symbol("buttonGroupContextKey");
+const useButton = (props, emit) => {
+  useDeprecated({
+    from: "type.text",
+    replacement: "link",
+    version: "3.0.0",
+    scope: "props",
+    ref: "https://element-plus.org/en-US/component/button.html#button-attributes"
+  }, computed(() => props.type === "text"));
+  const buttonGroupContext = inject(buttonGroupContextKey, void 0);
+  const globalConfig2 = useGlobalConfig("button");
+  const { form } = useFormItem();
+  const _size = useFormSize(computed(() => buttonGroupContext == null ? void 0 : buttonGroupContext.size));
+  const _disabled = useFormDisabled();
+  const _ref = ref();
+  const slots = useSlots();
+  const _type = computed(() => props.type || (buttonGroupContext == null ? void 0 : buttonGroupContext.type) || "");
+  const autoInsertSpace = computed(() => {
+    var _a2, _b, _c;
+    return (_c = (_b = props.autoInsertSpace) != null ? _b : (_a2 = globalConfig2.value) == null ? void 0 : _a2.autoInsertSpace) != null ? _c : false;
+  });
+  const _props = computed(() => {
+    if (props.tag === "button") {
+      return {
+        ariaDisabled: _disabled.value || props.loading,
+        disabled: _disabled.value || props.loading,
+        autofocus: props.autofocus,
+        type: props.nativeType
+      };
+    }
+    return {};
+  });
+  const shouldAddSpace = computed(() => {
+    var _a2;
+    const defaultSlot = (_a2 = slots.default) == null ? void 0 : _a2.call(slots);
+    if (autoInsertSpace.value && (defaultSlot == null ? void 0 : defaultSlot.length) === 1) {
+      const slot = defaultSlot[0];
+      if ((slot == null ? void 0 : slot.type) === Text) {
+        const text = slot.children;
+        return /^\p{Unified_Ideograph}{2}$/u.test(text.trim());
+      }
+    }
+    return false;
+  });
+  const handleClick = (evt) => {
+    if (props.nativeType === "reset") {
+      form == null ? void 0 : form.resetFields();
+    }
+    emit("click", evt);
+  };
+  return {
+    _disabled,
+    _size,
+    _type,
+    _ref,
+    _props,
+    shouldAddSpace,
+    handleClick
+  };
+};
+const buttonTypes = [
+  "default",
+  "primary",
+  "success",
+  "warning",
+  "info",
+  "danger",
+  "text",
+  ""
+];
+const buttonNativeTypes = ["button", "submit", "reset"];
+const buttonProps = buildProps({
+  size: useSizeProp,
+  disabled: Boolean,
+  type: {
+    type: String,
+    values: buttonTypes,
+    default: ""
+  },
+  icon: {
+    type: iconPropType
+  },
+  nativeType: {
+    type: String,
+    values: buttonNativeTypes,
+    default: "button"
+  },
+  loading: Boolean,
+  loadingIcon: {
+    type: iconPropType,
+    default: () => loading_default
+  },
+  plain: Boolean,
+  text: Boolean,
+  link: Boolean,
+  bg: Boolean,
+  autofocus: Boolean,
+  round: Boolean,
+  circle: Boolean,
+  color: String,
+  dark: Boolean,
+  autoInsertSpace: {
+    type: Boolean,
+    default: void 0
+  },
+  tag: {
+    type: definePropType([String, Object]),
+    default: "button"
+  }
+});
+const buttonEmits = {
+  click: (evt) => evt instanceof MouseEvent
+};
+function bound01$1(n, max) {
+  if (isOnePointZero$1(n)) {
     n = "100%";
   }
-  var isPercent = isPercentage(n);
+  var isPercent = isPercentage$1(n);
   n = max === 360 ? n : Math.min(max, Math.max(0, parseFloat(n)));
   if (isPercent) {
     n = parseInt(String(n * max), 10) / 100;
@@ -10117,10 +10626,10 @@ function bound01(n, max) {
 function clamp01(val) {
   return Math.min(1, Math.max(0, val));
 }
-function isOnePointZero(n) {
+function isOnePointZero$1(n) {
   return typeof n === "string" && n.indexOf(".") !== -1 && parseFloat(n) === 1;
 }
-function isPercentage(n) {
+function isPercentage$1(n) {
   return typeof n === "string" && n.indexOf("%") !== -1;
 }
 function boundAlpha(a) {
@@ -10141,15 +10650,15 @@ function pad2(c) {
 }
 function rgbToRgb(r, g, b) {
   return {
-    r: bound01(r, 255) * 255,
-    g: bound01(g, 255) * 255,
-    b: bound01(b, 255) * 255
+    r: bound01$1(r, 255) * 255,
+    g: bound01$1(g, 255) * 255,
+    b: bound01$1(b, 255) * 255
   };
 }
 function rgbToHsl(r, g, b) {
-  r = bound01(r, 255);
-  g = bound01(g, 255);
-  b = bound01(b, 255);
+  r = bound01$1(r, 255);
+  g = bound01$1(g, 255);
+  b = bound01$1(b, 255);
   var max = Math.max(r, g, b);
   var min = Math.min(r, g, b);
   var h2 = 0;
@@ -10198,9 +10707,9 @@ function hslToRgb(h2, s, l) {
   var r;
   var g;
   var b;
-  h2 = bound01(h2, 360);
-  s = bound01(s, 100);
-  l = bound01(l, 100);
+  h2 = bound01$1(h2, 360);
+  s = bound01$1(s, 100);
+  l = bound01$1(l, 100);
   if (s === 0) {
     g = l;
     b = l;
@@ -10215,9 +10724,9 @@ function hslToRgb(h2, s, l) {
   return { r: r * 255, g: g * 255, b: b * 255 };
 }
 function rgbToHsv(r, g, b) {
-  r = bound01(r, 255);
-  g = bound01(g, 255);
-  b = bound01(b, 255);
+  r = bound01$1(r, 255);
+  g = bound01$1(g, 255);
+  b = bound01$1(b, 255);
   var max = Math.max(r, g, b);
   var min = Math.min(r, g, b);
   var h2 = 0;
@@ -10243,9 +10752,9 @@ function rgbToHsv(r, g, b) {
   return { h: h2, s, v };
 }
 function hsvToRgb(h2, s, v) {
-  h2 = bound01(h2, 360) * 6;
-  s = bound01(s, 100);
-  v = bound01(v, 100);
+  h2 = bound01$1(h2, 360) * 6;
+  s = bound01$1(s, 100);
+  v = bound01$1(v, 100);
   var i = Math.floor(h2);
   var f = h2 - i;
   var p = v * (1 - s);
@@ -10739,7 +11248,7 @@ var TinyColor = (
     };
     TinyColor2.prototype.toPercentageRgb = function() {
       var fmt = function(x) {
-        return "".concat(Math.round(bound01(x, 255) * 100), "%");
+        return "".concat(Math.round(bound01$1(x, 255) * 100), "%");
       };
       return {
         r: fmt(this.r),
@@ -10750,7 +11259,7 @@ var TinyColor = (
     };
     TinyColor2.prototype.toPercentageRgbString = function() {
       var rnd = function(x) {
-        return Math.round(bound01(x, 255) * 100);
+        return Math.round(bound01$1(x, 255) * 100);
       };
       return this.a === 1 ? "rgb(".concat(rnd(this.r), "%, ").concat(rnd(this.g), "%, ").concat(rnd(this.b), "%)") : "rgba(".concat(rnd(this.r), "%, ").concat(rnd(this.g), "%, ").concat(rnd(this.b), "%, ").concat(this.roundA, ")");
     };
@@ -10978,10 +11487,1524 @@ var TinyColor = (
     return TinyColor2;
   }()
 );
+function darken(color, amount = 20) {
+  return color.mix("#141414", amount).toString();
+}
+function useButtonCustomStyle(props) {
+  const _disabled = useFormDisabled();
+  const ns = useNamespace("button");
+  return computed(() => {
+    let styles = {};
+    const buttonColor = props.color;
+    if (buttonColor) {
+      const color = new TinyColor(buttonColor);
+      const activeBgColor = props.dark ? color.tint(20).toString() : darken(color, 20);
+      if (props.plain) {
+        styles = ns.cssVarBlock({
+          "bg-color": props.dark ? darken(color, 90) : color.tint(90).toString(),
+          "text-color": buttonColor,
+          "border-color": props.dark ? darken(color, 50) : color.tint(50).toString(),
+          "hover-text-color": `var(${ns.cssVarName("color-white")})`,
+          "hover-bg-color": buttonColor,
+          "hover-border-color": buttonColor,
+          "active-bg-color": activeBgColor,
+          "active-text-color": `var(${ns.cssVarName("color-white")})`,
+          "active-border-color": activeBgColor
+        });
+        if (_disabled.value) {
+          styles[ns.cssVarBlockName("disabled-bg-color")] = props.dark ? darken(color, 90) : color.tint(90).toString();
+          styles[ns.cssVarBlockName("disabled-text-color")] = props.dark ? darken(color, 50) : color.tint(50).toString();
+          styles[ns.cssVarBlockName("disabled-border-color")] = props.dark ? darken(color, 80) : color.tint(80).toString();
+        }
+      } else {
+        const hoverBgColor = props.dark ? darken(color, 30) : color.tint(30).toString();
+        const textColor = color.isDark() ? `var(${ns.cssVarName("color-white")})` : `var(${ns.cssVarName("color-black")})`;
+        styles = ns.cssVarBlock({
+          "bg-color": buttonColor,
+          "text-color": textColor,
+          "border-color": buttonColor,
+          "hover-bg-color": hoverBgColor,
+          "hover-text-color": textColor,
+          "hover-border-color": hoverBgColor,
+          "active-bg-color": activeBgColor,
+          "active-border-color": activeBgColor
+        });
+        if (_disabled.value) {
+          const disabledButtonColor = props.dark ? darken(color, 50) : color.tint(50).toString();
+          styles[ns.cssVarBlockName("disabled-bg-color")] = disabledButtonColor;
+          styles[ns.cssVarBlockName("disabled-text-color")] = props.dark ? "rgba(255, 255, 255, 0.5)" : `var(${ns.cssVarName("color-white")})`;
+          styles[ns.cssVarBlockName("disabled-border-color")] = disabledButtonColor;
+        }
+      }
+    }
+    return styles;
+  });
+}
+const __default__$o = defineComponent({
+  name: "ElButton"
+});
+const _sfc_main$F = /* @__PURE__ */ defineComponent({
+  ...__default__$o,
+  props: buttonProps,
+  emits: buttonEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const buttonStyle = useButtonCustomStyle(props);
+    const ns = useNamespace("button");
+    const { _ref, _size, _type, _disabled, _props, shouldAddSpace, handleClick } = useButton(props, emit);
+    expose({
+      ref: _ref,
+      size: _size,
+      type: _type,
+      disabled: _disabled,
+      shouldAddSpace
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(resolveDynamicComponent(_ctx.tag), mergeProps({
+        ref_key: "_ref",
+        ref: _ref
+      }, unref(_props), {
+        class: [
+          unref(ns).b(),
+          unref(ns).m(unref(_type)),
+          unref(ns).m(unref(_size)),
+          unref(ns).is("disabled", unref(_disabled)),
+          unref(ns).is("loading", _ctx.loading),
+          unref(ns).is("plain", _ctx.plain),
+          unref(ns).is("round", _ctx.round),
+          unref(ns).is("circle", _ctx.circle),
+          unref(ns).is("text", _ctx.text),
+          unref(ns).is("link", _ctx.link),
+          unref(ns).is("has-bg", _ctx.bg)
+        ],
+        style: unref(buttonStyle),
+        onClick: unref(handleClick)
+      }), {
+        default: withCtx(() => [
+          _ctx.loading ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+            _ctx.$slots.loading ? renderSlot(_ctx.$slots, "loading", { key: 0 }) : (openBlock(), createBlock(unref(ElIcon), {
+              key: 1,
+              class: normalizeClass(unref(ns).is("loading"))
+            }, {
+              default: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent(_ctx.loadingIcon)))
+              ]),
+              _: 1
+            }, 8, ["class"]))
+          ], 64)) : _ctx.icon || _ctx.$slots.icon ? (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
+            default: withCtx(() => [
+              _ctx.icon ? (openBlock(), createBlock(resolveDynamicComponent(_ctx.icon), { key: 0 })) : renderSlot(_ctx.$slots, "icon", { key: 1 })
+            ]),
+            _: 3
+          })) : createCommentVNode("v-if", true),
+          _ctx.$slots.default ? (openBlock(), createElementBlock("span", {
+            key: 2,
+            class: normalizeClass({ [unref(ns).em("text", "expand")]: unref(shouldAddSpace) })
+          }, [
+            renderSlot(_ctx.$slots, "default")
+          ], 2)) : createCommentVNode("v-if", true)
+        ]),
+        _: 3
+      }, 16, ["class", "style", "onClick"]);
+    };
+  }
+});
+var Button = /* @__PURE__ */ _export_sfc$1(_sfc_main$F, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/button/src/button.vue"]]);
+const buttonGroupProps = {
+  size: buttonProps.size,
+  type: buttonProps.type
+};
+const __default__$n = defineComponent({
+  name: "ElButtonGroup"
+});
+const _sfc_main$E = /* @__PURE__ */ defineComponent({
+  ...__default__$n,
+  props: buttonGroupProps,
+  setup(__props) {
+    const props = __props;
+    provide(buttonGroupContextKey, reactive({
+      size: toRef(props, "size"),
+      type: toRef(props, "type")
+    }));
+    const ns = useNamespace("button");
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass(`${unref(ns).b("group")}`)
+      }, [
+        renderSlot(_ctx.$slots, "default")
+      ], 2);
+    };
+  }
+});
+var ButtonGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$E, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/button/src/button-group.vue"]]);
+const ElButton = withInstall(Button, {
+  ButtonGroup
+});
+withNoopInstall(ButtonGroup);
 var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 function getDefaultExportFromCjs(x) {
   return x && x.__esModule && Object.prototype.hasOwnProperty.call(x, "default") ? x["default"] : x;
 }
+var dayjs_min = { exports: {} };
+(function(module2, exports2) {
+  !function(t, e) {
+    module2.exports = e();
+  }(commonjsGlobal, function() {
+    var t = 1e3, e = 6e4, n = 36e5, r = "millisecond", i = "second", s = "minute", u = "hour", a = "day", o = "week", c = "month", f = "quarter", h2 = "year", d = "date", l = "Invalid Date", $ = /^(\d{4})[-/]?(\d{1,2})?[-/]?(\d{0,2})[Tt\s]*(\d{1,2})?:?(\d{1,2})?:?(\d{1,2})?[.:]?(\d+)?$/, y = /\[([^\]]+)]|Y{1,4}|M{1,4}|D{1,2}|d{1,4}|H{1,2}|h{1,2}|a|A|m{1,2}|s{1,2}|Z{1,2}|SSS/g, M = { name: "en", weekdays: "Sunday_Monday_Tuesday_Wednesday_Thursday_Friday_Saturday".split("_"), months: "January_February_March_April_May_June_July_August_September_October_November_December".split("_"), ordinal: function(t2) {
+      var e2 = ["th", "st", "nd", "rd"], n2 = t2 % 100;
+      return "[" + t2 + (e2[(n2 - 20) % 10] || e2[n2] || e2[0]) + "]";
+    } }, m = function(t2, e2, n2) {
+      var r2 = String(t2);
+      return !r2 || r2.length >= e2 ? t2 : "" + Array(e2 + 1 - r2.length).join(n2) + t2;
+    }, v = { s: m, z: function(t2) {
+      var e2 = -t2.utcOffset(), n2 = Math.abs(e2), r2 = Math.floor(n2 / 60), i2 = n2 % 60;
+      return (e2 <= 0 ? "+" : "-") + m(r2, 2, "0") + ":" + m(i2, 2, "0");
+    }, m: function t2(e2, n2) {
+      if (e2.date() < n2.date())
+        return -t2(n2, e2);
+      var r2 = 12 * (n2.year() - e2.year()) + (n2.month() - e2.month()), i2 = e2.clone().add(r2, c), s2 = n2 - i2 < 0, u2 = e2.clone().add(r2 + (s2 ? -1 : 1), c);
+      return +(-(r2 + (n2 - i2) / (s2 ? i2 - u2 : u2 - i2)) || 0);
+    }, a: function(t2) {
+      return t2 < 0 ? Math.ceil(t2) || 0 : Math.floor(t2);
+    }, p: function(t2) {
+      return { M: c, y: h2, w: o, d: a, D: d, h: u, m: s, s: i, ms: r, Q: f }[t2] || String(t2 || "").toLowerCase().replace(/s$/, "");
+    }, u: function(t2) {
+      return void 0 === t2;
+    } }, g = "en", D = {};
+    D[g] = M;
+    var p = "$isDayjsObject", S = function(t2) {
+      return t2 instanceof _ || !(!t2 || !t2[p]);
+    }, w = function t2(e2, n2, r2) {
+      var i2;
+      if (!e2)
+        return g;
+      if ("string" == typeof e2) {
+        var s2 = e2.toLowerCase();
+        D[s2] && (i2 = s2), n2 && (D[s2] = n2, i2 = s2);
+        var u2 = e2.split("-");
+        if (!i2 && u2.length > 1)
+          return t2(u2[0]);
+      } else {
+        var a2 = e2.name;
+        D[a2] = e2, i2 = a2;
+      }
+      return !r2 && i2 && (g = i2), i2 || !r2 && g;
+    }, O = function(t2, e2) {
+      if (S(t2))
+        return t2.clone();
+      var n2 = "object" == typeof e2 ? e2 : {};
+      return n2.date = t2, n2.args = arguments, new _(n2);
+    }, b = v;
+    b.l = w, b.i = S, b.w = function(t2, e2) {
+      return O(t2, { locale: e2.$L, utc: e2.$u, x: e2.$x, $offset: e2.$offset });
+    };
+    var _ = function() {
+      function M2(t2) {
+        this.$L = w(t2.locale, null, true), this.parse(t2), this.$x = this.$x || t2.x || {}, this[p] = true;
+      }
+      var m2 = M2.prototype;
+      return m2.parse = function(t2) {
+        this.$d = function(t3) {
+          var e2 = t3.date, n2 = t3.utc;
+          if (null === e2)
+            return /* @__PURE__ */ new Date(NaN);
+          if (b.u(e2))
+            return /* @__PURE__ */ new Date();
+          if (e2 instanceof Date)
+            return new Date(e2);
+          if ("string" == typeof e2 && !/Z$/i.test(e2)) {
+            var r2 = e2.match($);
+            if (r2) {
+              var i2 = r2[2] - 1 || 0, s2 = (r2[7] || "0").substring(0, 3);
+              return n2 ? new Date(Date.UTC(r2[1], i2, r2[3] || 1, r2[4] || 0, r2[5] || 0, r2[6] || 0, s2)) : new Date(r2[1], i2, r2[3] || 1, r2[4] || 0, r2[5] || 0, r2[6] || 0, s2);
+            }
+          }
+          return new Date(e2);
+        }(t2), this.init();
+      }, m2.init = function() {
+        var t2 = this.$d;
+        this.$y = t2.getFullYear(), this.$M = t2.getMonth(), this.$D = t2.getDate(), this.$W = t2.getDay(), this.$H = t2.getHours(), this.$m = t2.getMinutes(), this.$s = t2.getSeconds(), this.$ms = t2.getMilliseconds();
+      }, m2.$utils = function() {
+        return b;
+      }, m2.isValid = function() {
+        return !(this.$d.toString() === l);
+      }, m2.isSame = function(t2, e2) {
+        var n2 = O(t2);
+        return this.startOf(e2) <= n2 && n2 <= this.endOf(e2);
+      }, m2.isAfter = function(t2, e2) {
+        return O(t2) < this.startOf(e2);
+      }, m2.isBefore = function(t2, e2) {
+        return this.endOf(e2) < O(t2);
+      }, m2.$g = function(t2, e2, n2) {
+        return b.u(t2) ? this[e2] : this.set(n2, t2);
+      }, m2.unix = function() {
+        return Math.floor(this.valueOf() / 1e3);
+      }, m2.valueOf = function() {
+        return this.$d.getTime();
+      }, m2.startOf = function(t2, e2) {
+        var n2 = this, r2 = !!b.u(e2) || e2, f2 = b.p(t2), l2 = function(t3, e3) {
+          var i2 = b.w(n2.$u ? Date.UTC(n2.$y, e3, t3) : new Date(n2.$y, e3, t3), n2);
+          return r2 ? i2 : i2.endOf(a);
+        }, $2 = function(t3, e3) {
+          return b.w(n2.toDate()[t3].apply(n2.toDate("s"), (r2 ? [0, 0, 0, 0] : [23, 59, 59, 999]).slice(e3)), n2);
+        }, y2 = this.$W, M3 = this.$M, m3 = this.$D, v2 = "set" + (this.$u ? "UTC" : "");
+        switch (f2) {
+          case h2:
+            return r2 ? l2(1, 0) : l2(31, 11);
+          case c:
+            return r2 ? l2(1, M3) : l2(0, M3 + 1);
+          case o:
+            var g2 = this.$locale().weekStart || 0, D2 = (y2 < g2 ? y2 + 7 : y2) - g2;
+            return l2(r2 ? m3 - D2 : m3 + (6 - D2), M3);
+          case a:
+          case d:
+            return $2(v2 + "Hours", 0);
+          case u:
+            return $2(v2 + "Minutes", 1);
+          case s:
+            return $2(v2 + "Seconds", 2);
+          case i:
+            return $2(v2 + "Milliseconds", 3);
+          default:
+            return this.clone();
+        }
+      }, m2.endOf = function(t2) {
+        return this.startOf(t2, false);
+      }, m2.$set = function(t2, e2) {
+        var n2, o2 = b.p(t2), f2 = "set" + (this.$u ? "UTC" : ""), l2 = (n2 = {}, n2[a] = f2 + "Date", n2[d] = f2 + "Date", n2[c] = f2 + "Month", n2[h2] = f2 + "FullYear", n2[u] = f2 + "Hours", n2[s] = f2 + "Minutes", n2[i] = f2 + "Seconds", n2[r] = f2 + "Milliseconds", n2)[o2], $2 = o2 === a ? this.$D + (e2 - this.$W) : e2;
+        if (o2 === c || o2 === h2) {
+          var y2 = this.clone().set(d, 1);
+          y2.$d[l2]($2), y2.init(), this.$d = y2.set(d, Math.min(this.$D, y2.daysInMonth())).$d;
+        } else
+          l2 && this.$d[l2]($2);
+        return this.init(), this;
+      }, m2.set = function(t2, e2) {
+        return this.clone().$set(t2, e2);
+      }, m2.get = function(t2) {
+        return this[b.p(t2)]();
+      }, m2.add = function(r2, f2) {
+        var d2, l2 = this;
+        r2 = Number(r2);
+        var $2 = b.p(f2), y2 = function(t2) {
+          var e2 = O(l2);
+          return b.w(e2.date(e2.date() + Math.round(t2 * r2)), l2);
+        };
+        if ($2 === c)
+          return this.set(c, this.$M + r2);
+        if ($2 === h2)
+          return this.set(h2, this.$y + r2);
+        if ($2 === a)
+          return y2(1);
+        if ($2 === o)
+          return y2(7);
+        var M3 = (d2 = {}, d2[s] = e, d2[u] = n, d2[i] = t, d2)[$2] || 1, m3 = this.$d.getTime() + r2 * M3;
+        return b.w(m3, this);
+      }, m2.subtract = function(t2, e2) {
+        return this.add(-1 * t2, e2);
+      }, m2.format = function(t2) {
+        var e2 = this, n2 = this.$locale();
+        if (!this.isValid())
+          return n2.invalidDate || l;
+        var r2 = t2 || "YYYY-MM-DDTHH:mm:ssZ", i2 = b.z(this), s2 = this.$H, u2 = this.$m, a2 = this.$M, o2 = n2.weekdays, c2 = n2.months, f2 = n2.meridiem, h3 = function(t3, n3, i3, s3) {
+          return t3 && (t3[n3] || t3(e2, r2)) || i3[n3].slice(0, s3);
+        }, d2 = function(t3) {
+          return b.s(s2 % 12 || 12, t3, "0");
+        }, $2 = f2 || function(t3, e3, n3) {
+          var r3 = t3 < 12 ? "AM" : "PM";
+          return n3 ? r3.toLowerCase() : r3;
+        };
+        return r2.replace(y, function(t3, r3) {
+          return r3 || function(t4) {
+            switch (t4) {
+              case "YY":
+                return String(e2.$y).slice(-2);
+              case "YYYY":
+                return b.s(e2.$y, 4, "0");
+              case "M":
+                return a2 + 1;
+              case "MM":
+                return b.s(a2 + 1, 2, "0");
+              case "MMM":
+                return h3(n2.monthsShort, a2, c2, 3);
+              case "MMMM":
+                return h3(c2, a2);
+              case "D":
+                return e2.$D;
+              case "DD":
+                return b.s(e2.$D, 2, "0");
+              case "d":
+                return String(e2.$W);
+              case "dd":
+                return h3(n2.weekdaysMin, e2.$W, o2, 2);
+              case "ddd":
+                return h3(n2.weekdaysShort, e2.$W, o2, 3);
+              case "dddd":
+                return o2[e2.$W];
+              case "H":
+                return String(s2);
+              case "HH":
+                return b.s(s2, 2, "0");
+              case "h":
+                return d2(1);
+              case "hh":
+                return d2(2);
+              case "a":
+                return $2(s2, u2, true);
+              case "A":
+                return $2(s2, u2, false);
+              case "m":
+                return String(u2);
+              case "mm":
+                return b.s(u2, 2, "0");
+              case "s":
+                return String(e2.$s);
+              case "ss":
+                return b.s(e2.$s, 2, "0");
+              case "SSS":
+                return b.s(e2.$ms, 3, "0");
+              case "Z":
+                return i2;
+            }
+            return null;
+          }(t3) || i2.replace(":", "");
+        });
+      }, m2.utcOffset = function() {
+        return 15 * -Math.round(this.$d.getTimezoneOffset() / 15);
+      }, m2.diff = function(r2, d2, l2) {
+        var $2, y2 = this, M3 = b.p(d2), m3 = O(r2), v2 = (m3.utcOffset() - this.utcOffset()) * e, g2 = this - m3, D2 = function() {
+          return b.m(y2, m3);
+        };
+        switch (M3) {
+          case h2:
+            $2 = D2() / 12;
+            break;
+          case c:
+            $2 = D2();
+            break;
+          case f:
+            $2 = D2() / 3;
+            break;
+          case o:
+            $2 = (g2 - v2) / 6048e5;
+            break;
+          case a:
+            $2 = (g2 - v2) / 864e5;
+            break;
+          case u:
+            $2 = g2 / n;
+            break;
+          case s:
+            $2 = g2 / e;
+            break;
+          case i:
+            $2 = g2 / t;
+            break;
+          default:
+            $2 = g2;
+        }
+        return l2 ? $2 : b.a($2);
+      }, m2.daysInMonth = function() {
+        return this.endOf(c).$D;
+      }, m2.$locale = function() {
+        return D[this.$L];
+      }, m2.locale = function(t2, e2) {
+        if (!t2)
+          return this.$L;
+        var n2 = this.clone(), r2 = w(t2, e2, true);
+        return r2 && (n2.$L = r2), n2;
+      }, m2.clone = function() {
+        return b.w(this.$d, this);
+      }, m2.toDate = function() {
+        return new Date(this.valueOf());
+      }, m2.toJSON = function() {
+        return this.isValid() ? this.toISOString() : null;
+      }, m2.toISOString = function() {
+        return this.$d.toISOString();
+      }, m2.toString = function() {
+        return this.$d.toUTCString();
+      }, M2;
+    }(), k = _.prototype;
+    return O.prototype = k, [["$ms", r], ["$s", i], ["$m", s], ["$H", u], ["$W", a], ["$M", c], ["$y", h2], ["$D", d]].forEach(function(t2) {
+      k[t2[1]] = function(e2) {
+        return this.$g(e2, t2[0], t2[1]);
+      };
+    }), O.extend = function(t2, e2) {
+      return t2.$i || (t2(e2, _, O), t2.$i = true), O;
+    }, O.locale = w, O.isDayjs = S, O.unix = function(t2) {
+      return O(1e3 * t2);
+    }, O.en = D[g], O.Ls = D, O.p = {}, O;
+  });
+})(dayjs_min);
+var dayjs_minExports = dayjs_min.exports;
+const dayjs = /* @__PURE__ */ getDefaultExportFromCjs(dayjs_minExports);
+var customParseFormat$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(e, t) {
+    module2.exports = t();
+  }(commonjsGlobal, function() {
+    var e = { LTS: "h:mm:ss A", LT: "h:mm A", L: "MM/DD/YYYY", LL: "MMMM D, YYYY", LLL: "MMMM D, YYYY h:mm A", LLLL: "dddd, MMMM D, YYYY h:mm A" }, t = /(\[[^[]*\])|([-_:/.,()\s]+)|(A|a|YYYY|YY?|MM?M?M?|Do|DD?|hh?|HH?|mm?|ss?|S{1,3}|z|ZZ?)/g, n = /\d\d/, r = /\d\d?/, i = /\d*[^-_:/,()\s\d]+/, o = {}, s = function(e2) {
+      return (e2 = +e2) + (e2 > 68 ? 1900 : 2e3);
+    };
+    var a = function(e2) {
+      return function(t2) {
+        this[e2] = +t2;
+      };
+    }, f = [/[+-]\d\d:?(\d\d)?|Z/, function(e2) {
+      (this.zone || (this.zone = {})).offset = function(e3) {
+        if (!e3)
+          return 0;
+        if ("Z" === e3)
+          return 0;
+        var t2 = e3.match(/([+-]|\d\d)/g), n2 = 60 * t2[1] + (+t2[2] || 0);
+        return 0 === n2 ? 0 : "+" === t2[0] ? -n2 : n2;
+      }(e2);
+    }], h2 = function(e2) {
+      var t2 = o[e2];
+      return t2 && (t2.indexOf ? t2 : t2.s.concat(t2.f));
+    }, u = function(e2, t2) {
+      var n2, r2 = o.meridiem;
+      if (r2) {
+        for (var i2 = 1; i2 <= 24; i2 += 1)
+          if (e2.indexOf(r2(i2, 0, t2)) > -1) {
+            n2 = i2 > 12;
+            break;
+          }
+      } else
+        n2 = e2 === (t2 ? "pm" : "PM");
+      return n2;
+    }, d = { A: [i, function(e2) {
+      this.afternoon = u(e2, false);
+    }], a: [i, function(e2) {
+      this.afternoon = u(e2, true);
+    }], S: [/\d/, function(e2) {
+      this.milliseconds = 100 * +e2;
+    }], SS: [n, function(e2) {
+      this.milliseconds = 10 * +e2;
+    }], SSS: [/\d{3}/, function(e2) {
+      this.milliseconds = +e2;
+    }], s: [r, a("seconds")], ss: [r, a("seconds")], m: [r, a("minutes")], mm: [r, a("minutes")], H: [r, a("hours")], h: [r, a("hours")], HH: [r, a("hours")], hh: [r, a("hours")], D: [r, a("day")], DD: [n, a("day")], Do: [i, function(e2) {
+      var t2 = o.ordinal, n2 = e2.match(/\d+/);
+      if (this.day = n2[0], t2)
+        for (var r2 = 1; r2 <= 31; r2 += 1)
+          t2(r2).replace(/\[|\]/g, "") === e2 && (this.day = r2);
+    }], M: [r, a("month")], MM: [n, a("month")], MMM: [i, function(e2) {
+      var t2 = h2("months"), n2 = (h2("monthsShort") || t2.map(function(e3) {
+        return e3.slice(0, 3);
+      })).indexOf(e2) + 1;
+      if (n2 < 1)
+        throw new Error();
+      this.month = n2 % 12 || n2;
+    }], MMMM: [i, function(e2) {
+      var t2 = h2("months").indexOf(e2) + 1;
+      if (t2 < 1)
+        throw new Error();
+      this.month = t2 % 12 || t2;
+    }], Y: [/[+-]?\d+/, a("year")], YY: [n, function(e2) {
+      this.year = s(e2);
+    }], YYYY: [/\d{4}/, a("year")], Z: f, ZZ: f };
+    function c(n2) {
+      var r2, i2;
+      r2 = n2, i2 = o && o.formats;
+      for (var s2 = (n2 = r2.replace(/(\[[^\]]+])|(LTS?|l{1,4}|L{1,4})/g, function(t2, n3, r3) {
+        var o2 = r3 && r3.toUpperCase();
+        return n3 || i2[r3] || e[r3] || i2[o2].replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, function(e2, t3, n4) {
+          return t3 || n4.slice(1);
+        });
+      })).match(t), a2 = s2.length, f2 = 0; f2 < a2; f2 += 1) {
+        var h3 = s2[f2], u2 = d[h3], c2 = u2 && u2[0], l = u2 && u2[1];
+        s2[f2] = l ? { regex: c2, parser: l } : h3.replace(/^\[|\]$/g, "");
+      }
+      return function(e2) {
+        for (var t2 = {}, n3 = 0, r3 = 0; n3 < a2; n3 += 1) {
+          var i3 = s2[n3];
+          if ("string" == typeof i3)
+            r3 += i3.length;
+          else {
+            var o2 = i3.regex, f3 = i3.parser, h4 = e2.slice(r3), u3 = o2.exec(h4)[0];
+            f3.call(t2, u3), e2 = e2.replace(u3, "");
+          }
+        }
+        return function(e3) {
+          var t3 = e3.afternoon;
+          if (void 0 !== t3) {
+            var n4 = e3.hours;
+            t3 ? n4 < 12 && (e3.hours += 12) : 12 === n4 && (e3.hours = 0), delete e3.afternoon;
+          }
+        }(t2), t2;
+      };
+    }
+    return function(e2, t2, n2) {
+      n2.p.customParseFormat = true, e2 && e2.parseTwoDigitYear && (s = e2.parseTwoDigitYear);
+      var r2 = t2.prototype, i2 = r2.parse;
+      r2.parse = function(e3) {
+        var t3 = e3.date, r3 = e3.utc, s2 = e3.args;
+        this.$u = r3;
+        var a2 = s2[1];
+        if ("string" == typeof a2) {
+          var f2 = true === s2[2], h3 = true === s2[3], u2 = f2 || h3, d2 = s2[2];
+          h3 && (d2 = s2[2]), o = this.$locale(), !f2 && d2 && (o = n2.Ls[d2]), this.$d = function(e4, t4, n3) {
+            try {
+              if (["x", "X"].indexOf(t4) > -1)
+                return new Date(("X" === t4 ? 1e3 : 1) * e4);
+              var r4 = c(t4)(e4), i3 = r4.year, o2 = r4.month, s3 = r4.day, a3 = r4.hours, f3 = r4.minutes, h4 = r4.seconds, u3 = r4.milliseconds, d3 = r4.zone, l2 = /* @__PURE__ */ new Date(), m2 = s3 || (i3 || o2 ? 1 : l2.getDate()), M2 = i3 || l2.getFullYear(), Y = 0;
+              i3 && !o2 || (Y = o2 > 0 ? o2 - 1 : l2.getMonth());
+              var p = a3 || 0, v = f3 || 0, D = h4 || 0, g = u3 || 0;
+              return d3 ? new Date(Date.UTC(M2, Y, m2, p, v, D, g + 60 * d3.offset * 1e3)) : n3 ? new Date(Date.UTC(M2, Y, m2, p, v, D, g)) : new Date(M2, Y, m2, p, v, D, g);
+            } catch (e5) {
+              return /* @__PURE__ */ new Date("");
+            }
+          }(t3, a2, r3), this.init(), d2 && true !== d2 && (this.$L = this.locale(d2).$L), u2 && t3 != this.format(a2) && (this.$d = /* @__PURE__ */ new Date("")), o = {};
+        } else if (a2 instanceof Array)
+          for (var l = a2.length, m = 1; m <= l; m += 1) {
+            s2[1] = a2[m - 1];
+            var M = n2.apply(this, s2);
+            if (M.isValid()) {
+              this.$d = M.$d, this.$L = M.$L, this.init();
+              break;
+            }
+            m === l && (this.$d = /* @__PURE__ */ new Date(""));
+          }
+        else
+          i2.call(this, e3);
+      };
+    };
+  });
+})(customParseFormat$1);
+var customParseFormatExports = customParseFormat$1.exports;
+const customParseFormat = /* @__PURE__ */ getDefaultExportFromCjs(customParseFormatExports);
+const timeUnits = ["hours", "minutes", "seconds"];
+const DEFAULT_FORMATS_TIME = "HH:mm:ss";
+const DEFAULT_FORMATS_DATE = "YYYY-MM-DD";
+const DEFAULT_FORMATS_DATEPICKER = {
+  date: DEFAULT_FORMATS_DATE,
+  dates: DEFAULT_FORMATS_DATE,
+  week: "gggg[w]ww",
+  year: "YYYY",
+  month: "YYYY-MM",
+  datetime: `${DEFAULT_FORMATS_DATE} ${DEFAULT_FORMATS_TIME}`,
+  monthrange: "YYYY-MM",
+  daterange: DEFAULT_FORMATS_DATE,
+  datetimerange: `${DEFAULT_FORMATS_DATE} ${DEFAULT_FORMATS_TIME}`
+};
+const buildTimeList = (value, bound) => {
+  return [
+    value > 0 ? value - 1 : void 0,
+    value,
+    value < bound ? value + 1 : void 0
+  ];
+};
+const rangeArr = (n) => Array.from(Array.from({ length: n }).keys());
+const extractDateFormat = (format2) => {
+  return format2.replace(/\W?m{1,2}|\W?ZZ/g, "").replace(/\W?h{1,2}|\W?s{1,3}|\W?a/gi, "").trim();
+};
+const extractTimeFormat = (format2) => {
+  return format2.replace(/\W?D{1,2}|\W?Do|\W?d{1,4}|\W?M{1,4}|\W?Y{2,4}/g, "").trim();
+};
+const dateEquals = function(a, b) {
+  const aIsDate = isDate(a);
+  const bIsDate = isDate(b);
+  if (aIsDate && bIsDate) {
+    return a.getTime() === b.getTime();
+  }
+  if (!aIsDate && !bIsDate) {
+    return a === b;
+  }
+  return false;
+};
+const valueEquals = function(a, b) {
+  const aIsArray = isArray$2(a);
+  const bIsArray = isArray$2(b);
+  if (aIsArray && bIsArray) {
+    if (a.length !== b.length) {
+      return false;
+    }
+    return a.every((item, index) => dateEquals(item, b[index]));
+  }
+  if (!aIsArray && !bIsArray) {
+    return dateEquals(a, b);
+  }
+  return false;
+};
+const parseDate = function(date4, format2, lang) {
+  const day = isEmpty(format2) || format2 === "x" ? dayjs(date4).locale(lang) : dayjs(date4, format2).locale(lang);
+  return day.isValid() ? day : void 0;
+};
+const formatter = function(date4, format2, lang) {
+  if (isEmpty(format2))
+    return date4;
+  if (format2 === "x")
+    return +date4;
+  return dayjs(date4).locale(lang).format(format2);
+};
+const makeList = (total, method4) => {
+  var _a2;
+  const arr = [];
+  const disabledArr = method4 == null ? void 0 : method4();
+  for (let i = 0; i < total; i++) {
+    arr.push((_a2 = disabledArr == null ? void 0 : disabledArr.includes(i)) != null ? _a2 : false);
+  }
+  return arr;
+};
+const disabledTimeListsProps = buildProps({
+  disabledHours: {
+    type: definePropType(Function)
+  },
+  disabledMinutes: {
+    type: definePropType(Function)
+  },
+  disabledSeconds: {
+    type: definePropType(Function)
+  }
+});
+const timePanelSharedProps = buildProps({
+  visible: Boolean,
+  actualVisible: {
+    type: Boolean,
+    default: void 0
+  },
+  format: {
+    type: String,
+    default: ""
+  }
+});
+const timePickerDefaultProps = buildProps({
+  id: {
+    type: definePropType([Array, String])
+  },
+  name: {
+    type: definePropType([Array, String]),
+    default: ""
+  },
+  popperClass: {
+    type: String,
+    default: ""
+  },
+  format: String,
+  valueFormat: String,
+  dateFormat: String,
+  timeFormat: String,
+  type: {
+    type: String,
+    default: ""
+  },
+  clearable: {
+    type: Boolean,
+    default: true
+  },
+  clearIcon: {
+    type: definePropType([String, Object]),
+    default: circle_close_default
+  },
+  editable: {
+    type: Boolean,
+    default: true
+  },
+  prefixIcon: {
+    type: definePropType([String, Object]),
+    default: ""
+  },
+  size: useSizeProp,
+  readonly: {
+    type: Boolean,
+    default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  placeholder: {
+    type: String,
+    default: ""
+  },
+  popperOptions: {
+    type: definePropType(Object),
+    default: () => ({})
+  },
+  modelValue: {
+    type: definePropType([Date, Array, String, Number]),
+    default: ""
+  },
+  rangeSeparator: {
+    type: String,
+    default: "-"
+  },
+  startPlaceholder: String,
+  endPlaceholder: String,
+  defaultValue: {
+    type: definePropType([Date, Array])
+  },
+  defaultTime: {
+    type: definePropType([Date, Array])
+  },
+  isRange: {
+    type: Boolean,
+    default: false
+  },
+  ...disabledTimeListsProps,
+  disabledDate: {
+    type: Function
+  },
+  cellClassName: {
+    type: Function
+  },
+  shortcuts: {
+    type: Array,
+    default: () => []
+  },
+  arrowControl: {
+    type: Boolean,
+    default: false
+  },
+  label: {
+    type: String,
+    default: void 0
+  },
+  tabindex: {
+    type: definePropType([String, Number]),
+    default: 0
+  },
+  validateEvent: {
+    type: Boolean,
+    default: true
+  },
+  unlinkPanels: Boolean
+});
+const _hoisted_1$l = ["id", "name", "placeholder", "value", "disabled", "readonly"];
+const _hoisted_2$f = ["id", "name", "placeholder", "value", "disabled", "readonly"];
+const __default__$m = defineComponent({
+  name: "Picker"
+});
+const _sfc_main$D = /* @__PURE__ */ defineComponent({
+  ...__default__$m,
+  props: timePickerDefaultProps,
+  emits: [
+    "update:modelValue",
+    "change",
+    "focus",
+    "blur",
+    "calendar-change",
+    "panel-change",
+    "visible-change",
+    "keydown"
+  ],
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const attrs = useAttrs$1();
+    const { lang } = useLocale();
+    const nsDate = useNamespace("date");
+    const nsInput = useNamespace("input");
+    const nsRange = useNamespace("range");
+    const { form, formItem } = useFormItem();
+    const elPopperOptions = inject("ElPopperOptions", {});
+    const refPopper = ref();
+    const inputRef = ref();
+    const pickerVisible = ref(false);
+    const pickerActualVisible = ref(false);
+    const valueOnOpen = ref(null);
+    let hasJustTabExitedInput = false;
+    let ignoreFocusEvent = false;
+    const rangeInputKls = computed(() => [
+      nsDate.b("editor"),
+      nsDate.bm("editor", props.type),
+      nsInput.e("wrapper"),
+      nsDate.is("disabled", pickerDisabled.value),
+      nsDate.is("active", pickerVisible.value),
+      nsRange.b("editor"),
+      pickerSize ? nsRange.bm("editor", pickerSize.value) : "",
+      attrs.class
+    ]);
+    const clearIconKls = computed(() => [
+      nsInput.e("icon"),
+      nsRange.e("close-icon"),
+      !showClose.value ? nsRange.e("close-icon--hidden") : ""
+    ]);
+    watch(pickerVisible, (val) => {
+      if (!val) {
+        userInput.value = null;
+        nextTick(() => {
+          emitChange(props.modelValue);
+        });
+      } else {
+        nextTick(() => {
+          if (val) {
+            valueOnOpen.value = props.modelValue;
+          }
+        });
+      }
+    });
+    const emitChange = (val, isClear) => {
+      if (isClear || !valueEquals(val, valueOnOpen.value)) {
+        emit("change", val);
+        props.validateEvent && (formItem == null ? void 0 : formItem.validate("change").catch((err) => debugWarn(err)));
+      }
+    };
+    const emitInput = (input) => {
+      if (!valueEquals(props.modelValue, input)) {
+        let formatted;
+        if (isArray$2(input)) {
+          formatted = input.map((item) => formatter(item, props.valueFormat, lang.value));
+        } else if (input) {
+          formatted = formatter(input, props.valueFormat, lang.value);
+        }
+        emit("update:modelValue", input ? formatted : input, lang.value);
+      }
+    };
+    const emitKeydown = (e) => {
+      emit("keydown", e);
+    };
+    const refInput = computed(() => {
+      if (inputRef.value) {
+        const _r = isRangeInput.value ? inputRef.value : inputRef.value.$el;
+        return Array.from(_r.querySelectorAll("input"));
+      }
+      return [];
+    });
+    const setSelectionRange = (start, end2, pos) => {
+      const _inputs = refInput.value;
+      if (!_inputs.length)
+        return;
+      if (!pos || pos === "min") {
+        _inputs[0].setSelectionRange(start, end2);
+        _inputs[0].focus();
+      } else if (pos === "max") {
+        _inputs[1].setSelectionRange(start, end2);
+        _inputs[1].focus();
+      }
+    };
+    const focusOnInputBox = () => {
+      focus(true, true);
+      nextTick(() => {
+        ignoreFocusEvent = false;
+      });
+    };
+    const onPick = (date4 = "", visible = false) => {
+      if (!visible) {
+        ignoreFocusEvent = true;
+      }
+      pickerVisible.value = visible;
+      let result;
+      if (isArray$2(date4)) {
+        result = date4.map((_) => _.toDate());
+      } else {
+        result = date4 ? date4.toDate() : date4;
+      }
+      userInput.value = null;
+      emitInput(result);
+    };
+    const onBeforeShow = () => {
+      pickerActualVisible.value = true;
+    };
+    const onShow = () => {
+      emit("visible-change", true);
+    };
+    const onKeydownPopperContent = (event) => {
+      if ((event == null ? void 0 : event.key) === EVENT_CODE.esc) {
+        focus(true, true);
+      }
+    };
+    const onHide = () => {
+      pickerActualVisible.value = false;
+      pickerVisible.value = false;
+      ignoreFocusEvent = false;
+      emit("visible-change", false);
+    };
+    const handleOpen = () => {
+      pickerVisible.value = true;
+    };
+    const handleClose = () => {
+      pickerVisible.value = false;
+    };
+    const focus = (focusStartInput = true, isIgnoreFocusEvent = false) => {
+      ignoreFocusEvent = isIgnoreFocusEvent;
+      const [leftInput, rightInput] = unref(refInput);
+      let input = leftInput;
+      if (!focusStartInput && isRangeInput.value) {
+        input = rightInput;
+      }
+      if (input) {
+        input.focus();
+      }
+    };
+    const handleFocusInput = (e) => {
+      if (props.readonly || pickerDisabled.value || pickerVisible.value || ignoreFocusEvent) {
+        return;
+      }
+      pickerVisible.value = true;
+      emit("focus", e);
+    };
+    let currentHandleBlurDeferCallback = void 0;
+    const handleBlurInput = (e) => {
+      const handleBlurDefer = async () => {
+        setTimeout(() => {
+          var _a2;
+          if (currentHandleBlurDeferCallback === handleBlurDefer) {
+            if (!(((_a2 = refPopper.value) == null ? void 0 : _a2.isFocusInsideContent()) && !hasJustTabExitedInput) && refInput.value.filter((input) => {
+              return input.contains(document.activeElement);
+            }).length === 0) {
+              handleChange();
+              pickerVisible.value = false;
+              emit("blur", e);
+              props.validateEvent && (formItem == null ? void 0 : formItem.validate("blur").catch((err) => debugWarn(err)));
+            }
+            hasJustTabExitedInput = false;
+          }
+        }, 0);
+      };
+      currentHandleBlurDeferCallback = handleBlurDefer;
+      handleBlurDefer();
+    };
+    const pickerDisabled = computed(() => {
+      return props.disabled || (form == null ? void 0 : form.disabled);
+    });
+    const parsedValue2 = computed(() => {
+      let dayOrDays;
+      if (valueIsEmpty.value) {
+        if (pickerOptions.value.getDefaultValue) {
+          dayOrDays = pickerOptions.value.getDefaultValue();
+        }
+      } else {
+        if (isArray$2(props.modelValue)) {
+          dayOrDays = props.modelValue.map((d) => parseDate(d, props.valueFormat, lang.value));
+        } else {
+          dayOrDays = parseDate(props.modelValue, props.valueFormat, lang.value);
+        }
+      }
+      if (pickerOptions.value.getRangeAvailableTime) {
+        const availableResult = pickerOptions.value.getRangeAvailableTime(dayOrDays);
+        if (!isEqual(availableResult, dayOrDays)) {
+          dayOrDays = availableResult;
+          emitInput(isArray$2(dayOrDays) ? dayOrDays.map((_) => _.toDate()) : dayOrDays.toDate());
+        }
+      }
+      if (isArray$2(dayOrDays) && dayOrDays.some((day) => !day)) {
+        dayOrDays = [];
+      }
+      return dayOrDays;
+    });
+    const displayValue = computed(() => {
+      if (!pickerOptions.value.panelReady)
+        return "";
+      const formattedValue = formatDayjsToString(parsedValue2.value);
+      if (isArray$2(userInput.value)) {
+        return [
+          userInput.value[0] || formattedValue && formattedValue[0] || "",
+          userInput.value[1] || formattedValue && formattedValue[1] || ""
+        ];
+      } else if (userInput.value !== null) {
+        return userInput.value;
+      }
+      if (!isTimePicker.value && valueIsEmpty.value)
+        return "";
+      if (!pickerVisible.value && valueIsEmpty.value)
+        return "";
+      if (formattedValue) {
+        return isDatesPicker.value ? formattedValue.join(", ") : formattedValue;
+      }
+      return "";
+    });
+    const isTimeLikePicker = computed(() => props.type.includes("time"));
+    const isTimePicker = computed(() => props.type.startsWith("time"));
+    const isDatesPicker = computed(() => props.type === "dates");
+    const triggerIcon = computed(() => props.prefixIcon || (isTimeLikePicker.value ? clock_default : calendar_default));
+    const showClose = ref(false);
+    const onClearIconClick = (event) => {
+      if (props.readonly || pickerDisabled.value)
+        return;
+      if (showClose.value) {
+        event.stopPropagation();
+        focusOnInputBox();
+        emitInput(null);
+        emitChange(null, true);
+        showClose.value = false;
+        pickerVisible.value = false;
+        pickerOptions.value.handleClear && pickerOptions.value.handleClear();
+      }
+    };
+    const valueIsEmpty = computed(() => {
+      const { modelValue } = props;
+      return !modelValue || isArray$2(modelValue) && !modelValue.filter(Boolean).length;
+    });
+    const onMouseDownInput = async (event) => {
+      var _a2;
+      if (props.readonly || pickerDisabled.value)
+        return;
+      if (((_a2 = event.target) == null ? void 0 : _a2.tagName) !== "INPUT" || refInput.value.includes(document.activeElement)) {
+        pickerVisible.value = true;
+      }
+    };
+    const onMouseEnter = () => {
+      if (props.readonly || pickerDisabled.value)
+        return;
+      if (!valueIsEmpty.value && props.clearable) {
+        showClose.value = true;
+      }
+    };
+    const onMouseLeave = () => {
+      showClose.value = false;
+    };
+    const onTouchStartInput = (event) => {
+      var _a2;
+      if (props.readonly || pickerDisabled.value)
+        return;
+      if (((_a2 = event.touches[0].target) == null ? void 0 : _a2.tagName) !== "INPUT" || refInput.value.includes(document.activeElement)) {
+        pickerVisible.value = true;
+      }
+    };
+    const isRangeInput = computed(() => {
+      return props.type.includes("range");
+    });
+    const pickerSize = useFormSize();
+    const popperEl = computed(() => {
+      var _a2, _b;
+      return (_b = (_a2 = unref(refPopper)) == null ? void 0 : _a2.popperRef) == null ? void 0 : _b.contentRef;
+    });
+    const actualInputRef = computed(() => {
+      var _a2;
+      if (unref(isRangeInput)) {
+        return unref(inputRef);
+      }
+      return (_a2 = unref(inputRef)) == null ? void 0 : _a2.$el;
+    });
+    onClickOutside(actualInputRef, (e) => {
+      const unrefedPopperEl = unref(popperEl);
+      const inputEl = unref(actualInputRef);
+      if (unrefedPopperEl && (e.target === unrefedPopperEl || e.composedPath().includes(unrefedPopperEl)) || e.target === inputEl || e.composedPath().includes(inputEl))
+        return;
+      pickerVisible.value = false;
+    });
+    const userInput = ref(null);
+    const handleChange = () => {
+      if (userInput.value) {
+        const value = parseUserInputToDayjs(displayValue.value);
+        if (value) {
+          if (isValidValue2(value)) {
+            emitInput(isArray$2(value) ? value.map((_) => _.toDate()) : value.toDate());
+            userInput.value = null;
+          }
+        }
+      }
+      if (userInput.value === "") {
+        emitInput(null);
+        emitChange(null);
+        userInput.value = null;
+      }
+    };
+    const parseUserInputToDayjs = (value) => {
+      if (!value)
+        return null;
+      return pickerOptions.value.parseUserInput(value);
+    };
+    const formatDayjsToString = (value) => {
+      if (!value)
+        return null;
+      return pickerOptions.value.formatToString(value);
+    };
+    const isValidValue2 = (value) => {
+      return pickerOptions.value.isValidValue(value);
+    };
+    const handleKeydownInput = async (event) => {
+      if (props.readonly || pickerDisabled.value)
+        return;
+      const { code } = event;
+      emitKeydown(event);
+      if (code === EVENT_CODE.esc) {
+        if (pickerVisible.value === true) {
+          pickerVisible.value = false;
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        return;
+      }
+      if (code === EVENT_CODE.down) {
+        if (pickerOptions.value.handleFocusPicker) {
+          event.preventDefault();
+          event.stopPropagation();
+        }
+        if (pickerVisible.value === false) {
+          pickerVisible.value = true;
+          await nextTick();
+        }
+        if (pickerOptions.value.handleFocusPicker) {
+          pickerOptions.value.handleFocusPicker();
+          return;
+        }
+      }
+      if (code === EVENT_CODE.tab) {
+        hasJustTabExitedInput = true;
+        return;
+      }
+      if (code === EVENT_CODE.enter || code === EVENT_CODE.numpadEnter) {
+        if (userInput.value === null || userInput.value === "" || isValidValue2(parseUserInputToDayjs(displayValue.value))) {
+          handleChange();
+          pickerVisible.value = false;
+        }
+        event.stopPropagation();
+        return;
+      }
+      if (userInput.value) {
+        event.stopPropagation();
+        return;
+      }
+      if (pickerOptions.value.handleKeydownInput) {
+        pickerOptions.value.handleKeydownInput(event);
+      }
+    };
+    const onUserInput = (e) => {
+      userInput.value = e;
+      if (!pickerVisible.value) {
+        pickerVisible.value = true;
+      }
+    };
+    const handleStartInput = (event) => {
+      const target2 = event.target;
+      if (userInput.value) {
+        userInput.value = [target2.value, userInput.value[1]];
+      } else {
+        userInput.value = [target2.value, null];
+      }
+    };
+    const handleEndInput = (event) => {
+      const target2 = event.target;
+      if (userInput.value) {
+        userInput.value = [userInput.value[0], target2.value];
+      } else {
+        userInput.value = [null, target2.value];
+      }
+    };
+    const handleStartChange = () => {
+      var _a2;
+      const values = userInput.value;
+      const value = parseUserInputToDayjs(values && values[0]);
+      const parsedVal = unref(parsedValue2);
+      if (value && value.isValid()) {
+        userInput.value = [
+          formatDayjsToString(value),
+          ((_a2 = displayValue.value) == null ? void 0 : _a2[1]) || null
+        ];
+        const newValue = [value, parsedVal && (parsedVal[1] || null)];
+        if (isValidValue2(newValue)) {
+          emitInput(newValue);
+          userInput.value = null;
+        }
+      }
+    };
+    const handleEndChange = () => {
+      var _a2;
+      const values = unref(userInput);
+      const value = parseUserInputToDayjs(values && values[1]);
+      const parsedVal = unref(parsedValue2);
+      if (value && value.isValid()) {
+        userInput.value = [
+          ((_a2 = unref(displayValue)) == null ? void 0 : _a2[0]) || null,
+          formatDayjsToString(value)
+        ];
+        const newValue = [parsedVal && parsedVal[0], value];
+        if (isValidValue2(newValue)) {
+          emitInput(newValue);
+          userInput.value = null;
+        }
+      }
+    };
+    const pickerOptions = ref({});
+    const onSetPickerOption = (e) => {
+      pickerOptions.value[e[0]] = e[1];
+      pickerOptions.value.panelReady = true;
+    };
+    const onCalendarChange = (e) => {
+      emit("calendar-change", e);
+    };
+    const onPanelChange = (value, mode, view) => {
+      emit("panel-change", value, mode, view);
+    };
+    provide("EP_PICKER_BASE", {
+      props
+    });
+    expose({
+      focus,
+      handleFocusInput,
+      handleBlurInput,
+      handleOpen,
+      handleClose,
+      onPick
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElTooltip), mergeProps({
+        ref_key: "refPopper",
+        ref: refPopper,
+        visible: pickerVisible.value,
+        effect: "light",
+        pure: "",
+        trigger: "click"
+      }, _ctx.$attrs, {
+        role: "dialog",
+        teleported: "",
+        transition: `${unref(nsDate).namespace.value}-zoom-in-top`,
+        "popper-class": [`${unref(nsDate).namespace.value}-picker__popper`, _ctx.popperClass],
+        "popper-options": unref(elPopperOptions),
+        "fallback-placements": ["bottom", "top", "right", "left"],
+        "gpu-acceleration": false,
+        "stop-popper-mouse-event": false,
+        "hide-after": 0,
+        persistent: "",
+        onBeforeShow,
+        onShow,
+        onHide
+      }), {
+        default: withCtx(() => [
+          !unref(isRangeInput) ? (openBlock(), createBlock(unref(ElInput), {
+            key: 0,
+            id: _ctx.id,
+            ref_key: "inputRef",
+            ref: inputRef,
+            "container-role": "combobox",
+            "model-value": unref(displayValue),
+            name: _ctx.name,
+            size: unref(pickerSize),
+            disabled: unref(pickerDisabled),
+            placeholder: _ctx.placeholder,
+            class: normalizeClass([unref(nsDate).b("editor"), unref(nsDate).bm("editor", _ctx.type), _ctx.$attrs.class]),
+            style: normalizeStyle(_ctx.$attrs.style),
+            readonly: !_ctx.editable || _ctx.readonly || unref(isDatesPicker) || _ctx.type === "week",
+            label: _ctx.label,
+            tabindex: _ctx.tabindex,
+            "validate-event": false,
+            onInput: onUserInput,
+            onFocus: handleFocusInput,
+            onBlur: handleBlurInput,
+            onKeydown: handleKeydownInput,
+            onChange: handleChange,
+            onMousedown: onMouseDownInput,
+            onMouseenter: onMouseEnter,
+            onMouseleave: onMouseLeave,
+            onTouchstart: onTouchStartInput,
+            onClick: _cache[0] || (_cache[0] = withModifiers(() => {
+            }, ["stop"]))
+          }, {
+            prefix: withCtx(() => [
+              unref(triggerIcon) ? (openBlock(), createBlock(unref(ElIcon), {
+                key: 0,
+                class: normalizeClass(unref(nsInput).e("icon")),
+                onMousedown: withModifiers(onMouseDownInput, ["prevent"]),
+                onTouchstart: onTouchStartInput
+              }, {
+                default: withCtx(() => [
+                  (openBlock(), createBlock(resolveDynamicComponent(unref(triggerIcon))))
+                ]),
+                _: 1
+              }, 8, ["class", "onMousedown"])) : createCommentVNode("v-if", true)
+            ]),
+            suffix: withCtx(() => [
+              showClose.value && _ctx.clearIcon ? (openBlock(), createBlock(unref(ElIcon), {
+                key: 0,
+                class: normalizeClass(`${unref(nsInput).e("icon")} clear-icon`),
+                onClick: withModifiers(onClearIconClick, ["stop"])
+              }, {
+                default: withCtx(() => [
+                  (openBlock(), createBlock(resolveDynamicComponent(_ctx.clearIcon)))
+                ]),
+                _: 1
+              }, 8, ["class", "onClick"])) : createCommentVNode("v-if", true)
+            ]),
+            _: 1
+          }, 8, ["id", "model-value", "name", "size", "disabled", "placeholder", "class", "style", "readonly", "label", "tabindex", "onKeydown"])) : (openBlock(), createElementBlock("div", {
+            key: 1,
+            ref_key: "inputRef",
+            ref: inputRef,
+            class: normalizeClass(unref(rangeInputKls)),
+            style: normalizeStyle(_ctx.$attrs.style),
+            onClick: handleFocusInput,
+            onMouseenter: onMouseEnter,
+            onMouseleave: onMouseLeave,
+            onTouchstart: onTouchStartInput,
+            onKeydown: handleKeydownInput
+          }, [
+            unref(triggerIcon) ? (openBlock(), createBlock(unref(ElIcon), {
+              key: 0,
+              class: normalizeClass([unref(nsInput).e("icon"), unref(nsRange).e("icon")]),
+              onMousedown: withModifiers(onMouseDownInput, ["prevent"]),
+              onTouchstart: onTouchStartInput
+            }, {
+              default: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent(unref(triggerIcon))))
+              ]),
+              _: 1
+            }, 8, ["class", "onMousedown"])) : createCommentVNode("v-if", true),
+            createElementVNode("input", {
+              id: _ctx.id && _ctx.id[0],
+              autocomplete: "off",
+              name: _ctx.name && _ctx.name[0],
+              placeholder: _ctx.startPlaceholder,
+              value: unref(displayValue) && unref(displayValue)[0],
+              disabled: unref(pickerDisabled),
+              readonly: !_ctx.editable || _ctx.readonly,
+              class: normalizeClass(unref(nsRange).b("input")),
+              onMousedown: onMouseDownInput,
+              onInput: handleStartInput,
+              onChange: handleStartChange,
+              onFocus: handleFocusInput,
+              onBlur: handleBlurInput
+            }, null, 42, _hoisted_1$l),
+            renderSlot(_ctx.$slots, "range-separator", {}, () => [
+              createElementVNode("span", {
+                class: normalizeClass(unref(nsRange).b("separator"))
+              }, toDisplayString(_ctx.rangeSeparator), 3)
+            ]),
+            createElementVNode("input", {
+              id: _ctx.id && _ctx.id[1],
+              autocomplete: "off",
+              name: _ctx.name && _ctx.name[1],
+              placeholder: _ctx.endPlaceholder,
+              value: unref(displayValue) && unref(displayValue)[1],
+              disabled: unref(pickerDisabled),
+              readonly: !_ctx.editable || _ctx.readonly,
+              class: normalizeClass(unref(nsRange).b("input")),
+              onMousedown: onMouseDownInput,
+              onFocus: handleFocusInput,
+              onBlur: handleBlurInput,
+              onInput: handleEndInput,
+              onChange: handleEndChange
+            }, null, 42, _hoisted_2$f),
+            _ctx.clearIcon ? (openBlock(), createBlock(unref(ElIcon), {
+              key: 1,
+              class: normalizeClass(unref(clearIconKls)),
+              onClick: onClearIconClick
+            }, {
+              default: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent(_ctx.clearIcon)))
+              ]),
+              _: 1
+            }, 8, ["class"])) : createCommentVNode("v-if", true)
+          ], 38))
+        ]),
+        content: withCtx(() => [
+          renderSlot(_ctx.$slots, "default", {
+            visible: pickerVisible.value,
+            actualVisible: pickerActualVisible.value,
+            parsedValue: unref(parsedValue2),
+            format: _ctx.format,
+            dateFormat: _ctx.dateFormat,
+            timeFormat: _ctx.timeFormat,
+            unlinkPanels: _ctx.unlinkPanels,
+            type: _ctx.type,
+            defaultValue: _ctx.defaultValue,
+            onPick,
+            onSelectRange: setSelectionRange,
+            onSetPickerOption,
+            onCalendarChange,
+            onPanelChange,
+            onKeydown: onKeydownPopperContent,
+            onMousedown: _cache[1] || (_cache[1] = withModifiers(() => {
+            }, ["stop"]))
+          })
+        ]),
+        _: 3
+      }, 16, ["visible", "transition", "popper-class", "popper-options"]);
+    };
+  }
+});
+var CommonPicker = /* @__PURE__ */ _export_sfc$1(_sfc_main$D, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/time-picker/src/common/picker.vue"]]);
+const panelTimePickerProps = buildProps({
+  ...timePanelSharedProps,
+  datetimeRole: String,
+  parsedValue: {
+    type: definePropType(Object)
+  }
+});
+const useTimePanel = ({
+  getAvailableHours,
+  getAvailableMinutes,
+  getAvailableSeconds
+}) => {
+  const getAvailableTime = (date4, role, first, compareDate) => {
+    const availableTimeGetters = {
+      hour: getAvailableHours,
+      minute: getAvailableMinutes,
+      second: getAvailableSeconds
+    };
+    let result = date4;
+    ["hour", "minute", "second"].forEach((type4) => {
+      if (availableTimeGetters[type4]) {
+        let availableTimeSlots;
+        const method4 = availableTimeGetters[type4];
+        switch (type4) {
+          case "minute": {
+            availableTimeSlots = method4(result.hour(), role, compareDate);
+            break;
+          }
+          case "second": {
+            availableTimeSlots = method4(result.hour(), result.minute(), role, compareDate);
+            break;
+          }
+          default: {
+            availableTimeSlots = method4(role, compareDate);
+            break;
+          }
+        }
+        if ((availableTimeSlots == null ? void 0 : availableTimeSlots.length) && !availableTimeSlots.includes(result[type4]())) {
+          const pos = first ? 0 : availableTimeSlots.length - 1;
+          result = result[type4](availableTimeSlots[pos]);
+        }
+      }
+    });
+    return result;
+  };
+  const timePickerOptions = {};
+  const onSetOption = ([key, val]) => {
+    timePickerOptions[key] = val;
+  };
+  return {
+    timePickerOptions,
+    getAvailableTime,
+    onSetOption
+  };
+};
+const makeAvailableArr = (disabledList) => {
+  const trueOrNumber = (isDisabled, index) => isDisabled || index;
+  const getNumber = (predicate) => predicate !== true;
+  return disabledList.map(trueOrNumber).filter(getNumber);
+};
+const getTimeLists = (disabledHours, disabledMinutes, disabledSeconds) => {
+  const getHoursList = (role, compare) => {
+    return makeList(24, disabledHours && (() => disabledHours == null ? void 0 : disabledHours(role, compare)));
+  };
+  const getMinutesList = (hour, role, compare) => {
+    return makeList(60, disabledMinutes && (() => disabledMinutes == null ? void 0 : disabledMinutes(hour, role, compare)));
+  };
+  const getSecondsList = (hour, minute, role, compare) => {
+    return makeList(60, disabledSeconds && (() => disabledSeconds == null ? void 0 : disabledSeconds(hour, minute, role, compare)));
+  };
+  return {
+    getHoursList,
+    getMinutesList,
+    getSecondsList
+  };
+};
+const buildAvailableTimeSlotGetter = (disabledHours, disabledMinutes, disabledSeconds) => {
+  const { getHoursList, getMinutesList, getSecondsList } = getTimeLists(disabledHours, disabledMinutes, disabledSeconds);
+  const getAvailableHours = (role, compare) => {
+    return makeAvailableArr(getHoursList(role, compare));
+  };
+  const getAvailableMinutes = (hour, role, compare) => {
+    return makeAvailableArr(getMinutesList(hour, role, compare));
+  };
+  const getAvailableSeconds = (hour, minute, role, compare) => {
+    return makeAvailableArr(getSecondsList(hour, minute, role, compare));
+  };
+  return {
+    getAvailableHours,
+    getAvailableMinutes,
+    getAvailableSeconds
+  };
+};
+const useOldValue = (props) => {
+  const oldValue = ref(props.parsedValue);
+  watch(() => props.visible, (val) => {
+    if (!val) {
+      oldValue.value = props.parsedValue;
+    }
+  });
+  return oldValue;
+};
 const nodeList = /* @__PURE__ */ new Map();
 let startClick;
 if (isClient) {
@@ -11082,6 +13105,1070 @@ const vRepeatClick = {
     });
   }
 };
+const basicTimeSpinnerProps = buildProps({
+  role: {
+    type: String,
+    required: true
+  },
+  spinnerDate: {
+    type: definePropType(Object),
+    required: true
+  },
+  showSeconds: {
+    type: Boolean,
+    default: true
+  },
+  arrowControl: Boolean,
+  amPmMode: {
+    type: definePropType(String),
+    default: ""
+  },
+  ...disabledTimeListsProps
+});
+const _hoisted_1$k = ["onClick"];
+const _hoisted_2$e = ["onMouseenter"];
+const _sfc_main$C = /* @__PURE__ */ defineComponent({
+  __name: "basic-time-spinner",
+  props: basicTimeSpinnerProps,
+  emits: ["change", "select-range", "set-option"],
+  setup(__props, { emit }) {
+    const props = __props;
+    const ns = useNamespace("time");
+    const { getHoursList, getMinutesList, getSecondsList } = getTimeLists(props.disabledHours, props.disabledMinutes, props.disabledSeconds);
+    let isScrolling = false;
+    const currentScrollbar = ref();
+    const listHoursRef = ref();
+    const listMinutesRef = ref();
+    const listSecondsRef = ref();
+    const listRefsMap = {
+      hours: listHoursRef,
+      minutes: listMinutesRef,
+      seconds: listSecondsRef
+    };
+    const spinnerItems = computed(() => {
+      return props.showSeconds ? timeUnits : timeUnits.slice(0, 2);
+    });
+    const timePartials = computed(() => {
+      const { spinnerDate } = props;
+      const hours = spinnerDate.hour();
+      const minutes = spinnerDate.minute();
+      const seconds = spinnerDate.second();
+      return { hours, minutes, seconds };
+    });
+    const timeList = computed(() => {
+      const { hours, minutes } = unref(timePartials);
+      return {
+        hours: getHoursList(props.role),
+        minutes: getMinutesList(hours, props.role),
+        seconds: getSecondsList(hours, minutes, props.role)
+      };
+    });
+    const arrowControlTimeList = computed(() => {
+      const { hours, minutes, seconds } = unref(timePartials);
+      return {
+        hours: buildTimeList(hours, 23),
+        minutes: buildTimeList(minutes, 59),
+        seconds: buildTimeList(seconds, 59)
+      };
+    });
+    const debouncedResetScroll = debounce((type4) => {
+      isScrolling = false;
+      adjustCurrentSpinner(type4);
+    }, 200);
+    const getAmPmFlag = (hour) => {
+      const shouldShowAmPm = !!props.amPmMode;
+      if (!shouldShowAmPm)
+        return "";
+      const isCapital = props.amPmMode === "A";
+      let content = hour < 12 ? " am" : " pm";
+      if (isCapital)
+        content = content.toUpperCase();
+      return content;
+    };
+    const emitSelectRange = (type4) => {
+      let range3;
+      switch (type4) {
+        case "hours":
+          range3 = [0, 2];
+          break;
+        case "minutes":
+          range3 = [3, 5];
+          break;
+        case "seconds":
+          range3 = [6, 8];
+          break;
+      }
+      const [left2, right2] = range3;
+      emit("select-range", left2, right2);
+      currentScrollbar.value = type4;
+    };
+    const adjustCurrentSpinner = (type4) => {
+      adjustSpinner(type4, unref(timePartials)[type4]);
+    };
+    const adjustSpinners = () => {
+      adjustCurrentSpinner("hours");
+      adjustCurrentSpinner("minutes");
+      adjustCurrentSpinner("seconds");
+    };
+    const getScrollbarElement = (el) => el.querySelector(`.${ns.namespace.value}-scrollbar__wrap`);
+    const adjustSpinner = (type4, value) => {
+      if (props.arrowControl)
+        return;
+      const scrollbar = unref(listRefsMap[type4]);
+      if (scrollbar && scrollbar.$el) {
+        getScrollbarElement(scrollbar.$el).scrollTop = Math.max(0, value * typeItemHeight(type4));
+      }
+    };
+    const typeItemHeight = (type4) => {
+      const scrollbar = unref(listRefsMap[type4]);
+      const listItem = scrollbar == null ? void 0 : scrollbar.$el.querySelector("li");
+      if (listItem) {
+        return Number.parseFloat(getStyle(listItem, "height")) || 0;
+      }
+      return 0;
+    };
+    const onIncrement = () => {
+      scrollDown(1);
+    };
+    const onDecrement = () => {
+      scrollDown(-1);
+    };
+    const scrollDown = (step) => {
+      if (!currentScrollbar.value) {
+        emitSelectRange("hours");
+      }
+      const label = currentScrollbar.value;
+      const now2 = unref(timePartials)[label];
+      const total = currentScrollbar.value === "hours" ? 24 : 60;
+      const next = findNextUnDisabled(label, now2, step, total);
+      modifyDateField(label, next);
+      adjustSpinner(label, next);
+      nextTick(() => emitSelectRange(label));
+    };
+    const findNextUnDisabled = (type4, now2, step, total) => {
+      let next = (now2 + step + total) % total;
+      const list = unref(timeList)[type4];
+      while (list[next] && next !== now2) {
+        next = (next + step + total) % total;
+      }
+      return next;
+    };
+    const modifyDateField = (type4, value) => {
+      const list = unref(timeList)[type4];
+      const isDisabled = list[value];
+      if (isDisabled)
+        return;
+      const { hours, minutes, seconds } = unref(timePartials);
+      let changeTo;
+      switch (type4) {
+        case "hours":
+          changeTo = props.spinnerDate.hour(value).minute(minutes).second(seconds);
+          break;
+        case "minutes":
+          changeTo = props.spinnerDate.hour(hours).minute(value).second(seconds);
+          break;
+        case "seconds":
+          changeTo = props.spinnerDate.hour(hours).minute(minutes).second(value);
+          break;
+      }
+      emit("change", changeTo);
+    };
+    const handleClick = (type4, { value, disabled }) => {
+      if (!disabled) {
+        modifyDateField(type4, value);
+        emitSelectRange(type4);
+        adjustSpinner(type4, value);
+      }
+    };
+    const handleScroll = (type4) => {
+      isScrolling = true;
+      debouncedResetScroll(type4);
+      const value = Math.min(Math.round((getScrollbarElement(unref(listRefsMap[type4]).$el).scrollTop - (scrollBarHeight(type4) * 0.5 - 10) / typeItemHeight(type4) + 3) / typeItemHeight(type4)), type4 === "hours" ? 23 : 59);
+      modifyDateField(type4, value);
+    };
+    const scrollBarHeight = (type4) => {
+      return unref(listRefsMap[type4]).$el.offsetHeight;
+    };
+    const bindScrollEvent = () => {
+      const bindFunction = (type4) => {
+        const scrollbar = unref(listRefsMap[type4]);
+        if (scrollbar && scrollbar.$el) {
+          getScrollbarElement(scrollbar.$el).onscroll = () => {
+            handleScroll(type4);
+          };
+        }
+      };
+      bindFunction("hours");
+      bindFunction("minutes");
+      bindFunction("seconds");
+    };
+    onMounted(() => {
+      nextTick(() => {
+        !props.arrowControl && bindScrollEvent();
+        adjustSpinners();
+        if (props.role === "start")
+          emitSelectRange("hours");
+      });
+    });
+    const setRef = (scrollbar, type4) => {
+      listRefsMap[type4].value = scrollbar;
+    };
+    emit("set-option", [`${props.role}_scrollDown`, scrollDown]);
+    emit("set-option", [`${props.role}_emitSelectRange`, emitSelectRange]);
+    watch(() => props.spinnerDate, () => {
+      if (isScrolling)
+        return;
+      adjustSpinners();
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass([unref(ns).b("spinner"), { "has-seconds": _ctx.showSeconds }])
+      }, [
+        !_ctx.arrowControl ? (openBlock(true), createElementBlock(Fragment, { key: 0 }, renderList(unref(spinnerItems), (item) => {
+          return openBlock(), createBlock(unref(ElScrollbar), {
+            key: item,
+            ref_for: true,
+            ref: (scrollbar) => setRef(scrollbar, item),
+            class: normalizeClass(unref(ns).be("spinner", "wrapper")),
+            "wrap-style": "max-height: inherit;",
+            "view-class": unref(ns).be("spinner", "list"),
+            noresize: "",
+            tag: "ul",
+            onMouseenter: ($event) => emitSelectRange(item),
+            onMousemove: ($event) => adjustCurrentSpinner(item)
+          }, {
+            default: withCtx(() => [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(unref(timeList)[item], (disabled, key) => {
+                return openBlock(), createElementBlock("li", {
+                  key,
+                  class: normalizeClass([
+                    unref(ns).be("spinner", "item"),
+                    unref(ns).is("active", key === unref(timePartials)[item]),
+                    unref(ns).is("disabled", disabled)
+                  ]),
+                  onClick: ($event) => handleClick(item, { value: key, disabled })
+                }, [
+                  item === "hours" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+                    createTextVNode(toDisplayString(("0" + (_ctx.amPmMode ? key % 12 || 12 : key)).slice(-2)) + toDisplayString(getAmPmFlag(key)), 1)
+                  ], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                    createTextVNode(toDisplayString(("0" + key).slice(-2)), 1)
+                  ], 64))
+                ], 10, _hoisted_1$k);
+              }), 128))
+            ]),
+            _: 2
+          }, 1032, ["class", "view-class", "onMouseenter", "onMousemove"]);
+        }), 128)) : createCommentVNode("v-if", true),
+        _ctx.arrowControl ? (openBlock(true), createElementBlock(Fragment, { key: 1 }, renderList(unref(spinnerItems), (item) => {
+          return openBlock(), createElementBlock("div", {
+            key: item,
+            class: normalizeClass([unref(ns).be("spinner", "wrapper"), unref(ns).is("arrow")]),
+            onMouseenter: ($event) => emitSelectRange(item)
+          }, [
+            withDirectives((openBlock(), createBlock(unref(ElIcon), {
+              class: normalizeClass(["arrow-up", unref(ns).be("spinner", "arrow")])
+            }, {
+              default: withCtx(() => [
+                createVNode(unref(arrow_up_default))
+              ]),
+              _: 1
+            }, 8, ["class"])), [
+              [unref(vRepeatClick), onDecrement]
+            ]),
+            withDirectives((openBlock(), createBlock(unref(ElIcon), {
+              class: normalizeClass(["arrow-down", unref(ns).be("spinner", "arrow")])
+            }, {
+              default: withCtx(() => [
+                createVNode(unref(arrow_down_default))
+              ]),
+              _: 1
+            }, 8, ["class"])), [
+              [unref(vRepeatClick), onIncrement]
+            ]),
+            createElementVNode("ul", {
+              class: normalizeClass(unref(ns).be("spinner", "list"))
+            }, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(unref(arrowControlTimeList)[item], (time, key) => {
+                return openBlock(), createElementBlock("li", {
+                  key,
+                  class: normalizeClass([
+                    unref(ns).be("spinner", "item"),
+                    unref(ns).is("active", time === unref(timePartials)[item]),
+                    unref(ns).is("disabled", unref(timeList)[item][time])
+                  ])
+                }, [
+                  typeof time === "number" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+                    item === "hours" ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+                      createTextVNode(toDisplayString(("0" + (_ctx.amPmMode ? time % 12 || 12 : time)).slice(-2)) + toDisplayString(getAmPmFlag(time)), 1)
+                    ], 64)) : (openBlock(), createElementBlock(Fragment, { key: 1 }, [
+                      createTextVNode(toDisplayString(("0" + time).slice(-2)), 1)
+                    ], 64))
+                  ], 64)) : createCommentVNode("v-if", true)
+                ], 2);
+              }), 128))
+            ], 2)
+          ], 42, _hoisted_2$e);
+        }), 128)) : createCommentVNode("v-if", true)
+      ], 2);
+    };
+  }
+});
+var TimeSpinner = /* @__PURE__ */ _export_sfc$1(_sfc_main$C, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/time-picker/src/time-picker-com/basic-time-spinner.vue"]]);
+const _sfc_main$B = /* @__PURE__ */ defineComponent({
+  __name: "panel-time-pick",
+  props: panelTimePickerProps,
+  emits: ["pick", "select-range", "set-picker-option"],
+  setup(__props, { emit }) {
+    const props = __props;
+    const pickerBase = inject("EP_PICKER_BASE");
+    const {
+      arrowControl,
+      disabledHours,
+      disabledMinutes,
+      disabledSeconds,
+      defaultValue
+    } = pickerBase.props;
+    const { getAvailableHours, getAvailableMinutes, getAvailableSeconds } = buildAvailableTimeSlotGetter(disabledHours, disabledMinutes, disabledSeconds);
+    const ns = useNamespace("time");
+    const { t, lang } = useLocale();
+    const selectionRange = ref([0, 2]);
+    const oldValue = useOldValue(props);
+    const transitionName = computed(() => {
+      return isUndefined(props.actualVisible) ? `${ns.namespace.value}-zoom-in-top` : "";
+    });
+    const showSeconds = computed(() => {
+      return props.format.includes("ss");
+    });
+    const amPmMode = computed(() => {
+      if (props.format.includes("A"))
+        return "A";
+      if (props.format.includes("a"))
+        return "a";
+      return "";
+    });
+    const isValidValue2 = (_date) => {
+      const parsedDate = dayjs(_date).locale(lang.value);
+      const result = getRangeAvailableTime(parsedDate);
+      return parsedDate.isSame(result);
+    };
+    const handleCancel = () => {
+      emit("pick", oldValue.value, false);
+    };
+    const handleConfirm = (visible = false, first = false) => {
+      if (first)
+        return;
+      emit("pick", props.parsedValue, visible);
+    };
+    const handleChange = (_date) => {
+      if (!props.visible) {
+        return;
+      }
+      const result = getRangeAvailableTime(_date).millisecond(0);
+      emit("pick", result, true);
+    };
+    const setSelectionRange = (start, end2) => {
+      emit("select-range", start, end2);
+      selectionRange.value = [start, end2];
+    };
+    const changeSelectionRange = (step) => {
+      const list = [0, 3].concat(showSeconds.value ? [6] : []);
+      const mapping = ["hours", "minutes"].concat(showSeconds.value ? ["seconds"] : []);
+      const index = list.indexOf(selectionRange.value[0]);
+      const next = (index + step + list.length) % list.length;
+      timePickerOptions["start_emitSelectRange"](mapping[next]);
+    };
+    const handleKeydown = (event) => {
+      const code = event.code;
+      const { left: left2, right: right2, up: up2, down: down2 } = EVENT_CODE;
+      if ([left2, right2].includes(code)) {
+        const step = code === left2 ? -1 : 1;
+        changeSelectionRange(step);
+        event.preventDefault();
+        return;
+      }
+      if ([up2, down2].includes(code)) {
+        const step = code === up2 ? -1 : 1;
+        timePickerOptions["start_scrollDown"](step);
+        event.preventDefault();
+        return;
+      }
+    };
+    const { timePickerOptions, onSetOption, getAvailableTime } = useTimePanel({
+      getAvailableHours,
+      getAvailableMinutes,
+      getAvailableSeconds
+    });
+    const getRangeAvailableTime = (date4) => {
+      return getAvailableTime(date4, props.datetimeRole || "", true);
+    };
+    const parseUserInput = (value) => {
+      if (!value)
+        return null;
+      return dayjs(value, props.format).locale(lang.value);
+    };
+    const formatToString = (value) => {
+      if (!value)
+        return null;
+      return value.format(props.format);
+    };
+    const getDefaultValue2 = () => {
+      return dayjs(defaultValue).locale(lang.value);
+    };
+    emit("set-picker-option", ["isValidValue", isValidValue2]);
+    emit("set-picker-option", ["formatToString", formatToString]);
+    emit("set-picker-option", ["parseUserInput", parseUserInput]);
+    emit("set-picker-option", ["handleKeydownInput", handleKeydown]);
+    emit("set-picker-option", ["getRangeAvailableTime", getRangeAvailableTime]);
+    emit("set-picker-option", ["getDefaultValue", getDefaultValue2]);
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(Transition, { name: unref(transitionName) }, {
+        default: withCtx(() => [
+          _ctx.actualVisible || _ctx.visible ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            class: normalizeClass(unref(ns).b("panel"))
+          }, [
+            createElementVNode("div", {
+              class: normalizeClass([unref(ns).be("panel", "content"), { "has-seconds": unref(showSeconds) }])
+            }, [
+              createVNode(TimeSpinner, {
+                ref: "spinner",
+                role: _ctx.datetimeRole || "start",
+                "arrow-control": unref(arrowControl),
+                "show-seconds": unref(showSeconds),
+                "am-pm-mode": unref(amPmMode),
+                "spinner-date": _ctx.parsedValue,
+                "disabled-hours": unref(disabledHours),
+                "disabled-minutes": unref(disabledMinutes),
+                "disabled-seconds": unref(disabledSeconds),
+                onChange: handleChange,
+                onSetOption: unref(onSetOption),
+                onSelectRange: setSelectionRange
+              }, null, 8, ["role", "arrow-control", "show-seconds", "am-pm-mode", "spinner-date", "disabled-hours", "disabled-minutes", "disabled-seconds", "onSetOption"])
+            ], 2),
+            createElementVNode("div", {
+              class: normalizeClass(unref(ns).be("panel", "footer"))
+            }, [
+              createElementVNode("button", {
+                type: "button",
+                class: normalizeClass([unref(ns).be("panel", "btn"), "cancel"]),
+                onClick: handleCancel
+              }, toDisplayString(unref(t)("el.datepicker.cancel")), 3),
+              createElementVNode("button", {
+                type: "button",
+                class: normalizeClass([unref(ns).be("panel", "btn"), "confirm"]),
+                onClick: _cache[0] || (_cache[0] = ($event) => handleConfirm())
+              }, toDisplayString(unref(t)("el.datepicker.confirm")), 3)
+            ], 2)
+          ], 2)) : createCommentVNode("v-if", true)
+        ]),
+        _: 1
+      }, 8, ["name"]);
+    };
+  }
+});
+var TimePickPanel = /* @__PURE__ */ _export_sfc$1(_sfc_main$B, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/time-picker/src/time-picker-com/panel-time-pick.vue"]]);
+var localeData$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(n, e) {
+    module2.exports = e();
+  }(commonjsGlobal, function() {
+    return function(n, e, t) {
+      var r = e.prototype, o = function(n2) {
+        return n2 && (n2.indexOf ? n2 : n2.s);
+      }, u = function(n2, e2, t2, r2, u2) {
+        var i2 = n2.name ? n2 : n2.$locale(), a2 = o(i2[e2]), s2 = o(i2[t2]), f = a2 || s2.map(function(n3) {
+          return n3.slice(0, r2);
+        });
+        if (!u2)
+          return f;
+        var d = i2.weekStart;
+        return f.map(function(n3, e3) {
+          return f[(e3 + (d || 0)) % 7];
+        });
+      }, i = function() {
+        return t.Ls[t.locale()];
+      }, a = function(n2, e2) {
+        return n2.formats[e2] || function(n3) {
+          return n3.replace(/(\[[^\]]+])|(MMMM|MM|DD|dddd)/g, function(n4, e3, t2) {
+            return e3 || t2.slice(1);
+          });
+        }(n2.formats[e2.toUpperCase()]);
+      }, s = function() {
+        var n2 = this;
+        return { months: function(e2) {
+          return e2 ? e2.format("MMMM") : u(n2, "months");
+        }, monthsShort: function(e2) {
+          return e2 ? e2.format("MMM") : u(n2, "monthsShort", "months", 3);
+        }, firstDayOfWeek: function() {
+          return n2.$locale().weekStart || 0;
+        }, weekdays: function(e2) {
+          return e2 ? e2.format("dddd") : u(n2, "weekdays");
+        }, weekdaysMin: function(e2) {
+          return e2 ? e2.format("dd") : u(n2, "weekdaysMin", "weekdays", 2);
+        }, weekdaysShort: function(e2) {
+          return e2 ? e2.format("ddd") : u(n2, "weekdaysShort", "weekdays", 3);
+        }, longDateFormat: function(e2) {
+          return a(n2.$locale(), e2);
+        }, meridiem: this.$locale().meridiem, ordinal: this.$locale().ordinal };
+      };
+      r.localeData = function() {
+        return s.bind(this)();
+      }, t.localeData = function() {
+        var n2 = i();
+        return { firstDayOfWeek: function() {
+          return n2.weekStart || 0;
+        }, weekdays: function() {
+          return t.weekdays();
+        }, weekdaysShort: function() {
+          return t.weekdaysShort();
+        }, weekdaysMin: function() {
+          return t.weekdaysMin();
+        }, months: function() {
+          return t.months();
+        }, monthsShort: function() {
+          return t.monthsShort();
+        }, longDateFormat: function(e2) {
+          return a(n2, e2);
+        }, meridiem: n2.meridiem, ordinal: n2.ordinal };
+      }, t.months = function() {
+        return u(i(), "months");
+      }, t.monthsShort = function() {
+        return u(i(), "monthsShort", "months", 3);
+      }, t.weekdays = function(n2) {
+        return u(i(), "weekdays", null, null, n2);
+      }, t.weekdaysShort = function(n2) {
+        return u(i(), "weekdaysShort", "weekdays", 3, n2);
+      }, t.weekdaysMin = function(n2) {
+        return u(i(), "weekdaysMin", "weekdays", 2, n2);
+      };
+    };
+  });
+})(localeData$1);
+var localeDataExports = localeData$1.exports;
+const localeData = /* @__PURE__ */ getDefaultExportFromCjs(localeDataExports);
+const checkboxProps = {
+  modelValue: {
+    type: [Number, String, Boolean],
+    default: void 0
+  },
+  label: {
+    type: [String, Boolean, Number, Object],
+    default: void 0
+  },
+  indeterminate: Boolean,
+  disabled: Boolean,
+  checked: Boolean,
+  name: {
+    type: String,
+    default: void 0
+  },
+  trueLabel: {
+    type: [String, Number],
+    default: void 0
+  },
+  falseLabel: {
+    type: [String, Number],
+    default: void 0
+  },
+  id: {
+    type: String,
+    default: void 0
+  },
+  controls: {
+    type: String,
+    default: void 0
+  },
+  border: Boolean,
+  size: useSizeProp,
+  tabindex: [String, Number],
+  validateEvent: {
+    type: Boolean,
+    default: true
+  }
+};
+const checkboxEmits = {
+  [UPDATE_MODEL_EVENT]: (val) => isString(val) || isNumber(val) || isBoolean(val),
+  change: (val) => isString(val) || isNumber(val) || isBoolean(val)
+};
+const checkboxGroupContextKey = Symbol("checkboxGroupContextKey");
+const useCheckboxDisabled = ({
+  model,
+  isChecked
+}) => {
+  const checkboxGroup = inject(checkboxGroupContextKey, void 0);
+  const isLimitDisabled = computed(() => {
+    var _a2, _b;
+    const max = (_a2 = checkboxGroup == null ? void 0 : checkboxGroup.max) == null ? void 0 : _a2.value;
+    const min = (_b = checkboxGroup == null ? void 0 : checkboxGroup.min) == null ? void 0 : _b.value;
+    return !isUndefined(max) && model.value.length >= max && !isChecked.value || !isUndefined(min) && model.value.length <= min && isChecked.value;
+  });
+  const isDisabled = useFormDisabled(computed(() => (checkboxGroup == null ? void 0 : checkboxGroup.disabled.value) || isLimitDisabled.value));
+  return {
+    isDisabled,
+    isLimitDisabled
+  };
+};
+const useCheckboxEvent = (props, {
+  model,
+  isLimitExceeded,
+  hasOwnLabel,
+  isDisabled,
+  isLabeledByFormItem
+}) => {
+  const checkboxGroup = inject(checkboxGroupContextKey, void 0);
+  const { formItem } = useFormItem();
+  const { emit } = getCurrentInstance();
+  function getLabeledValue(value) {
+    var _a2, _b;
+    return value === props.trueLabel || value === true ? (_a2 = props.trueLabel) != null ? _a2 : true : (_b = props.falseLabel) != null ? _b : false;
+  }
+  function emitChangeEvent(checked, e) {
+    emit("change", getLabeledValue(checked), e);
+  }
+  function handleChange(e) {
+    if (isLimitExceeded.value)
+      return;
+    const target2 = e.target;
+    emit("change", getLabeledValue(target2.checked), e);
+  }
+  async function onClickRoot(e) {
+    if (isLimitExceeded.value)
+      return;
+    if (!hasOwnLabel.value && !isDisabled.value && isLabeledByFormItem.value) {
+      const eventTargets = e.composedPath();
+      const hasLabel = eventTargets.some((item) => item.tagName === "LABEL");
+      if (!hasLabel) {
+        model.value = getLabeledValue([false, props.falseLabel].includes(model.value));
+        await nextTick();
+        emitChangeEvent(model.value, e);
+      }
+    }
+  }
+  const validateEvent = computed(() => (checkboxGroup == null ? void 0 : checkboxGroup.validateEvent) || props.validateEvent);
+  watch(() => props.modelValue, () => {
+    if (validateEvent.value) {
+      formItem == null ? void 0 : formItem.validate("change").catch((err) => debugWarn(err));
+    }
+  });
+  return {
+    handleChange,
+    onClickRoot
+  };
+};
+const useCheckboxModel = (props) => {
+  const selfModel = ref(false);
+  const { emit } = getCurrentInstance();
+  const checkboxGroup = inject(checkboxGroupContextKey, void 0);
+  const isGroup = computed(() => isUndefined(checkboxGroup) === false);
+  const isLimitExceeded = ref(false);
+  const model = computed({
+    get() {
+      var _a2, _b;
+      return isGroup.value ? (_a2 = checkboxGroup == null ? void 0 : checkboxGroup.modelValue) == null ? void 0 : _a2.value : (_b = props.modelValue) != null ? _b : selfModel.value;
+    },
+    set(val) {
+      var _a2, _b;
+      if (isGroup.value && isArray$2(val)) {
+        isLimitExceeded.value = ((_a2 = checkboxGroup == null ? void 0 : checkboxGroup.max) == null ? void 0 : _a2.value) !== void 0 && val.length > (checkboxGroup == null ? void 0 : checkboxGroup.max.value);
+        isLimitExceeded.value === false && ((_b = checkboxGroup == null ? void 0 : checkboxGroup.changeEvent) == null ? void 0 : _b.call(checkboxGroup, val));
+      } else {
+        emit(UPDATE_MODEL_EVENT, val);
+        selfModel.value = val;
+      }
+    }
+  });
+  return {
+    model,
+    isGroup,
+    isLimitExceeded
+  };
+};
+const useCheckboxStatus = (props, slots, { model }) => {
+  const checkboxGroup = inject(checkboxGroupContextKey, void 0);
+  const isFocused = ref(false);
+  const isChecked = computed(() => {
+    const value = model.value;
+    if (isBoolean(value)) {
+      return value;
+    } else if (isArray$2(value)) {
+      if (isObject$1(props.label)) {
+        return value.map(toRaw).some((o) => isEqual(o, props.label));
+      } else {
+        return value.map(toRaw).includes(props.label);
+      }
+    } else if (value !== null && value !== void 0) {
+      return value === props.trueLabel;
+    } else {
+      return !!value;
+    }
+  });
+  const checkboxButtonSize = useFormSize(computed(() => {
+    var _a2;
+    return (_a2 = checkboxGroup == null ? void 0 : checkboxGroup.size) == null ? void 0 : _a2.value;
+  }), {
+    prop: true
+  });
+  const checkboxSize = useFormSize(computed(() => {
+    var _a2;
+    return (_a2 = checkboxGroup == null ? void 0 : checkboxGroup.size) == null ? void 0 : _a2.value;
+  }));
+  const hasOwnLabel = computed(() => {
+    return !!slots.default || !isNil(props.label);
+  });
+  return {
+    checkboxButtonSize,
+    isChecked,
+    isFocused,
+    checkboxSize,
+    hasOwnLabel
+  };
+};
+const setStoreValue = (props, { model }) => {
+  function addToStore() {
+    if (isArray$2(model.value) && !model.value.includes(props.label)) {
+      model.value.push(props.label);
+    } else {
+      model.value = props.trueLabel || true;
+    }
+  }
+  props.checked && addToStore();
+};
+const useCheckbox = (props, slots) => {
+  const { formItem: elFormItem } = useFormItem();
+  const { model, isGroup, isLimitExceeded } = useCheckboxModel(props);
+  const {
+    isFocused,
+    isChecked,
+    checkboxButtonSize,
+    checkboxSize,
+    hasOwnLabel
+  } = useCheckboxStatus(props, slots, { model });
+  const { isDisabled } = useCheckboxDisabled({ model, isChecked });
+  const { inputId, isLabeledByFormItem } = useFormItemInputId(props, {
+    formItemContext: elFormItem,
+    disableIdGeneration: hasOwnLabel,
+    disableIdManagement: isGroup
+  });
+  const { handleChange, onClickRoot } = useCheckboxEvent(props, {
+    model,
+    isLimitExceeded,
+    hasOwnLabel,
+    isDisabled,
+    isLabeledByFormItem
+  });
+  setStoreValue(props, { model });
+  return {
+    inputId,
+    isLabeledByFormItem,
+    isChecked,
+    isDisabled,
+    isFocused,
+    checkboxButtonSize,
+    checkboxSize,
+    hasOwnLabel,
+    model,
+    handleChange,
+    onClickRoot
+  };
+};
+const _hoisted_1$j = ["id", "indeterminate", "name", "tabindex", "disabled", "true-value", "false-value"];
+const _hoisted_2$d = ["id", "indeterminate", "disabled", "value", "name", "tabindex"];
+const __default__$l = defineComponent({
+  name: "ElCheckbox"
+});
+const _sfc_main$A = /* @__PURE__ */ defineComponent({
+  ...__default__$l,
+  props: checkboxProps,
+  emits: checkboxEmits,
+  setup(__props) {
+    const props = __props;
+    const slots = useSlots();
+    const {
+      inputId,
+      isLabeledByFormItem,
+      isChecked,
+      isDisabled,
+      isFocused,
+      checkboxSize,
+      hasOwnLabel,
+      model,
+      handleChange,
+      onClickRoot
+    } = useCheckbox(props, slots);
+    const ns = useNamespace("checkbox");
+    const compKls = computed(() => {
+      return [
+        ns.b(),
+        ns.m(checkboxSize.value),
+        ns.is("disabled", isDisabled.value),
+        ns.is("bordered", props.border),
+        ns.is("checked", isChecked.value)
+      ];
+    });
+    const spanKls = computed(() => {
+      return [
+        ns.e("input"),
+        ns.is("disabled", isDisabled.value),
+        ns.is("checked", isChecked.value),
+        ns.is("indeterminate", props.indeterminate),
+        ns.is("focus", isFocused.value)
+      ];
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(resolveDynamicComponent(!unref(hasOwnLabel) && unref(isLabeledByFormItem) ? "span" : "label"), {
+        class: normalizeClass(unref(compKls)),
+        "aria-controls": _ctx.indeterminate ? _ctx.controls : null,
+        onClick: unref(onClickRoot)
+      }, {
+        default: withCtx(() => [
+          createElementVNode("span", {
+            class: normalizeClass(unref(spanKls))
+          }, [
+            _ctx.trueLabel || _ctx.falseLabel ? withDirectives((openBlock(), createElementBlock("input", {
+              key: 0,
+              id: unref(inputId),
+              "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => isRef(model) ? model.value = $event : null),
+              class: normalizeClass(unref(ns).e("original")),
+              type: "checkbox",
+              indeterminate: _ctx.indeterminate,
+              name: _ctx.name,
+              tabindex: _ctx.tabindex,
+              disabled: unref(isDisabled),
+              "true-value": _ctx.trueLabel,
+              "false-value": _ctx.falseLabel,
+              onChange: _cache[1] || (_cache[1] = (...args) => unref(handleChange) && unref(handleChange)(...args)),
+              onFocus: _cache[2] || (_cache[2] = ($event) => isFocused.value = true),
+              onBlur: _cache[3] || (_cache[3] = ($event) => isFocused.value = false),
+              onClick: _cache[4] || (_cache[4] = withModifiers(() => {
+              }, ["stop"]))
+            }, null, 42, _hoisted_1$j)), [
+              [vModelCheckbox, unref(model)]
+            ]) : withDirectives((openBlock(), createElementBlock("input", {
+              key: 1,
+              id: unref(inputId),
+              "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => isRef(model) ? model.value = $event : null),
+              class: normalizeClass(unref(ns).e("original")),
+              type: "checkbox",
+              indeterminate: _ctx.indeterminate,
+              disabled: unref(isDisabled),
+              value: _ctx.label,
+              name: _ctx.name,
+              tabindex: _ctx.tabindex,
+              onChange: _cache[6] || (_cache[6] = (...args) => unref(handleChange) && unref(handleChange)(...args)),
+              onFocus: _cache[7] || (_cache[7] = ($event) => isFocused.value = true),
+              onBlur: _cache[8] || (_cache[8] = ($event) => isFocused.value = false),
+              onClick: _cache[9] || (_cache[9] = withModifiers(() => {
+              }, ["stop"]))
+            }, null, 42, _hoisted_2$d)), [
+              [vModelCheckbox, unref(model)]
+            ]),
+            createElementVNode("span", {
+              class: normalizeClass(unref(ns).e("inner"))
+            }, null, 2)
+          ], 2),
+          unref(hasOwnLabel) ? (openBlock(), createElementBlock("span", {
+            key: 0,
+            class: normalizeClass(unref(ns).e("label"))
+          }, [
+            renderSlot(_ctx.$slots, "default"),
+            !_ctx.$slots.default ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [
+              createTextVNode(toDisplayString(_ctx.label), 1)
+            ], 64)) : createCommentVNode("v-if", true)
+          ], 2)) : createCommentVNode("v-if", true)
+        ]),
+        _: 3
+      }, 8, ["class", "aria-controls", "onClick"]);
+    };
+  }
+});
+var Checkbox = /* @__PURE__ */ _export_sfc$1(_sfc_main$A, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/checkbox/src/checkbox.vue"]]);
+const _hoisted_1$i = ["name", "tabindex", "disabled", "true-value", "false-value"];
+const _hoisted_2$c = ["name", "tabindex", "disabled", "value"];
+const __default__$k = defineComponent({
+  name: "ElCheckboxButton"
+});
+const _sfc_main$z = /* @__PURE__ */ defineComponent({
+  ...__default__$k,
+  props: checkboxProps,
+  emits: checkboxEmits,
+  setup(__props) {
+    const props = __props;
+    const slots = useSlots();
+    const {
+      isFocused,
+      isChecked,
+      isDisabled,
+      checkboxButtonSize,
+      model,
+      handleChange
+    } = useCheckbox(props, slots);
+    const checkboxGroup = inject(checkboxGroupContextKey, void 0);
+    const ns = useNamespace("checkbox");
+    const activeStyle = computed(() => {
+      var _a2, _b, _c, _d;
+      const fillValue = (_b = (_a2 = checkboxGroup == null ? void 0 : checkboxGroup.fill) == null ? void 0 : _a2.value) != null ? _b : "";
+      return {
+        backgroundColor: fillValue,
+        borderColor: fillValue,
+        color: (_d = (_c = checkboxGroup == null ? void 0 : checkboxGroup.textColor) == null ? void 0 : _c.value) != null ? _d : "",
+        boxShadow: fillValue ? `-1px 0 0 0 ${fillValue}` : void 0
+      };
+    });
+    const labelKls = computed(() => {
+      return [
+        ns.b("button"),
+        ns.bm("button", checkboxButtonSize.value),
+        ns.is("disabled", isDisabled.value),
+        ns.is("checked", isChecked.value),
+        ns.is("focus", isFocused.value)
+      ];
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("label", {
+        class: normalizeClass(unref(labelKls))
+      }, [
+        _ctx.trueLabel || _ctx.falseLabel ? withDirectives((openBlock(), createElementBlock("input", {
+          key: 0,
+          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => isRef(model) ? model.value = $event : null),
+          class: normalizeClass(unref(ns).be("button", "original")),
+          type: "checkbox",
+          name: _ctx.name,
+          tabindex: _ctx.tabindex,
+          disabled: unref(isDisabled),
+          "true-value": _ctx.trueLabel,
+          "false-value": _ctx.falseLabel,
+          onChange: _cache[1] || (_cache[1] = (...args) => unref(handleChange) && unref(handleChange)(...args)),
+          onFocus: _cache[2] || (_cache[2] = ($event) => isFocused.value = true),
+          onBlur: _cache[3] || (_cache[3] = ($event) => isFocused.value = false),
+          onClick: _cache[4] || (_cache[4] = withModifiers(() => {
+          }, ["stop"]))
+        }, null, 42, _hoisted_1$i)), [
+          [vModelCheckbox, unref(model)]
+        ]) : withDirectives((openBlock(), createElementBlock("input", {
+          key: 1,
+          "onUpdate:modelValue": _cache[5] || (_cache[5] = ($event) => isRef(model) ? model.value = $event : null),
+          class: normalizeClass(unref(ns).be("button", "original")),
+          type: "checkbox",
+          name: _ctx.name,
+          tabindex: _ctx.tabindex,
+          disabled: unref(isDisabled),
+          value: _ctx.label,
+          onChange: _cache[6] || (_cache[6] = (...args) => unref(handleChange) && unref(handleChange)(...args)),
+          onFocus: _cache[7] || (_cache[7] = ($event) => isFocused.value = true),
+          onBlur: _cache[8] || (_cache[8] = ($event) => isFocused.value = false),
+          onClick: _cache[9] || (_cache[9] = withModifiers(() => {
+          }, ["stop"]))
+        }, null, 42, _hoisted_2$c)), [
+          [vModelCheckbox, unref(model)]
+        ]),
+        _ctx.$slots.default || _ctx.label ? (openBlock(), createElementBlock("span", {
+          key: 2,
+          class: normalizeClass(unref(ns).be("button", "inner")),
+          style: normalizeStyle(unref(isChecked) ? unref(activeStyle) : void 0)
+        }, [
+          renderSlot(_ctx.$slots, "default", {}, () => [
+            createTextVNode(toDisplayString(_ctx.label), 1)
+          ])
+        ], 6)) : createCommentVNode("v-if", true)
+      ], 2);
+    };
+  }
+});
+var CheckboxButton = /* @__PURE__ */ _export_sfc$1(_sfc_main$z, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/checkbox/src/checkbox-button.vue"]]);
+const checkboxGroupProps = buildProps({
+  modelValue: {
+    type: definePropType(Array),
+    default: () => []
+  },
+  disabled: Boolean,
+  min: Number,
+  max: Number,
+  size: useSizeProp,
+  label: String,
+  fill: String,
+  textColor: String,
+  tag: {
+    type: String,
+    default: "div"
+  },
+  validateEvent: {
+    type: Boolean,
+    default: true
+  }
+});
+const checkboxGroupEmits = {
+  [UPDATE_MODEL_EVENT]: (val) => isArray$2(val),
+  change: (val) => isArray$2(val)
+};
+const __default__$j = defineComponent({
+  name: "ElCheckboxGroup"
+});
+const _sfc_main$y = /* @__PURE__ */ defineComponent({
+  ...__default__$j,
+  props: checkboxGroupProps,
+  emits: checkboxGroupEmits,
+  setup(__props, { emit }) {
+    const props = __props;
+    const ns = useNamespace("checkbox");
+    const { formItem } = useFormItem();
+    const { inputId: groupId, isLabeledByFormItem } = useFormItemInputId(props, {
+      formItemContext: formItem
+    });
+    const changeEvent = async (value) => {
+      emit(UPDATE_MODEL_EVENT, value);
+      await nextTick();
+      emit("change", value);
+    };
+    const modelValue = computed({
+      get() {
+        return props.modelValue;
+      },
+      set(val) {
+        changeEvent(val);
+      }
+    });
+    provide(checkboxGroupContextKey, {
+      ...pick$1(toRefs(props), [
+        "size",
+        "min",
+        "max",
+        "disabled",
+        "validateEvent",
+        "fill",
+        "textColor"
+      ]),
+      modelValue,
+      changeEvent
+    });
+    watch(() => props.modelValue, () => {
+      if (props.validateEvent) {
+        formItem == null ? void 0 : formItem.validate("change").catch((err) => debugWarn(err));
+      }
+    });
+    return (_ctx, _cache) => {
+      var _a2;
+      return openBlock(), createBlock(resolveDynamicComponent(_ctx.tag), {
+        id: unref(groupId),
+        class: normalizeClass(unref(ns).b("group")),
+        role: "group",
+        "aria-label": !unref(isLabeledByFormItem) ? _ctx.label || "checkbox-group" : void 0,
+        "aria-labelledby": unref(isLabeledByFormItem) ? (_a2 = unref(formItem)) == null ? void 0 : _a2.labelId : void 0
+      }, {
+        default: withCtx(() => [
+          renderSlot(_ctx.$slots, "default")
+        ]),
+        _: 3
+      }, 8, ["id", "class", "aria-label", "aria-labelledby"]);
+    };
+  }
+});
+var CheckboxGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$y, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/checkbox/src/checkbox-group.vue"]]);
+const ElCheckbox = withInstall(Checkbox, {
+  CheckboxButton,
+  CheckboxGroup
+});
+const ElCheckboxButton = withNoopInstall(CheckboxButton);
+const ElCheckboxGroup = withNoopInstall(CheckboxGroup);
 const radioPropsBase = buildProps({
   size: useSizeProp,
   disabled: Boolean,
@@ -11141,12 +14228,12 @@ const useRadio = (props, emit) => {
     modelValue
   };
 };
-const _hoisted_1$8 = ["value", "name", "disabled"];
-const __default__$f = defineComponent({
+const _hoisted_1$h = ["value", "name", "disabled"];
+const __default__$i = defineComponent({
   name: "ElRadio"
 });
-const _sfc_main$m = /* @__PURE__ */ defineComponent({
-  ...__default__$f,
+const _sfc_main$x = /* @__PURE__ */ defineComponent({
+  ...__default__$i,
   props: radioProps,
   emits: radioEmits,
   setup(__props, { emit }) {
@@ -11189,7 +14276,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
             onChange: handleChange,
             onClick: _cache[3] || (_cache[3] = withModifiers(() => {
             }, ["stop"]))
-          }, null, 42, _hoisted_1$8), [
+          }, null, 42, _hoisted_1$h), [
             [vModelRadio, unref(modelValue)]
           ]),
           createElementVNode("span", {
@@ -11209,7 +14296,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Radio = /* @__PURE__ */ _export_sfc$1(_sfc_main$m, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio.vue"]]);
+var Radio = /* @__PURE__ */ _export_sfc$1(_sfc_main$x, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio.vue"]]);
 const radioButtonProps = buildProps({
   ...radioPropsBase,
   name: {
@@ -11217,12 +14304,12 @@ const radioButtonProps = buildProps({
     default: ""
   }
 });
-const _hoisted_1$7 = ["value", "name", "disabled"];
-const __default__$e = defineComponent({
+const _hoisted_1$g = ["value", "name", "disabled"];
+const __default__$h = defineComponent({
   name: "ElRadioButton"
 });
-const _sfc_main$l = /* @__PURE__ */ defineComponent({
-  ...__default__$e,
+const _sfc_main$w = /* @__PURE__ */ defineComponent({
+  ...__default__$h,
   props: radioButtonProps,
   setup(__props) {
     const props = __props;
@@ -11260,7 +14347,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
           onBlur: _cache[2] || (_cache[2] = ($event) => focus.value = false),
           onClick: _cache[3] || (_cache[3] = withModifiers(() => {
           }, ["stop"]))
-        }, null, 42, _hoisted_1$7), [
+        }, null, 42, _hoisted_1$g), [
           [vModelRadio, unref(modelValue)]
         ]),
         createElementVNode("span", {
@@ -11277,7 +14364,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var RadioButton = /* @__PURE__ */ _export_sfc$1(_sfc_main$l, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio-button.vue"]]);
+var RadioButton = /* @__PURE__ */ _export_sfc$1(_sfc_main$w, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio-button.vue"]]);
 const radioGroupProps = buildProps({
   id: {
     type: String,
@@ -11311,12 +14398,12 @@ const radioGroupProps = buildProps({
   }
 });
 const radioGroupEmits = radioEmits;
-const _hoisted_1$6 = ["id", "aria-label", "aria-labelledby"];
-const __default__$d = defineComponent({
+const _hoisted_1$f = ["id", "aria-label", "aria-labelledby"];
+const __default__$g = defineComponent({
   name: "ElRadioGroup"
 });
-const _sfc_main$k = /* @__PURE__ */ defineComponent({
-  ...__default__$d,
+const _sfc_main$v = /* @__PURE__ */ defineComponent({
+  ...__default__$g,
   props: radioGroupProps,
   emits: radioGroupEmits,
   setup(__props, { emit }) {
@@ -11363,11 +14450,11 @@ const _sfc_main$k = /* @__PURE__ */ defineComponent({
         "aria-labelledby": unref(isLabeledByFormItem) ? unref(formItem).labelId : void 0
       }, [
         renderSlot(_ctx.$slots, "default")
-      ], 10, _hoisted_1$6);
+      ], 10, _hoisted_1$f);
     };
   }
 });
-var RadioGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$k, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio-group.vue"]]);
+var RadioGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$v, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio-group.vue"]]);
 const ElRadio = withInstall(Radio, {
   RadioButton,
   RadioGroup
@@ -11403,11 +14490,11 @@ const tagEmits = {
   close: (evt) => evt instanceof MouseEvent,
   click: (evt) => evt instanceof MouseEvent
 };
-const __default__$c = defineComponent({
+const __default__$f = defineComponent({
   name: "ElTag"
 });
-const _sfc_main$j = /* @__PURE__ */ defineComponent({
-  ...__default__$c,
+const _sfc_main$u = /* @__PURE__ */ defineComponent({
+  ...__default__$f,
   props: tagProps,
   emits: tagEmits,
   setup(__props, { emit }) {
@@ -11487,7 +14574,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Tag = /* @__PURE__ */ _export_sfc$1(_sfc_main$j, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tag/src/tag.vue"]]);
+var Tag = /* @__PURE__ */ _export_sfc$1(_sfc_main$u, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tag/src/tag.vue"]]);
 const ElTag = withInstall(Tag);
 const rowContextKey = Symbol("rowContextKey");
 const RowJustify = [
@@ -11518,11 +14605,11 @@ const rowProps = buildProps({
     values: RowAlign
   }
 });
-const __default__$b = defineComponent({
+const __default__$e = defineComponent({
   name: "ElRow"
 });
-const _sfc_main$i = /* @__PURE__ */ defineComponent({
-  ...__default__$b,
+const _sfc_main$t = /* @__PURE__ */ defineComponent({
+  ...__default__$e,
   props: rowProps,
   setup(__props) {
     const props = __props;
@@ -11557,7 +14644,7 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Row = /* @__PURE__ */ _export_sfc$1(_sfc_main$i, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/row/src/row.vue"]]);
+var Row = /* @__PURE__ */ _export_sfc$1(_sfc_main$t, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/row/src/row.vue"]]);
 const ElRow = withInstall(Row);
 const colProps = buildProps({
   tag: {
@@ -11601,11 +14688,11 @@ const colProps = buildProps({
     default: () => mutable({})
   }
 });
-const __default__$a = defineComponent({
+const __default__$d = defineComponent({
   name: "ElCol"
 });
-const _sfc_main$h = /* @__PURE__ */ defineComponent({
-  ...__default__$a,
+const _sfc_main$s = /* @__PURE__ */ defineComponent({
+  ...__default__$d,
   props: colProps,
   setup(__props) {
     const props = __props;
@@ -11658,13 +14745,13 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Col = /* @__PURE__ */ _export_sfc$1(_sfc_main$h, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/col/src/col.vue"]]);
+var Col = /* @__PURE__ */ _export_sfc$1(_sfc_main$s, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/col/src/col.vue"]]);
 const ElCol = withInstall(Col);
-const __default__$9 = defineComponent({
+const __default__$c = defineComponent({
   name: "ElCollapseTransition"
 });
-const _sfc_main$g = /* @__PURE__ */ defineComponent({
-  ...__default__$9,
+const _sfc_main$r = /* @__PURE__ */ defineComponent({
+  ...__default__$c,
   setup(__props) {
     const ns = useNamespace("collapse-transition");
     const reset = (el) => {
@@ -11736,16 +14823,1196 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var CollapseTransition = /* @__PURE__ */ _export_sfc$1(_sfc_main$g, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/collapse-transition/src/collapse-transition.vue"]]);
+var CollapseTransition = /* @__PURE__ */ _export_sfc$1(_sfc_main$r, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/collapse-transition/src/collapse-transition.vue"]]);
 CollapseTransition.install = (app) => {
   app.component(CollapseTransition.name, CollapseTransition);
 };
 const _CollapseTransition = CollapseTransition;
-const __default__$8 = defineComponent({
+const alphaSliderProps = buildProps({
+  color: {
+    type: definePropType(Object),
+    required: true
+  },
+  vertical: {
+    type: Boolean,
+    default: false
+  }
+});
+let isDragging = false;
+function draggable(element, options2) {
+  if (!isClient)
+    return;
+  const moveFn = function(event) {
+    var _a2;
+    (_a2 = options2.drag) == null ? void 0 : _a2.call(options2, event);
+  };
+  const upFn = function(event) {
+    var _a2;
+    document.removeEventListener("mousemove", moveFn);
+    document.removeEventListener("mouseup", upFn);
+    document.removeEventListener("touchmove", moveFn);
+    document.removeEventListener("touchend", upFn);
+    document.onselectstart = null;
+    document.ondragstart = null;
+    isDragging = false;
+    (_a2 = options2.end) == null ? void 0 : _a2.call(options2, event);
+  };
+  const downFn = function(event) {
+    var _a2;
+    if (isDragging)
+      return;
+    event.preventDefault();
+    document.onselectstart = () => false;
+    document.ondragstart = () => false;
+    document.addEventListener("mousemove", moveFn);
+    document.addEventListener("mouseup", upFn);
+    document.addEventListener("touchmove", moveFn);
+    document.addEventListener("touchend", upFn);
+    isDragging = true;
+    (_a2 = options2.start) == null ? void 0 : _a2.call(options2, event);
+  };
+  element.addEventListener("mousedown", downFn);
+  element.addEventListener("touchstart", downFn);
+}
+const useAlphaSlider = (props) => {
+  const instance = getCurrentInstance();
+  const thumb = shallowRef();
+  const bar = shallowRef();
+  function handleClick(event) {
+    const target2 = event.target;
+    if (target2 !== thumb.value) {
+      handleDrag(event);
+    }
+  }
+  function handleDrag(event) {
+    if (!bar.value || !thumb.value)
+      return;
+    const el = instance.vnode.el;
+    const rect = el.getBoundingClientRect();
+    const { clientX, clientY } = getClientXY(event);
+    if (!props.vertical) {
+      let left2 = clientX - rect.left;
+      left2 = Math.max(thumb.value.offsetWidth / 2, left2);
+      left2 = Math.min(left2, rect.width - thumb.value.offsetWidth / 2);
+      props.color.set("alpha", Math.round((left2 - thumb.value.offsetWidth / 2) / (rect.width - thumb.value.offsetWidth) * 100));
+    } else {
+      let top = clientY - rect.top;
+      top = Math.max(thumb.value.offsetHeight / 2, top);
+      top = Math.min(top, rect.height - thumb.value.offsetHeight / 2);
+      props.color.set("alpha", Math.round((top - thumb.value.offsetHeight / 2) / (rect.height - thumb.value.offsetHeight) * 100));
+    }
+  }
+  return {
+    thumb,
+    bar,
+    handleDrag,
+    handleClick
+  };
+};
+const useAlphaSliderDOM = (props, {
+  bar,
+  thumb,
+  handleDrag
+}) => {
+  const instance = getCurrentInstance();
+  const ns = useNamespace("color-alpha-slider");
+  const thumbLeft = ref(0);
+  const thumbTop = ref(0);
+  const background = ref();
+  function getThumbLeft() {
+    if (!thumb.value)
+      return 0;
+    if (props.vertical)
+      return 0;
+    const el = instance.vnode.el;
+    const alpha = props.color.get("alpha");
+    if (!el)
+      return 0;
+    return Math.round(alpha * (el.offsetWidth - thumb.value.offsetWidth / 2) / 100);
+  }
+  function getThumbTop() {
+    if (!thumb.value)
+      return 0;
+    const el = instance.vnode.el;
+    if (!props.vertical)
+      return 0;
+    const alpha = props.color.get("alpha");
+    if (!el)
+      return 0;
+    return Math.round(alpha * (el.offsetHeight - thumb.value.offsetHeight / 2) / 100);
+  }
+  function getBackground() {
+    if (props.color && props.color.value) {
+      const { r, g, b } = props.color.toRgb();
+      return `linear-gradient(to right, rgba(${r}, ${g}, ${b}, 0) 0%, rgba(${r}, ${g}, ${b}, 1) 100%)`;
+    }
+    return "";
+  }
+  function update() {
+    thumbLeft.value = getThumbLeft();
+    thumbTop.value = getThumbTop();
+    background.value = getBackground();
+  }
+  onMounted(() => {
+    if (!bar.value || !thumb.value)
+      return;
+    const dragConfig = {
+      drag: (event) => {
+        handleDrag(event);
+      },
+      end: (event) => {
+        handleDrag(event);
+      }
+    };
+    draggable(bar.value, dragConfig);
+    draggable(thumb.value, dragConfig);
+    update();
+  });
+  watch(() => props.color.get("alpha"), () => update());
+  watch(() => props.color.value, () => update());
+  const rootKls = computed(() => [ns.b(), ns.is("vertical", props.vertical)]);
+  const barKls = computed(() => ns.e("bar"));
+  const thumbKls = computed(() => ns.e("thumb"));
+  const barStyle = computed(() => ({ background: background.value }));
+  const thumbStyle = computed(() => ({
+    left: addUnit(thumbLeft.value),
+    top: addUnit(thumbTop.value)
+  }));
+  return { rootKls, barKls, barStyle, thumbKls, thumbStyle, update };
+};
+const COMPONENT_NAME$5 = "ElColorAlphaSlider";
+const __default__$b = defineComponent({
+  name: COMPONENT_NAME$5
+});
+const _sfc_main$q = /* @__PURE__ */ defineComponent({
+  ...__default__$b,
+  props: alphaSliderProps,
+  setup(__props, { expose }) {
+    const props = __props;
+    const { bar, thumb, handleDrag, handleClick } = useAlphaSlider(props);
+    const { rootKls, barKls, barStyle, thumbKls, thumbStyle, update } = useAlphaSliderDOM(props, {
+      bar,
+      thumb,
+      handleDrag
+    });
+    expose({
+      update,
+      bar,
+      thumb
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass(unref(rootKls))
+      }, [
+        createElementVNode("div", {
+          ref_key: "bar",
+          ref: bar,
+          class: normalizeClass(unref(barKls)),
+          style: normalizeStyle(unref(barStyle)),
+          onClick: _cache[0] || (_cache[0] = (...args) => unref(handleClick) && unref(handleClick)(...args))
+        }, null, 6),
+        createElementVNode("div", {
+          ref_key: "thumb",
+          ref: thumb,
+          class: normalizeClass(unref(thumbKls)),
+          style: normalizeStyle(unref(thumbStyle))
+        }, null, 6)
+      ], 2);
+    };
+  }
+});
+var AlphaSlider = /* @__PURE__ */ _export_sfc$1(_sfc_main$q, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/color-picker/src/components/alpha-slider.vue"]]);
+const _sfc_main$p = defineComponent({
+  name: "ElColorHueSlider",
+  props: {
+    color: {
+      type: Object,
+      required: true
+    },
+    vertical: Boolean
+  },
+  setup(props) {
+    const ns = useNamespace("color-hue-slider");
+    const instance = getCurrentInstance();
+    const thumb = ref();
+    const bar = ref();
+    const thumbLeft = ref(0);
+    const thumbTop = ref(0);
+    const hueValue = computed(() => {
+      return props.color.get("hue");
+    });
+    watch(() => hueValue.value, () => {
+      update();
+    });
+    function handleClick(event) {
+      const target2 = event.target;
+      if (target2 !== thumb.value) {
+        handleDrag(event);
+      }
+    }
+    function handleDrag(event) {
+      if (!bar.value || !thumb.value)
+        return;
+      const el = instance.vnode.el;
+      const rect = el.getBoundingClientRect();
+      const { clientX, clientY } = getClientXY(event);
+      let hue;
+      if (!props.vertical) {
+        let left2 = clientX - rect.left;
+        left2 = Math.min(left2, rect.width - thumb.value.offsetWidth / 2);
+        left2 = Math.max(thumb.value.offsetWidth / 2, left2);
+        hue = Math.round((left2 - thumb.value.offsetWidth / 2) / (rect.width - thumb.value.offsetWidth) * 360);
+      } else {
+        let top = clientY - rect.top;
+        top = Math.min(top, rect.height - thumb.value.offsetHeight / 2);
+        top = Math.max(thumb.value.offsetHeight / 2, top);
+        hue = Math.round((top - thumb.value.offsetHeight / 2) / (rect.height - thumb.value.offsetHeight) * 360);
+      }
+      props.color.set("hue", hue);
+    }
+    function getThumbLeft() {
+      if (!thumb.value)
+        return 0;
+      const el = instance.vnode.el;
+      if (props.vertical)
+        return 0;
+      const hue = props.color.get("hue");
+      if (!el)
+        return 0;
+      return Math.round(hue * (el.offsetWidth - thumb.value.offsetWidth / 2) / 360);
+    }
+    function getThumbTop() {
+      if (!thumb.value)
+        return 0;
+      const el = instance.vnode.el;
+      if (!props.vertical)
+        return 0;
+      const hue = props.color.get("hue");
+      if (!el)
+        return 0;
+      return Math.round(hue * (el.offsetHeight - thumb.value.offsetHeight / 2) / 360);
+    }
+    function update() {
+      thumbLeft.value = getThumbLeft();
+      thumbTop.value = getThumbTop();
+    }
+    onMounted(() => {
+      if (!bar.value || !thumb.value)
+        return;
+      const dragConfig = {
+        drag: (event) => {
+          handleDrag(event);
+        },
+        end: (event) => {
+          handleDrag(event);
+        }
+      };
+      draggable(bar.value, dragConfig);
+      draggable(thumb.value, dragConfig);
+      update();
+    });
+    return {
+      bar,
+      thumb,
+      thumbLeft,
+      thumbTop,
+      hueValue,
+      handleClick,
+      update,
+      ns
+    };
+  }
+});
+function _sfc_render$9(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", {
+    class: normalizeClass([_ctx.ns.b(), _ctx.ns.is("vertical", _ctx.vertical)])
+  }, [
+    createElementVNode("div", {
+      ref: "bar",
+      class: normalizeClass(_ctx.ns.e("bar")),
+      onClick: _cache[0] || (_cache[0] = (...args) => _ctx.handleClick && _ctx.handleClick(...args))
+    }, null, 2),
+    createElementVNode("div", {
+      ref: "thumb",
+      class: normalizeClass(_ctx.ns.e("thumb")),
+      style: normalizeStyle({
+        left: _ctx.thumbLeft + "px",
+        top: _ctx.thumbTop + "px"
+      })
+    }, null, 6)
+  ], 2);
+}
+var HueSlider = /* @__PURE__ */ _export_sfc$1(_sfc_main$p, [["render", _sfc_render$9], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/color-picker/src/components/hue-slider.vue"]]);
+const colorPickerProps = buildProps({
+  modelValue: String,
+  id: String,
+  showAlpha: Boolean,
+  colorFormat: String,
+  disabled: Boolean,
+  size: useSizeProp,
+  popperClass: {
+    type: String,
+    default: ""
+  },
+  label: {
+    type: String,
+    default: void 0
+  },
+  tabindex: {
+    type: [String, Number],
+    default: 0
+  },
+  predefine: {
+    type: definePropType(Array)
+  },
+  validateEvent: {
+    type: Boolean,
+    default: true
+  }
+});
+const colorPickerEmits = {
+  [UPDATE_MODEL_EVENT]: (val) => isString(val) || isNil(val),
+  [CHANGE_EVENT]: (val) => isString(val) || isNil(val),
+  activeChange: (val) => isString(val) || isNil(val),
+  focus: (event) => event instanceof FocusEvent,
+  blur: (event) => event instanceof FocusEvent
+};
+const colorPickerContextKey = Symbol("colorPickerContextKey");
+const hsv2hsl = function(hue, sat, val) {
+  return [
+    hue,
+    sat * val / ((hue = (2 - sat) * val) < 1 ? hue : 2 - hue) || 0,
+    hue / 2
+  ];
+};
+const isOnePointZero = function(n) {
+  return typeof n === "string" && n.includes(".") && Number.parseFloat(n) === 1;
+};
+const isPercentage = function(n) {
+  return typeof n === "string" && n.includes("%");
+};
+const bound01 = function(value, max) {
+  if (isOnePointZero(value))
+    value = "100%";
+  const processPercent = isPercentage(value);
+  value = Math.min(max, Math.max(0, Number.parseFloat(`${value}`)));
+  if (processPercent) {
+    value = Number.parseInt(`${value * max}`, 10) / 100;
+  }
+  if (Math.abs(value - max) < 1e-6) {
+    return 1;
+  }
+  return value % max / Number.parseFloat(max);
+};
+const INT_HEX_MAP = {
+  10: "A",
+  11: "B",
+  12: "C",
+  13: "D",
+  14: "E",
+  15: "F"
+};
+const hexOne = (value) => {
+  value = Math.min(Math.round(value), 255);
+  const high = Math.floor(value / 16);
+  const low = value % 16;
+  return `${INT_HEX_MAP[high] || high}${INT_HEX_MAP[low] || low}`;
+};
+const toHex = function({ r, g, b }) {
+  if (Number.isNaN(+r) || Number.isNaN(+g) || Number.isNaN(+b))
+    return "";
+  return `#${hexOne(r)}${hexOne(g)}${hexOne(b)}`;
+};
+const HEX_INT_MAP = {
+  A: 10,
+  B: 11,
+  C: 12,
+  D: 13,
+  E: 14,
+  F: 15
+};
+const parseHexChannel = function(hex2) {
+  if (hex2.length === 2) {
+    return (HEX_INT_MAP[hex2[0].toUpperCase()] || +hex2[0]) * 16 + (HEX_INT_MAP[hex2[1].toUpperCase()] || +hex2[1]);
+  }
+  return HEX_INT_MAP[hex2[1].toUpperCase()] || +hex2[1];
+};
+const hsl2hsv = function(hue, sat, light) {
+  sat = sat / 100;
+  light = light / 100;
+  let smin = sat;
+  const lmin = Math.max(light, 0.01);
+  light *= 2;
+  sat *= light <= 1 ? light : 2 - light;
+  smin *= lmin <= 1 ? lmin : 2 - lmin;
+  const v = (light + sat) / 2;
+  const sv = light === 0 ? 2 * smin / (lmin + smin) : 2 * sat / (light + sat);
+  return {
+    h: hue,
+    s: sv * 100,
+    v: v * 100
+  };
+};
+const rgb2hsv = (r, g, b) => {
+  r = bound01(r, 255);
+  g = bound01(g, 255);
+  b = bound01(b, 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  let h2;
+  const v = max;
+  const d = max - min;
+  const s = max === 0 ? 0 : d / max;
+  if (max === min) {
+    h2 = 0;
+  } else {
+    switch (max) {
+      case r: {
+        h2 = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      }
+      case g: {
+        h2 = (b - r) / d + 2;
+        break;
+      }
+      case b: {
+        h2 = (r - g) / d + 4;
+        break;
+      }
+    }
+    h2 /= 6;
+  }
+  return { h: h2 * 360, s: s * 100, v: v * 100 };
+};
+const hsv2rgb = function(h2, s, v) {
+  h2 = bound01(h2, 360) * 6;
+  s = bound01(s, 100);
+  v = bound01(v, 100);
+  const i = Math.floor(h2);
+  const f = h2 - i;
+  const p = v * (1 - s);
+  const q2 = v * (1 - f * s);
+  const t = v * (1 - (1 - f) * s);
+  const mod = i % 6;
+  const r = [v, q2, p, p, t, v][mod];
+  const g = [t, v, v, q2, p, p][mod];
+  const b = [p, p, t, v, v, q2][mod];
+  return {
+    r: Math.round(r * 255),
+    g: Math.round(g * 255),
+    b: Math.round(b * 255)
+  };
+};
+class Color {
+  constructor(options2 = {}) {
+    this._hue = 0;
+    this._saturation = 100;
+    this._value = 100;
+    this._alpha = 100;
+    this.enableAlpha = false;
+    this.format = "hex";
+    this.value = "";
+    for (const option in options2) {
+      if (hasOwn(options2, option)) {
+        this[option] = options2[option];
+      }
+    }
+    if (options2.value) {
+      this.fromString(options2.value);
+    } else {
+      this.doOnChange();
+    }
+  }
+  set(prop, value) {
+    if (arguments.length === 1 && typeof prop === "object") {
+      for (const p in prop) {
+        if (hasOwn(prop, p)) {
+          this.set(p, prop[p]);
+        }
+      }
+      return;
+    }
+    this[`_${prop}`] = value;
+    this.doOnChange();
+  }
+  get(prop) {
+    if (prop === "alpha") {
+      return Math.floor(this[`_${prop}`]);
+    }
+    return this[`_${prop}`];
+  }
+  toRgb() {
+    return hsv2rgb(this._hue, this._saturation, this._value);
+  }
+  fromString(value) {
+    if (!value) {
+      this._hue = 0;
+      this._saturation = 100;
+      this._value = 100;
+      this.doOnChange();
+      return;
+    }
+    const fromHSV = (h2, s, v) => {
+      this._hue = Math.max(0, Math.min(360, h2));
+      this._saturation = Math.max(0, Math.min(100, s));
+      this._value = Math.max(0, Math.min(100, v));
+      this.doOnChange();
+    };
+    if (value.includes("hsl")) {
+      const parts = value.replace(/hsla|hsl|\(|\)/gm, "").split(/\s|,/g).filter((val) => val !== "").map((val, index) => index > 2 ? Number.parseFloat(val) : Number.parseInt(val, 10));
+      if (parts.length === 4) {
+        this._alpha = Number.parseFloat(parts[3]) * 100;
+      } else if (parts.length === 3) {
+        this._alpha = 100;
+      }
+      if (parts.length >= 3) {
+        const { h: h2, s, v } = hsl2hsv(parts[0], parts[1], parts[2]);
+        fromHSV(h2, s, v);
+      }
+    } else if (value.includes("hsv")) {
+      const parts = value.replace(/hsva|hsv|\(|\)/gm, "").split(/\s|,/g).filter((val) => val !== "").map((val, index) => index > 2 ? Number.parseFloat(val) : Number.parseInt(val, 10));
+      if (parts.length === 4) {
+        this._alpha = Number.parseFloat(parts[3]) * 100;
+      } else if (parts.length === 3) {
+        this._alpha = 100;
+      }
+      if (parts.length >= 3) {
+        fromHSV(parts[0], parts[1], parts[2]);
+      }
+    } else if (value.includes("rgb")) {
+      const parts = value.replace(/rgba|rgb|\(|\)/gm, "").split(/\s|,/g).filter((val) => val !== "").map((val, index) => index > 2 ? Number.parseFloat(val) : Number.parseInt(val, 10));
+      if (parts.length === 4) {
+        this._alpha = Number.parseFloat(parts[3]) * 100;
+      } else if (parts.length === 3) {
+        this._alpha = 100;
+      }
+      if (parts.length >= 3) {
+        const { h: h2, s, v } = rgb2hsv(parts[0], parts[1], parts[2]);
+        fromHSV(h2, s, v);
+      }
+    } else if (value.includes("#")) {
+      const hex2 = value.replace("#", "").trim();
+      if (!/^[0-9a-fA-F]{3}$|^[0-9a-fA-F]{6}$|^[0-9a-fA-F]{8}$/.test(hex2))
+        return;
+      let r, g, b;
+      if (hex2.length === 3) {
+        r = parseHexChannel(hex2[0] + hex2[0]);
+        g = parseHexChannel(hex2[1] + hex2[1]);
+        b = parseHexChannel(hex2[2] + hex2[2]);
+      } else if (hex2.length === 6 || hex2.length === 8) {
+        r = parseHexChannel(hex2.slice(0, 2));
+        g = parseHexChannel(hex2.slice(2, 4));
+        b = parseHexChannel(hex2.slice(4, 6));
+      }
+      if (hex2.length === 8) {
+        this._alpha = parseHexChannel(hex2.slice(6)) / 255 * 100;
+      } else if (hex2.length === 3 || hex2.length === 6) {
+        this._alpha = 100;
+      }
+      const { h: h2, s, v } = rgb2hsv(r, g, b);
+      fromHSV(h2, s, v);
+    }
+  }
+  compare(color) {
+    return Math.abs(color._hue - this._hue) < 2 && Math.abs(color._saturation - this._saturation) < 1 && Math.abs(color._value - this._value) < 1 && Math.abs(color._alpha - this._alpha) < 1;
+  }
+  doOnChange() {
+    const { _hue, _saturation, _value, _alpha, format: format2 } = this;
+    if (this.enableAlpha) {
+      switch (format2) {
+        case "hsl": {
+          const hsl = hsv2hsl(_hue, _saturation / 100, _value / 100);
+          this.value = `hsla(${_hue}, ${Math.round(hsl[1] * 100)}%, ${Math.round(hsl[2] * 100)}%, ${this.get("alpha") / 100})`;
+          break;
+        }
+        case "hsv": {
+          this.value = `hsva(${_hue}, ${Math.round(_saturation)}%, ${Math.round(_value)}%, ${this.get("alpha") / 100})`;
+          break;
+        }
+        case "hex": {
+          this.value = `${toHex(hsv2rgb(_hue, _saturation, _value))}${hexOne(_alpha * 255 / 100)}`;
+          break;
+        }
+        default: {
+          const { r, g, b } = hsv2rgb(_hue, _saturation, _value);
+          this.value = `rgba(${r}, ${g}, ${b}, ${this.get("alpha") / 100})`;
+        }
+      }
+    } else {
+      switch (format2) {
+        case "hsl": {
+          const hsl = hsv2hsl(_hue, _saturation / 100, _value / 100);
+          this.value = `hsl(${_hue}, ${Math.round(hsl[1] * 100)}%, ${Math.round(hsl[2] * 100)}%)`;
+          break;
+        }
+        case "hsv": {
+          this.value = `hsv(${_hue}, ${Math.round(_saturation)}%, ${Math.round(_value)}%)`;
+          break;
+        }
+        case "rgb": {
+          const { r, g, b } = hsv2rgb(_hue, _saturation, _value);
+          this.value = `rgb(${r}, ${g}, ${b})`;
+          break;
+        }
+        default: {
+          this.value = toHex(hsv2rgb(_hue, _saturation, _value));
+        }
+      }
+    }
+  }
+}
+const _sfc_main$o = defineComponent({
+  props: {
+    colors: {
+      type: Array,
+      required: true
+    },
+    color: {
+      type: Object,
+      required: true
+    }
+  },
+  setup(props) {
+    const ns = useNamespace("color-predefine");
+    const { currentColor } = inject(colorPickerContextKey);
+    const rgbaColors = ref(parseColors(props.colors, props.color));
+    watch(() => currentColor.value, (val) => {
+      const color = new Color();
+      color.fromString(val);
+      rgbaColors.value.forEach((item) => {
+        item.selected = color.compare(item);
+      });
+    });
+    watchEffect(() => {
+      rgbaColors.value = parseColors(props.colors, props.color);
+    });
+    function handleSelect(index) {
+      props.color.fromString(props.colors[index]);
+    }
+    function parseColors(colors, color) {
+      return colors.map((value) => {
+        const c = new Color();
+        c.enableAlpha = true;
+        c.format = "rgba";
+        c.fromString(value);
+        c.selected = c.value === color.value;
+        return c;
+      });
+    }
+    return {
+      rgbaColors,
+      handleSelect,
+      ns
+    };
+  }
+});
+const _hoisted_1$e = ["onClick"];
+function _sfc_render$8(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", {
+    class: normalizeClass(_ctx.ns.b())
+  }, [
+    createElementVNode("div", {
+      class: normalizeClass(_ctx.ns.e("colors"))
+    }, [
+      (openBlock(true), createElementBlock(Fragment, null, renderList(_ctx.rgbaColors, (item, index) => {
+        return openBlock(), createElementBlock("div", {
+          key: _ctx.colors[index],
+          class: normalizeClass([
+            _ctx.ns.e("color-selector"),
+            _ctx.ns.is("alpha", item._alpha < 100),
+            { selected: item.selected }
+          ]),
+          onClick: ($event) => _ctx.handleSelect(index)
+        }, [
+          createElementVNode("div", {
+            style: normalizeStyle({ backgroundColor: item.value })
+          }, null, 4)
+        ], 10, _hoisted_1$e);
+      }), 128))
+    ], 2)
+  ], 2);
+}
+var Predefine = /* @__PURE__ */ _export_sfc$1(_sfc_main$o, [["render", _sfc_render$8], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/color-picker/src/components/predefine.vue"]]);
+const _sfc_main$n = defineComponent({
+  name: "ElSlPanel",
+  props: {
+    color: {
+      type: Object,
+      required: true
+    }
+  },
+  setup(props) {
+    const ns = useNamespace("color-svpanel");
+    const instance = getCurrentInstance();
+    const cursorTop = ref(0);
+    const cursorLeft = ref(0);
+    const background = ref("hsl(0, 100%, 50%)");
+    const colorValue = computed(() => {
+      const hue = props.color.get("hue");
+      const value = props.color.get("value");
+      return { hue, value };
+    });
+    function update() {
+      const saturation = props.color.get("saturation");
+      const value = props.color.get("value");
+      const el = instance.vnode.el;
+      const { clientWidth: width, clientHeight: height } = el;
+      cursorLeft.value = saturation * width / 100;
+      cursorTop.value = (100 - value) * height / 100;
+      background.value = `hsl(${props.color.get("hue")}, 100%, 50%)`;
+    }
+    function handleDrag(event) {
+      const el = instance.vnode.el;
+      const rect = el.getBoundingClientRect();
+      const { clientX, clientY } = getClientXY(event);
+      let left2 = clientX - rect.left;
+      let top = clientY - rect.top;
+      left2 = Math.max(0, left2);
+      left2 = Math.min(left2, rect.width);
+      top = Math.max(0, top);
+      top = Math.min(top, rect.height);
+      cursorLeft.value = left2;
+      cursorTop.value = top;
+      props.color.set({
+        saturation: left2 / rect.width * 100,
+        value: 100 - top / rect.height * 100
+      });
+    }
+    watch(() => colorValue.value, () => {
+      update();
+    });
+    onMounted(() => {
+      draggable(instance.vnode.el, {
+        drag: (event) => {
+          handleDrag(event);
+        },
+        end: (event) => {
+          handleDrag(event);
+        }
+      });
+      update();
+    });
+    return {
+      cursorTop,
+      cursorLeft,
+      background,
+      colorValue,
+      handleDrag,
+      update,
+      ns
+    };
+  }
+});
+const _hoisted_1$d = /* @__PURE__ */ createElementVNode("div", null, null, -1);
+const _hoisted_2$b = [
+  _hoisted_1$d
+];
+function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("div", {
+    class: normalizeClass(_ctx.ns.b()),
+    style: normalizeStyle({
+      backgroundColor: _ctx.background
+    })
+  }, [
+    createElementVNode("div", {
+      class: normalizeClass(_ctx.ns.e("white"))
+    }, null, 2),
+    createElementVNode("div", {
+      class: normalizeClass(_ctx.ns.e("black"))
+    }, null, 2),
+    createElementVNode("div", {
+      class: normalizeClass(_ctx.ns.e("cursor")),
+      style: normalizeStyle({
+        top: _ctx.cursorTop + "px",
+        left: _ctx.cursorLeft + "px"
+      })
+    }, _hoisted_2$b, 6)
+  ], 6);
+}
+var SvPanel = /* @__PURE__ */ _export_sfc$1(_sfc_main$n, [["render", _sfc_render$7], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/color-picker/src/components/sv-panel.vue"]]);
+const _hoisted_1$c = ["onKeydown"];
+const _hoisted_2$a = ["id", "aria-label", "aria-labelledby", "aria-description", "aria-disabled", "tabindex"];
+const __default__$a = defineComponent({
+  name: "ElColorPicker"
+});
+const _sfc_main$m = /* @__PURE__ */ defineComponent({
+  ...__default__$a,
+  props: colorPickerProps,
+  emits: colorPickerEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const { t } = useLocale();
+    const ns = useNamespace("color");
+    const { formItem } = useFormItem();
+    const colorSize = useFormSize();
+    const colorDisabled = useFormDisabled();
+    const { inputId: buttonId, isLabeledByFormItem } = useFormItemInputId(props, {
+      formItemContext: formItem
+    });
+    const hue = ref();
+    const sv = ref();
+    const alpha = ref();
+    const popper = ref();
+    const triggerRef2 = ref();
+    const inputRef = ref();
+    const {
+      isFocused,
+      handleFocus: _handleFocus,
+      handleBlur
+    } = useFocusController(triggerRef2, {
+      beforeBlur(event) {
+        var _a2;
+        return (_a2 = popper.value) == null ? void 0 : _a2.isFocusInsideContent(event);
+      },
+      afterBlur() {
+        setShowPicker(false);
+        resetColor();
+      }
+    });
+    const handleFocus = (event) => {
+      if (colorDisabled.value)
+        return blur();
+      _handleFocus(event);
+    };
+    let shouldActiveChange = true;
+    const color = reactive(new Color({
+      enableAlpha: props.showAlpha,
+      format: props.colorFormat || "",
+      value: props.modelValue
+    }));
+    const showPicker = ref(false);
+    const showPanelColor = ref(false);
+    const customInput = ref("");
+    const displayedColor = computed(() => {
+      if (!props.modelValue && !showPanelColor.value) {
+        return "transparent";
+      }
+      return displayedRgb(color, props.showAlpha);
+    });
+    const currentColor = computed(() => {
+      return !props.modelValue && !showPanelColor.value ? "" : color.value;
+    });
+    const buttonAriaLabel = computed(() => {
+      return !isLabeledByFormItem.value ? props.label || t("el.colorpicker.defaultLabel") : void 0;
+    });
+    const buttonAriaLabelledby = computed(() => {
+      return isLabeledByFormItem.value ? formItem == null ? void 0 : formItem.labelId : void 0;
+    });
+    const btnKls = computed(() => {
+      return [
+        ns.b("picker"),
+        ns.is("disabled", colorDisabled.value),
+        ns.bm("picker", colorSize.value),
+        ns.is("focused", isFocused.value)
+      ];
+    });
+    function displayedRgb(color2, showAlpha) {
+      if (!(color2 instanceof Color)) {
+        throw new TypeError("color should be instance of _color Class");
+      }
+      const { r, g, b } = color2.toRgb();
+      return showAlpha ? `rgba(${r}, ${g}, ${b}, ${color2.get("alpha") / 100})` : `rgb(${r}, ${g}, ${b})`;
+    }
+    function setShowPicker(value) {
+      showPicker.value = value;
+    }
+    const debounceSetShowPicker = debounce(setShowPicker, 100, { leading: true });
+    function show() {
+      if (colorDisabled.value)
+        return;
+      setShowPicker(true);
+    }
+    function hide() {
+      debounceSetShowPicker(false);
+      resetColor();
+    }
+    function resetColor() {
+      nextTick(() => {
+        if (props.modelValue) {
+          color.fromString(props.modelValue);
+        } else {
+          color.value = "";
+          nextTick(() => {
+            showPanelColor.value = false;
+          });
+        }
+      });
+    }
+    function handleTrigger() {
+      if (colorDisabled.value)
+        return;
+      debounceSetShowPicker(!showPicker.value);
+    }
+    function handleConfirm() {
+      color.fromString(customInput.value);
+    }
+    function confirmValue() {
+      const value = color.value;
+      emit(UPDATE_MODEL_EVENT, value);
+      emit("change", value);
+      if (props.validateEvent) {
+        formItem == null ? void 0 : formItem.validate("change").catch((err) => debugWarn(err));
+      }
+      debounceSetShowPicker(false);
+      nextTick(() => {
+        const newColor = new Color({
+          enableAlpha: props.showAlpha,
+          format: props.colorFormat || "",
+          value: props.modelValue
+        });
+        if (!color.compare(newColor)) {
+          resetColor();
+        }
+      });
+    }
+    function clear() {
+      debounceSetShowPicker(false);
+      emit(UPDATE_MODEL_EVENT, null);
+      emit("change", null);
+      if (props.modelValue !== null && props.validateEvent) {
+        formItem == null ? void 0 : formItem.validate("change").catch((err) => debugWarn(err));
+      }
+      resetColor();
+    }
+    function handleClickOutside(event) {
+      if (!showPicker.value)
+        return;
+      hide();
+      if (isFocused.value) {
+        const _event2 = new FocusEvent("focus", event);
+        handleBlur(_event2);
+      }
+    }
+    function handleEsc(event) {
+      event.preventDefault();
+      event.stopPropagation();
+      setShowPicker(false);
+      resetColor();
+    }
+    function handleKeyDown(event) {
+      switch (event.code) {
+        case EVENT_CODE.enter:
+        case EVENT_CODE.space:
+          event.preventDefault();
+          event.stopPropagation();
+          show();
+          inputRef.value.focus();
+          break;
+        case EVENT_CODE.esc:
+          handleEsc(event);
+          break;
+      }
+    }
+    function focus() {
+      triggerRef2.value.focus();
+    }
+    function blur() {
+      triggerRef2.value.blur();
+    }
+    onMounted(() => {
+      if (props.modelValue) {
+        customInput.value = currentColor.value;
+      }
+    });
+    watch(() => props.modelValue, (newVal) => {
+      if (!newVal) {
+        showPanelColor.value = false;
+      } else if (newVal && newVal !== color.value) {
+        shouldActiveChange = false;
+        color.fromString(newVal);
+      }
+    });
+    watch(() => currentColor.value, (val) => {
+      customInput.value = val;
+      shouldActiveChange && emit("activeChange", val);
+      shouldActiveChange = true;
+    });
+    watch(() => color.value, () => {
+      if (!props.modelValue && !showPanelColor.value) {
+        showPanelColor.value = true;
+      }
+    });
+    watch(() => showPicker.value, () => {
+      nextTick(() => {
+        var _a2, _b, _c;
+        (_a2 = hue.value) == null ? void 0 : _a2.update();
+        (_b = sv.value) == null ? void 0 : _b.update();
+        (_c = alpha.value) == null ? void 0 : _c.update();
+      });
+    });
+    provide(colorPickerContextKey, {
+      currentColor
+    });
+    expose({
+      color,
+      show,
+      hide,
+      focus,
+      blur
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createBlock(unref(ElTooltip), {
+        ref_key: "popper",
+        ref: popper,
+        visible: showPicker.value,
+        "show-arrow": false,
+        "fallback-placements": ["bottom", "top", "right", "left"],
+        offset: 0,
+        "gpu-acceleration": false,
+        "popper-class": [unref(ns).be("picker", "panel"), unref(ns).b("dropdown"), _ctx.popperClass],
+        "stop-popper-mouse-event": false,
+        effect: "light",
+        trigger: "click",
+        transition: `${unref(ns).namespace.value}-zoom-in-top`,
+        persistent: "",
+        onHide: _cache[2] || (_cache[2] = ($event) => setShowPicker(false))
+      }, {
+        content: withCtx(() => [
+          withDirectives((openBlock(), createElementBlock("div", {
+            onKeydown: withKeys(handleEsc, ["esc"])
+          }, [
+            createElementVNode("div", {
+              class: normalizeClass(unref(ns).be("dropdown", "main-wrapper"))
+            }, [
+              createVNode(HueSlider, {
+                ref_key: "hue",
+                ref: hue,
+                class: "hue-slider",
+                color: unref(color),
+                vertical: ""
+              }, null, 8, ["color"]),
+              createVNode(SvPanel, {
+                ref_key: "sv",
+                ref: sv,
+                color: unref(color)
+              }, null, 8, ["color"])
+            ], 2),
+            _ctx.showAlpha ? (openBlock(), createBlock(AlphaSlider, {
+              key: 0,
+              ref_key: "alpha",
+              ref: alpha,
+              color: unref(color)
+            }, null, 8, ["color"])) : createCommentVNode("v-if", true),
+            _ctx.predefine ? (openBlock(), createBlock(Predefine, {
+              key: 1,
+              ref: "predefine",
+              color: unref(color),
+              colors: _ctx.predefine
+            }, null, 8, ["color", "colors"])) : createCommentVNode("v-if", true),
+            createElementVNode("div", {
+              class: normalizeClass(unref(ns).be("dropdown", "btns"))
+            }, [
+              createElementVNode("span", {
+                class: normalizeClass(unref(ns).be("dropdown", "value"))
+              }, [
+                createVNode(unref(ElInput), {
+                  ref_key: "inputRef",
+                  ref: inputRef,
+                  modelValue: customInput.value,
+                  "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => customInput.value = $event),
+                  "validate-event": false,
+                  size: "small",
+                  onKeyup: withKeys(handleConfirm, ["enter"]),
+                  onBlur: handleConfirm
+                }, null, 8, ["modelValue", "onKeyup"])
+              ], 2),
+              createVNode(unref(ElButton), {
+                class: normalizeClass(unref(ns).be("dropdown", "link-btn")),
+                text: "",
+                size: "small",
+                onClick: clear
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(toDisplayString(unref(t)("el.colorpicker.clear")), 1)
+                ]),
+                _: 1
+              }, 8, ["class"]),
+              createVNode(unref(ElButton), {
+                plain: "",
+                size: "small",
+                class: normalizeClass(unref(ns).be("dropdown", "btn")),
+                onClick: confirmValue
+              }, {
+                default: withCtx(() => [
+                  createTextVNode(toDisplayString(unref(t)("el.colorpicker.confirm")), 1)
+                ]),
+                _: 1
+              }, 8, ["class"])
+            ], 2)
+          ], 40, _hoisted_1$c)), [
+            [unref(ClickOutside), handleClickOutside]
+          ])
+        ]),
+        default: withCtx(() => [
+          createElementVNode("div", {
+            id: unref(buttonId),
+            ref_key: "triggerRef",
+            ref: triggerRef2,
+            class: normalizeClass(unref(btnKls)),
+            role: "button",
+            "aria-label": unref(buttonAriaLabel),
+            "aria-labelledby": unref(buttonAriaLabelledby),
+            "aria-description": unref(t)("el.colorpicker.description", { color: _ctx.modelValue || "" }),
+            "aria-disabled": unref(colorDisabled),
+            tabindex: unref(colorDisabled) ? -1 : _ctx.tabindex,
+            onKeydown: handleKeyDown,
+            onFocus: handleFocus,
+            onBlur: _cache[1] || (_cache[1] = (...args) => unref(handleBlur) && unref(handleBlur)(...args))
+          }, [
+            unref(colorDisabled) ? (openBlock(), createElementBlock("div", {
+              key: 0,
+              class: normalizeClass(unref(ns).be("picker", "mask"))
+            }, null, 2)) : createCommentVNode("v-if", true),
+            createElementVNode("div", {
+              class: normalizeClass(unref(ns).be("picker", "trigger")),
+              onClick: handleTrigger
+            }, [
+              createElementVNode("span", {
+                class: normalizeClass([unref(ns).be("picker", "color"), unref(ns).is("alpha", _ctx.showAlpha)])
+              }, [
+                createElementVNode("span", {
+                  class: normalizeClass(unref(ns).be("picker", "color-inner")),
+                  style: normalizeStyle({
+                    backgroundColor: unref(displayedColor)
+                  })
+                }, [
+                  withDirectives(createVNode(unref(ElIcon), {
+                    class: normalizeClass([unref(ns).be("picker", "icon"), unref(ns).is("icon-arrow-down")])
+                  }, {
+                    default: withCtx(() => [
+                      createVNode(unref(arrow_down_default))
+                    ]),
+                    _: 1
+                  }, 8, ["class"]), [
+                    [vShow, _ctx.modelValue || showPanelColor.value]
+                  ]),
+                  withDirectives(createVNode(unref(ElIcon), {
+                    class: normalizeClass([unref(ns).be("picker", "empty"), unref(ns).is("icon-close")])
+                  }, {
+                    default: withCtx(() => [
+                      createVNode(unref(close_default))
+                    ]),
+                    _: 1
+                  }, 8, ["class"]), [
+                    [vShow, !_ctx.modelValue && !showPanelColor.value]
+                  ])
+                ], 6)
+              ], 2)
+            ], 2)
+          ], 42, _hoisted_2$a)
+        ]),
+        _: 1
+      }, 8, ["visible", "popper-class", "transition"]);
+    };
+  }
+});
+var ColorPicker = /* @__PURE__ */ _export_sfc$1(_sfc_main$m, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/color-picker/src/color-picker.vue"]]);
+const ElColorPicker = withInstall(ColorPicker);
+const __default__$9 = defineComponent({
   name: "ElContainer"
 });
-const _sfc_main$f = /* @__PURE__ */ defineComponent({
-  ...__default__$8,
+const _sfc_main$l = /* @__PURE__ */ defineComponent({
+  ...__default__$9,
   props: {
     direction: {
       type: String
@@ -11780,12 +16047,12 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Container = /* @__PURE__ */ _export_sfc$1(_sfc_main$f, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/container.vue"]]);
-const __default__$7 = defineComponent({
+var Container = /* @__PURE__ */ _export_sfc$1(_sfc_main$l, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/container.vue"]]);
+const __default__$8 = defineComponent({
   name: "ElAside"
 });
-const _sfc_main$e = /* @__PURE__ */ defineComponent({
-  ...__default__$7,
+const _sfc_main$k = /* @__PURE__ */ defineComponent({
+  ...__default__$8,
   props: {
     width: {
       type: String,
@@ -11806,12 +16073,12 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Aside = /* @__PURE__ */ _export_sfc$1(_sfc_main$e, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/aside.vue"]]);
-const __default__$6 = defineComponent({
+var Aside = /* @__PURE__ */ _export_sfc$1(_sfc_main$k, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/aside.vue"]]);
+const __default__$7 = defineComponent({
   name: "ElFooter"
 });
-const _sfc_main$d = /* @__PURE__ */ defineComponent({
-  ...__default__$6,
+const _sfc_main$j = /* @__PURE__ */ defineComponent({
+  ...__default__$7,
   props: {
     height: {
       type: String,
@@ -11832,12 +16099,12 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Footer = /* @__PURE__ */ _export_sfc$1(_sfc_main$d, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/footer.vue"]]);
-const __default__$5 = defineComponent({
+var Footer = /* @__PURE__ */ _export_sfc$1(_sfc_main$j, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/footer.vue"]]);
+const __default__$6 = defineComponent({
   name: "ElHeader"
 });
-const _sfc_main$c = /* @__PURE__ */ defineComponent({
-  ...__default__$5,
+const _sfc_main$i = /* @__PURE__ */ defineComponent({
+  ...__default__$6,
   props: {
     height: {
       type: String,
@@ -11862,12 +16129,12 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Header = /* @__PURE__ */ _export_sfc$1(_sfc_main$c, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/header.vue"]]);
-const __default__$4 = defineComponent({
+var Header = /* @__PURE__ */ _export_sfc$1(_sfc_main$i, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/header.vue"]]);
+const __default__$5 = defineComponent({
   name: "ElMain"
 });
-const _sfc_main$b = /* @__PURE__ */ defineComponent({
-  ...__default__$4,
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
+  ...__default__$5,
   setup(__props) {
     const ns = useNamespace("main");
     return (_ctx, _cache) => {
@@ -11879,7 +16146,7 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Main = /* @__PURE__ */ _export_sfc$1(_sfc_main$b, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/main.vue"]]);
+var Main = /* @__PURE__ */ _export_sfc$1(_sfc_main$h, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/main.vue"]]);
 const ElContainer = withInstall(Container, {
   Aside,
   Footer,
@@ -11890,6 +16157,2797 @@ const ElAside = withNoopInstall(Aside);
 withNoopInstall(Footer);
 const ElHeader = withNoopInstall(Header);
 const ElMain = withNoopInstall(Main);
+var advancedFormat$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(e, t) {
+    module2.exports = t();
+  }(commonjsGlobal, function() {
+    return function(e, t) {
+      var r = t.prototype, n = r.format;
+      r.format = function(e2) {
+        var t2 = this, r2 = this.$locale();
+        if (!this.isValid())
+          return n.bind(this)(e2);
+        var s = this.$utils(), a = (e2 || "YYYY-MM-DDTHH:mm:ssZ").replace(/\[([^\]]+)]|Q|wo|ww|w|WW|W|zzz|z|gggg|GGGG|Do|X|x|k{1,2}|S/g, function(e3) {
+          switch (e3) {
+            case "Q":
+              return Math.ceil((t2.$M + 1) / 3);
+            case "Do":
+              return r2.ordinal(t2.$D);
+            case "gggg":
+              return t2.weekYear();
+            case "GGGG":
+              return t2.isoWeekYear();
+            case "wo":
+              return r2.ordinal(t2.week(), "W");
+            case "w":
+            case "ww":
+              return s.s(t2.week(), "w" === e3 ? 1 : 2, "0");
+            case "W":
+            case "WW":
+              return s.s(t2.isoWeek(), "W" === e3 ? 1 : 2, "0");
+            case "k":
+            case "kk":
+              return s.s(String(0 === t2.$H ? 24 : t2.$H), "k" === e3 ? 1 : 2, "0");
+            case "X":
+              return Math.floor(t2.$d.getTime() / 1e3);
+            case "x":
+              return t2.$d.getTime();
+            case "z":
+              return "[" + t2.offsetName() + "]";
+            case "zzz":
+              return "[" + t2.offsetName("long") + "]";
+            default:
+              return e3;
+          }
+        });
+        return n.bind(this)(a);
+      };
+    };
+  });
+})(advancedFormat$1);
+var advancedFormatExports = advancedFormat$1.exports;
+const advancedFormat = /* @__PURE__ */ getDefaultExportFromCjs(advancedFormatExports);
+var weekOfYear$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(e, t) {
+    module2.exports = t();
+  }(commonjsGlobal, function() {
+    var e = "week", t = "year";
+    return function(i, n, r) {
+      var f = n.prototype;
+      f.week = function(i2) {
+        if (void 0 === i2 && (i2 = null), null !== i2)
+          return this.add(7 * (i2 - this.week()), "day");
+        var n2 = this.$locale().yearStart || 1;
+        if (11 === this.month() && this.date() > 25) {
+          var f2 = r(this).startOf(t).add(1, t).date(n2), s = r(this).endOf(e);
+          if (f2.isBefore(s))
+            return 1;
+        }
+        var a = r(this).startOf(t).date(n2).startOf(e).subtract(1, "millisecond"), o = this.diff(a, e, true);
+        return o < 0 ? r(this).startOf("week").week() : Math.ceil(o);
+      }, f.weeks = function(e2) {
+        return void 0 === e2 && (e2 = null), this.week(e2);
+      };
+    };
+  });
+})(weekOfYear$1);
+var weekOfYearExports = weekOfYear$1.exports;
+const weekOfYear = /* @__PURE__ */ getDefaultExportFromCjs(weekOfYearExports);
+var weekYear$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(e, t) {
+    module2.exports = t();
+  }(commonjsGlobal, function() {
+    return function(e, t) {
+      t.prototype.weekYear = function() {
+        var e2 = this.month(), t2 = this.week(), n = this.year();
+        return 1 === t2 && 11 === e2 ? n + 1 : 0 === e2 && t2 >= 52 ? n - 1 : n;
+      };
+    };
+  });
+})(weekYear$1);
+var weekYearExports = weekYear$1.exports;
+const weekYear = /* @__PURE__ */ getDefaultExportFromCjs(weekYearExports);
+var dayOfYear$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(e, t) {
+    module2.exports = t();
+  }(commonjsGlobal, function() {
+    return function(e, t, n) {
+      t.prototype.dayOfYear = function(e2) {
+        var t2 = Math.round((n(this).startOf("day") - n(this).startOf("year")) / 864e5) + 1;
+        return null == e2 ? t2 : this.add(e2 - t2, "day");
+      };
+    };
+  });
+})(dayOfYear$1);
+var dayOfYearExports = dayOfYear$1.exports;
+const dayOfYear = /* @__PURE__ */ getDefaultExportFromCjs(dayOfYearExports);
+var isSameOrAfter$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(e, t) {
+    module2.exports = t();
+  }(commonjsGlobal, function() {
+    return function(e, t) {
+      t.prototype.isSameOrAfter = function(e2, t2) {
+        return this.isSame(e2, t2) || this.isAfter(e2, t2);
+      };
+    };
+  });
+})(isSameOrAfter$1);
+var isSameOrAfterExports = isSameOrAfter$1.exports;
+const isSameOrAfter = /* @__PURE__ */ getDefaultExportFromCjs(isSameOrAfterExports);
+var isSameOrBefore$1 = { exports: {} };
+(function(module2, exports2) {
+  !function(e, i) {
+    module2.exports = i();
+  }(commonjsGlobal, function() {
+    return function(e, i) {
+      i.prototype.isSameOrBefore = function(e2, i2) {
+        return this.isSame(e2, i2) || this.isBefore(e2, i2);
+      };
+    };
+  });
+})(isSameOrBefore$1);
+var isSameOrBeforeExports = isSameOrBefore$1.exports;
+const isSameOrBefore = /* @__PURE__ */ getDefaultExportFromCjs(isSameOrBeforeExports);
+const ROOT_PICKER_INJECTION_KEY = Symbol();
+const datePickerProps = buildProps({
+  ...timePickerDefaultProps,
+  type: {
+    type: definePropType(String),
+    default: "date"
+  }
+});
+const selectionModes = ["date", "dates", "year", "month", "week", "range"];
+const datePickerSharedProps = buildProps({
+  disabledDate: {
+    type: definePropType(Function)
+  },
+  date: {
+    type: definePropType(Object),
+    required: true
+  },
+  minDate: {
+    type: definePropType(Object)
+  },
+  maxDate: {
+    type: definePropType(Object)
+  },
+  parsedValue: {
+    type: definePropType([Object, Array])
+  },
+  rangeState: {
+    type: definePropType(Object),
+    default: () => ({
+      endDate: null,
+      selecting: false
+    })
+  }
+});
+const panelSharedProps = buildProps({
+  type: {
+    type: definePropType(String),
+    required: true,
+    values: datePickTypes
+  },
+  dateFormat: String,
+  timeFormat: String
+});
+const panelRangeSharedProps = buildProps({
+  unlinkPanels: Boolean,
+  parsedValue: {
+    type: definePropType(Array)
+  }
+});
+const selectionModeWithDefault = (mode) => {
+  return {
+    type: String,
+    values: selectionModes,
+    default: mode
+  };
+};
+const panelDatePickProps = buildProps({
+  ...panelSharedProps,
+  parsedValue: {
+    type: definePropType([Object, Array])
+  },
+  visible: {
+    type: Boolean
+  },
+  format: {
+    type: String,
+    default: ""
+  }
+});
+const basicDateTableProps = buildProps({
+  ...datePickerSharedProps,
+  cellClassName: {
+    type: definePropType(Function)
+  },
+  showWeekNumber: Boolean,
+  selectionMode: selectionModeWithDefault("date")
+});
+const basicDateTableEmits = ["changerange", "pick", "select"];
+const isValidRange = (range3) => {
+  if (!isArray$2(range3))
+    return false;
+  const [left2, right2] = range3;
+  return dayjs.isDayjs(left2) && dayjs.isDayjs(right2) && left2.isSameOrBefore(right2);
+};
+const getDefaultValue = (defaultValue, { lang, unit: unit2, unlinkPanels }) => {
+  let start;
+  if (isArray$2(defaultValue)) {
+    let [left2, right2] = defaultValue.map((d) => dayjs(d).locale(lang));
+    if (!unlinkPanels) {
+      right2 = left2.add(1, unit2);
+    }
+    return [left2, right2];
+  } else if (defaultValue) {
+    start = dayjs(defaultValue);
+  } else {
+    start = dayjs();
+  }
+  start = start.locale(lang);
+  return [start, start.add(1, unit2)];
+};
+const buildPickerTable = (dimension, rows, {
+  columnIndexOffset,
+  startDate,
+  nextEndDate,
+  now: now2,
+  unit: unit2,
+  relativeDateGetter,
+  setCellMetadata,
+  setRowMetadata
+}) => {
+  for (let rowIndex = 0; rowIndex < dimension.row; rowIndex++) {
+    const row = rows[rowIndex];
+    for (let columnIndex = 0; columnIndex < dimension.column; columnIndex++) {
+      let cell = row[columnIndex + columnIndexOffset];
+      if (!cell) {
+        cell = {
+          row: rowIndex,
+          column: columnIndex,
+          type: "normal",
+          inRange: false,
+          start: false,
+          end: false
+        };
+      }
+      const index = rowIndex * dimension.column + columnIndex;
+      const nextStartDate = relativeDateGetter(index);
+      cell.dayjs = nextStartDate;
+      cell.date = nextStartDate.toDate();
+      cell.timestamp = nextStartDate.valueOf();
+      cell.type = "normal";
+      cell.inRange = !!(startDate && nextStartDate.isSameOrAfter(startDate, unit2) && nextEndDate && nextStartDate.isSameOrBefore(nextEndDate, unit2)) || !!(startDate && nextStartDate.isSameOrBefore(startDate, unit2) && nextEndDate && nextStartDate.isSameOrAfter(nextEndDate, unit2));
+      if (startDate == null ? void 0 : startDate.isSameOrAfter(nextEndDate)) {
+        cell.start = !!nextEndDate && nextStartDate.isSame(nextEndDate, unit2);
+        cell.end = startDate && nextStartDate.isSame(startDate, unit2);
+      } else {
+        cell.start = !!startDate && nextStartDate.isSame(startDate, unit2);
+        cell.end = !!nextEndDate && nextStartDate.isSame(nextEndDate, unit2);
+      }
+      const isToday = nextStartDate.isSame(now2, unit2);
+      if (isToday) {
+        cell.type = "today";
+      }
+      setCellMetadata == null ? void 0 : setCellMetadata(cell, { rowIndex, columnIndex });
+      row[columnIndex + columnIndexOffset] = cell;
+    }
+    setRowMetadata == null ? void 0 : setRowMetadata(row);
+  }
+};
+const isNormalDay = (type4 = "") => {
+  return ["normal", "today"].includes(type4);
+};
+const useBasicDateTable = (props, emit) => {
+  const { lang } = useLocale();
+  const tbodyRef = ref();
+  const currentCellRef = ref();
+  const lastRow = ref();
+  const lastColumn = ref();
+  const tableRows = ref([[], [], [], [], [], []]);
+  let focusWithClick = false;
+  const firstDayOfWeek = props.date.$locale().weekStart || 7;
+  const WEEKS_CONSTANT = props.date.locale("en").localeData().weekdaysShort().map((_) => _.toLowerCase());
+  const offsetDay = computed(() => {
+    return firstDayOfWeek > 3 ? 7 - firstDayOfWeek : -firstDayOfWeek;
+  });
+  const startDate = computed(() => {
+    const startDayOfMonth = props.date.startOf("month");
+    return startDayOfMonth.subtract(startDayOfMonth.day() || 7, "day");
+  });
+  const WEEKS = computed(() => {
+    return WEEKS_CONSTANT.concat(WEEKS_CONSTANT).slice(firstDayOfWeek, firstDayOfWeek + 7);
+  });
+  const hasCurrent = computed(() => {
+    return flatten(unref(rows)).some((row) => {
+      return row.isCurrent;
+    });
+  });
+  const days = computed(() => {
+    const startOfMonth = props.date.startOf("month");
+    const startOfMonthDay = startOfMonth.day() || 7;
+    const dateCountOfMonth = startOfMonth.daysInMonth();
+    const dateCountOfLastMonth = startOfMonth.subtract(1, "month").daysInMonth();
+    return {
+      startOfMonthDay,
+      dateCountOfMonth,
+      dateCountOfLastMonth
+    };
+  });
+  const selectedDate = computed(() => {
+    return props.selectionMode === "dates" ? castArray(props.parsedValue) : [];
+  });
+  const setDateText = (cell, { count, rowIndex, columnIndex }) => {
+    const { startOfMonthDay, dateCountOfMonth, dateCountOfLastMonth } = unref(days);
+    const offset = unref(offsetDay);
+    if (rowIndex >= 0 && rowIndex <= 1) {
+      const numberOfDaysFromPreviousMonth = startOfMonthDay + offset < 0 ? 7 + startOfMonthDay + offset : startOfMonthDay + offset;
+      if (columnIndex + rowIndex * 7 >= numberOfDaysFromPreviousMonth) {
+        cell.text = count;
+        return true;
+      } else {
+        cell.text = dateCountOfLastMonth - (numberOfDaysFromPreviousMonth - columnIndex % 7) + 1 + rowIndex * 7;
+        cell.type = "prev-month";
+      }
+    } else {
+      if (count <= dateCountOfMonth) {
+        cell.text = count;
+      } else {
+        cell.text = count - dateCountOfMonth;
+        cell.type = "next-month";
+      }
+      return true;
+    }
+    return false;
+  };
+  const setCellMetadata = (cell, { columnIndex, rowIndex }, count) => {
+    const { disabledDate: disabledDate2, cellClassName } = props;
+    const _selectedDate = unref(selectedDate);
+    const shouldIncrement = setDateText(cell, { count, rowIndex, columnIndex });
+    const cellDate = cell.dayjs.toDate();
+    cell.selected = _selectedDate.find((d) => d.valueOf() === cell.dayjs.valueOf());
+    cell.isSelected = !!cell.selected;
+    cell.isCurrent = isCurrent(cell);
+    cell.disabled = disabledDate2 == null ? void 0 : disabledDate2(cellDate);
+    cell.customClass = cellClassName == null ? void 0 : cellClassName(cellDate);
+    return shouldIncrement;
+  };
+  const setRowMetadata = (row) => {
+    if (props.selectionMode === "week") {
+      const [start, end2] = props.showWeekNumber ? [1, 7] : [0, 6];
+      const isActive = isWeekActive(row[start + 1]);
+      row[start].inRange = isActive;
+      row[start].start = isActive;
+      row[end2].inRange = isActive;
+      row[end2].end = isActive;
+    }
+  };
+  const rows = computed(() => {
+    const { minDate, maxDate, rangeState, showWeekNumber } = props;
+    const offset = unref(offsetDay);
+    const rows_ = unref(tableRows);
+    const dateUnit = "day";
+    let count = 1;
+    if (showWeekNumber) {
+      for (let rowIndex = 0; rowIndex < 6; rowIndex++) {
+        if (!rows_[rowIndex][0]) {
+          rows_[rowIndex][0] = {
+            type: "week",
+            text: unref(startDate).add(rowIndex * 7 + 1, dateUnit).week()
+          };
+        }
+      }
+    }
+    buildPickerTable({ row: 6, column: 7 }, rows_, {
+      startDate: minDate,
+      columnIndexOffset: showWeekNumber ? 1 : 0,
+      nextEndDate: rangeState.endDate || maxDate || rangeState.selecting && minDate || null,
+      now: dayjs().locale(unref(lang)).startOf(dateUnit),
+      unit: dateUnit,
+      relativeDateGetter: (idx) => unref(startDate).add(idx - offset, dateUnit),
+      setCellMetadata: (...args) => {
+        if (setCellMetadata(...args, count)) {
+          count += 1;
+        }
+      },
+      setRowMetadata
+    });
+    return rows_;
+  });
+  watch(() => props.date, async () => {
+    var _a2;
+    if ((_a2 = unref(tbodyRef)) == null ? void 0 : _a2.contains(document.activeElement)) {
+      await nextTick();
+      await focus();
+    }
+  });
+  const focus = async () => {
+    var _a2;
+    return (_a2 = unref(currentCellRef)) == null ? void 0 : _a2.focus();
+  };
+  const isCurrent = (cell) => {
+    return props.selectionMode === "date" && isNormalDay(cell.type) && cellMatchesDate(cell, props.parsedValue);
+  };
+  const cellMatchesDate = (cell, date4) => {
+    if (!date4)
+      return false;
+    return dayjs(date4).locale(unref(lang)).isSame(props.date.date(Number(cell.text)), "day");
+  };
+  const getDateOfCell = (row, column) => {
+    const offsetFromStart = row * 7 + (column - (props.showWeekNumber ? 1 : 0)) - unref(offsetDay);
+    return unref(startDate).add(offsetFromStart, "day");
+  };
+  const handleMouseMove = (event) => {
+    var _a2;
+    if (!props.rangeState.selecting)
+      return;
+    let target2 = event.target;
+    if (target2.tagName === "SPAN") {
+      target2 = (_a2 = target2.parentNode) == null ? void 0 : _a2.parentNode;
+    }
+    if (target2.tagName === "DIV") {
+      target2 = target2.parentNode;
+    }
+    if (target2.tagName !== "TD")
+      return;
+    const row = target2.parentNode.rowIndex - 1;
+    const column = target2.cellIndex;
+    if (unref(rows)[row][column].disabled)
+      return;
+    if (row !== unref(lastRow) || column !== unref(lastColumn)) {
+      lastRow.value = row;
+      lastColumn.value = column;
+      emit("changerange", {
+        selecting: true,
+        endDate: getDateOfCell(row, column)
+      });
+    }
+  };
+  const isSelectedCell = (cell) => {
+    return !unref(hasCurrent) && (cell == null ? void 0 : cell.text) === 1 && cell.type === "normal" || cell.isCurrent;
+  };
+  const handleFocus = (event) => {
+    if (focusWithClick || unref(hasCurrent) || props.selectionMode !== "date")
+      return;
+    handlePickDate(event, true);
+  };
+  const handleMouseDown = (event) => {
+    const target2 = event.target.closest("td");
+    if (!target2)
+      return;
+    focusWithClick = true;
+  };
+  const handleMouseUp = (event) => {
+    const target2 = event.target.closest("td");
+    if (!target2)
+      return;
+    focusWithClick = false;
+  };
+  const handleRangePick = (newDate) => {
+    if (!props.rangeState.selecting || !props.minDate) {
+      emit("pick", { minDate: newDate, maxDate: null });
+      emit("select", true);
+    } else {
+      if (newDate >= props.minDate) {
+        emit("pick", { minDate: props.minDate, maxDate: newDate });
+      } else {
+        emit("pick", { minDate: newDate, maxDate: props.minDate });
+      }
+      emit("select", false);
+    }
+  };
+  const handleWeekPick = (newDate) => {
+    const weekNumber = newDate.week();
+    const value = `${newDate.year()}w${weekNumber}`;
+    emit("pick", {
+      year: newDate.year(),
+      week: weekNumber,
+      value,
+      date: newDate.startOf("week")
+    });
+  };
+  const handleDatesPick = (newDate, selected) => {
+    const newValue = selected ? castArray(props.parsedValue).filter((d) => (d == null ? void 0 : d.valueOf()) !== newDate.valueOf()) : castArray(props.parsedValue).concat([newDate]);
+    emit("pick", newValue);
+  };
+  const handlePickDate = (event, isKeyboardMovement = false) => {
+    const target2 = event.target.closest("td");
+    if (!target2)
+      return;
+    const row = target2.parentNode.rowIndex - 1;
+    const column = target2.cellIndex;
+    const cell = unref(rows)[row][column];
+    if (cell.disabled || cell.type === "week")
+      return;
+    const newDate = getDateOfCell(row, column);
+    switch (props.selectionMode) {
+      case "range": {
+        handleRangePick(newDate);
+        break;
+      }
+      case "date": {
+        emit("pick", newDate, isKeyboardMovement);
+        break;
+      }
+      case "week": {
+        handleWeekPick(newDate);
+        break;
+      }
+      case "dates": {
+        handleDatesPick(newDate, !!cell.selected);
+        break;
+      }
+    }
+  };
+  const isWeekActive = (cell) => {
+    if (props.selectionMode !== "week")
+      return false;
+    let newDate = props.date.startOf("day");
+    if (cell.type === "prev-month") {
+      newDate = newDate.subtract(1, "month");
+    }
+    if (cell.type === "next-month") {
+      newDate = newDate.add(1, "month");
+    }
+    newDate = newDate.date(Number.parseInt(cell.text, 10));
+    if (props.parsedValue && !Array.isArray(props.parsedValue)) {
+      const dayOffset = (props.parsedValue.day() - firstDayOfWeek + 7) % 7 - 1;
+      const weekDate = props.parsedValue.subtract(dayOffset, "day");
+      return weekDate.isSame(newDate, "day");
+    }
+    return false;
+  };
+  return {
+    WEEKS,
+    rows,
+    tbodyRef,
+    currentCellRef,
+    focus,
+    isCurrent,
+    isWeekActive,
+    isSelectedCell,
+    handlePickDate,
+    handleMouseUp,
+    handleMouseDown,
+    handleMouseMove,
+    handleFocus
+  };
+};
+const useBasicDateTableDOM = (props, {
+  isCurrent,
+  isWeekActive
+}) => {
+  const ns = useNamespace("date-table");
+  const { t } = useLocale();
+  const tableKls = computed(() => [
+    ns.b(),
+    { "is-week-mode": props.selectionMode === "week" }
+  ]);
+  const tableLabel = computed(() => t("el.datepicker.dateTablePrompt"));
+  const weekLabel = computed(() => t("el.datepicker.week"));
+  const getCellClasses = (cell) => {
+    const classes = [];
+    if (isNormalDay(cell.type) && !cell.disabled) {
+      classes.push("available");
+      if (cell.type === "today") {
+        classes.push("today");
+      }
+    } else {
+      classes.push(cell.type);
+    }
+    if (isCurrent(cell)) {
+      classes.push("current");
+    }
+    if (cell.inRange && (isNormalDay(cell.type) || props.selectionMode === "week")) {
+      classes.push("in-range");
+      if (cell.start) {
+        classes.push("start-date");
+      }
+      if (cell.end) {
+        classes.push("end-date");
+      }
+    }
+    if (cell.disabled) {
+      classes.push("disabled");
+    }
+    if (cell.selected) {
+      classes.push("selected");
+    }
+    if (cell.customClass) {
+      classes.push(cell.customClass);
+    }
+    return classes.join(" ");
+  };
+  const getRowKls = (cell) => [
+    ns.e("row"),
+    { current: isWeekActive(cell) }
+  ];
+  return {
+    tableKls,
+    tableLabel,
+    weekLabel,
+    getCellClasses,
+    getRowKls,
+    t
+  };
+};
+const basicCellProps = buildProps({
+  cell: {
+    type: definePropType(Object)
+  }
+});
+var ElDatePickerCell = defineComponent({
+  name: "ElDatePickerCell",
+  props: basicCellProps,
+  setup(props) {
+    const ns = useNamespace("date-table-cell");
+    const {
+      slots
+    } = inject(ROOT_PICKER_INJECTION_KEY);
+    return () => {
+      const {
+        cell
+      } = props;
+      if (slots.default) {
+        const list = slots.default(cell).filter((item) => {
+          return item.patchFlag !== -2 && item.type.toString() !== "Symbol(Comment)" && item.type.toString() !== "Symbol(v-cmt)";
+        });
+        if (list.length) {
+          return list;
+        }
+      }
+      return createVNode("div", {
+        "class": ns.b()
+      }, [createVNode("span", {
+        "class": ns.e("text")
+      }, [cell == null ? void 0 : cell.text])]);
+    };
+  }
+});
+const _hoisted_1$b = ["aria-label"];
+const _hoisted_2$9 = {
+  key: 0,
+  scope: "col"
+};
+const _hoisted_3$7 = ["aria-label"];
+const _hoisted_4$4 = ["aria-current", "aria-selected", "tabindex"];
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
+  __name: "basic-date-table",
+  props: basicDateTableProps,
+  emits: basicDateTableEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const {
+      WEEKS,
+      rows,
+      tbodyRef,
+      currentCellRef,
+      focus,
+      isCurrent,
+      isWeekActive,
+      isSelectedCell,
+      handlePickDate,
+      handleMouseUp,
+      handleMouseDown,
+      handleMouseMove,
+      handleFocus
+    } = useBasicDateTable(props, emit);
+    const { tableLabel, tableKls, weekLabel, getCellClasses, getRowKls, t } = useBasicDateTableDOM(props, {
+      isCurrent,
+      isWeekActive
+    });
+    expose({
+      focus
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("table", {
+        "aria-label": unref(tableLabel),
+        class: normalizeClass(unref(tableKls)),
+        cellspacing: "0",
+        cellpadding: "0",
+        role: "grid",
+        onClick: _cache[1] || (_cache[1] = (...args) => unref(handlePickDate) && unref(handlePickDate)(...args)),
+        onMousemove: _cache[2] || (_cache[2] = (...args) => unref(handleMouseMove) && unref(handleMouseMove)(...args)),
+        onMousedown: _cache[3] || (_cache[3] = withModifiers((...args) => unref(handleMouseDown) && unref(handleMouseDown)(...args), ["prevent"])),
+        onMouseup: _cache[4] || (_cache[4] = (...args) => unref(handleMouseUp) && unref(handleMouseUp)(...args))
+      }, [
+        createElementVNode("tbody", {
+          ref_key: "tbodyRef",
+          ref: tbodyRef
+        }, [
+          createElementVNode("tr", null, [
+            _ctx.showWeekNumber ? (openBlock(), createElementBlock("th", _hoisted_2$9, toDisplayString(unref(weekLabel)), 1)) : createCommentVNode("v-if", true),
+            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(WEEKS), (week, key) => {
+              return openBlock(), createElementBlock("th", {
+                key,
+                "aria-label": unref(t)("el.datepicker.weeksFull." + week),
+                scope: "col"
+              }, toDisplayString(unref(t)("el.datepicker.weeks." + week)), 9, _hoisted_3$7);
+            }), 128))
+          ]),
+          (openBlock(true), createElementBlock(Fragment, null, renderList(unref(rows), (row, rowKey) => {
+            return openBlock(), createElementBlock("tr", {
+              key: rowKey,
+              class: normalizeClass(unref(getRowKls)(row[1]))
+            }, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(row, (cell, columnKey) => {
+                return openBlock(), createElementBlock("td", {
+                  key: `${rowKey}.${columnKey}`,
+                  ref_for: true,
+                  ref: (el) => unref(isSelectedCell)(cell) && (currentCellRef.value = el),
+                  class: normalizeClass(unref(getCellClasses)(cell)),
+                  "aria-current": cell.isCurrent ? "date" : void 0,
+                  "aria-selected": cell.isCurrent,
+                  tabindex: unref(isSelectedCell)(cell) ? 0 : -1,
+                  onFocus: _cache[0] || (_cache[0] = (...args) => unref(handleFocus) && unref(handleFocus)(...args))
+                }, [
+                  createVNode(unref(ElDatePickerCell), { cell }, null, 8, ["cell"])
+                ], 42, _hoisted_4$4);
+              }), 128))
+            ], 2);
+          }), 128))
+        ], 512)
+      ], 42, _hoisted_1$b);
+    };
+  }
+});
+var DateTable = /* @__PURE__ */ _export_sfc$1(_sfc_main$g, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/date-picker/src/date-picker-com/basic-date-table.vue"]]);
+const basicMonthTableProps = buildProps({
+  ...datePickerSharedProps,
+  selectionMode: selectionModeWithDefault("month")
+});
+const _hoisted_1$a = ["aria-label"];
+const _hoisted_2$8 = ["aria-selected", "aria-label", "tabindex", "onKeydown"];
+const _hoisted_3$6 = { class: "cell" };
+const _sfc_main$f = /* @__PURE__ */ defineComponent({
+  __name: "basic-month-table",
+  props: basicMonthTableProps,
+  emits: ["changerange", "pick", "select"],
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const datesInMonth = (year, month, lang2) => {
+      const firstDay = dayjs().locale(lang2).startOf("month").month(month).year(year);
+      const numOfDays = firstDay.daysInMonth();
+      return rangeArr(numOfDays).map((n) => firstDay.add(n, "day").toDate());
+    };
+    const ns = useNamespace("month-table");
+    const { t, lang } = useLocale();
+    const tbodyRef = ref();
+    const currentCellRef = ref();
+    const months = ref(props.date.locale("en").localeData().monthsShort().map((_) => _.toLowerCase()));
+    const tableRows = ref([
+      [],
+      [],
+      []
+    ]);
+    const lastRow = ref();
+    const lastColumn = ref();
+    const rows = computed(() => {
+      var _a2, _b;
+      const rows2 = tableRows.value;
+      const now2 = dayjs().locale(lang.value).startOf("month");
+      for (let i = 0; i < 3; i++) {
+        const row = rows2[i];
+        for (let j = 0; j < 4; j++) {
+          const cell = row[j] || (row[j] = {
+            row: i,
+            column: j,
+            type: "normal",
+            inRange: false,
+            start: false,
+            end: false,
+            text: -1,
+            disabled: false
+          });
+          cell.type = "normal";
+          const index = i * 4 + j;
+          const calTime = props.date.startOf("year").month(index);
+          const calEndDate = props.rangeState.endDate || props.maxDate || props.rangeState.selecting && props.minDate || null;
+          cell.inRange = !!(props.minDate && calTime.isSameOrAfter(props.minDate, "month") && calEndDate && calTime.isSameOrBefore(calEndDate, "month")) || !!(props.minDate && calTime.isSameOrBefore(props.minDate, "month") && calEndDate && calTime.isSameOrAfter(calEndDate, "month"));
+          if ((_a2 = props.minDate) == null ? void 0 : _a2.isSameOrAfter(calEndDate)) {
+            cell.start = !!(calEndDate && calTime.isSame(calEndDate, "month"));
+            cell.end = props.minDate && calTime.isSame(props.minDate, "month");
+          } else {
+            cell.start = !!(props.minDate && calTime.isSame(props.minDate, "month"));
+            cell.end = !!(calEndDate && calTime.isSame(calEndDate, "month"));
+          }
+          const isToday = now2.isSame(calTime);
+          if (isToday) {
+            cell.type = "today";
+          }
+          cell.text = index;
+          cell.disabled = ((_b = props.disabledDate) == null ? void 0 : _b.call(props, calTime.toDate())) || false;
+        }
+      }
+      return rows2;
+    });
+    const focus = () => {
+      var _a2;
+      (_a2 = currentCellRef.value) == null ? void 0 : _a2.focus();
+    };
+    const getCellStyle = (cell) => {
+      const style = {};
+      const year = props.date.year();
+      const today = /* @__PURE__ */ new Date();
+      const month = cell.text;
+      style.disabled = props.disabledDate ? datesInMonth(year, month, lang.value).every(props.disabledDate) : false;
+      style.current = castArray(props.parsedValue).findIndex((date4) => dayjs.isDayjs(date4) && date4.year() === year && date4.month() === month) >= 0;
+      style.today = today.getFullYear() === year && today.getMonth() === month;
+      if (cell.inRange) {
+        style["in-range"] = true;
+        if (cell.start) {
+          style["start-date"] = true;
+        }
+        if (cell.end) {
+          style["end-date"] = true;
+        }
+      }
+      return style;
+    };
+    const isSelectedCell = (cell) => {
+      const year = props.date.year();
+      const month = cell.text;
+      return castArray(props.date).findIndex((date4) => date4.year() === year && date4.month() === month) >= 0;
+    };
+    const handleMouseMove = (event) => {
+      var _a2;
+      if (!props.rangeState.selecting)
+        return;
+      let target2 = event.target;
+      if (target2.tagName === "A") {
+        target2 = (_a2 = target2.parentNode) == null ? void 0 : _a2.parentNode;
+      }
+      if (target2.tagName === "DIV") {
+        target2 = target2.parentNode;
+      }
+      if (target2.tagName !== "TD")
+        return;
+      const row = target2.parentNode.rowIndex;
+      const column = target2.cellIndex;
+      if (rows.value[row][column].disabled)
+        return;
+      if (row !== lastRow.value || column !== lastColumn.value) {
+        lastRow.value = row;
+        lastColumn.value = column;
+        emit("changerange", {
+          selecting: true,
+          endDate: props.date.startOf("year").month(row * 4 + column)
+        });
+      }
+    };
+    const handleMonthTableClick = (event) => {
+      var _a2;
+      const target2 = (_a2 = event.target) == null ? void 0 : _a2.closest("td");
+      if ((target2 == null ? void 0 : target2.tagName) !== "TD")
+        return;
+      if (hasClass(target2, "disabled"))
+        return;
+      const column = target2.cellIndex;
+      const row = target2.parentNode.rowIndex;
+      const month = row * 4 + column;
+      const newDate = props.date.startOf("year").month(month);
+      if (props.selectionMode === "range") {
+        if (!props.rangeState.selecting) {
+          emit("pick", { minDate: newDate, maxDate: null });
+          emit("select", true);
+        } else {
+          if (props.minDate && newDate >= props.minDate) {
+            emit("pick", { minDate: props.minDate, maxDate: newDate });
+          } else {
+            emit("pick", { minDate: newDate, maxDate: props.minDate });
+          }
+          emit("select", false);
+        }
+      } else {
+        emit("pick", month);
+      }
+    };
+    watch(() => props.date, async () => {
+      var _a2, _b;
+      if ((_a2 = tbodyRef.value) == null ? void 0 : _a2.contains(document.activeElement)) {
+        await nextTick();
+        (_b = currentCellRef.value) == null ? void 0 : _b.focus();
+      }
+    });
+    expose({
+      focus
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("table", {
+        role: "grid",
+        "aria-label": unref(t)("el.datepicker.monthTablePrompt"),
+        class: normalizeClass(unref(ns).b()),
+        onClick: handleMonthTableClick,
+        onMousemove: handleMouseMove
+      }, [
+        createElementVNode("tbody", {
+          ref_key: "tbodyRef",
+          ref: tbodyRef
+        }, [
+          (openBlock(true), createElementBlock(Fragment, null, renderList(unref(rows), (row, key) => {
+            return openBlock(), createElementBlock("tr", { key }, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(row, (cell, key_) => {
+                return openBlock(), createElementBlock("td", {
+                  key: key_,
+                  ref_for: true,
+                  ref: (el) => isSelectedCell(cell) && (currentCellRef.value = el),
+                  class: normalizeClass(getCellStyle(cell)),
+                  "aria-selected": `${isSelectedCell(cell)}`,
+                  "aria-label": unref(t)(`el.datepicker.month${+cell.text + 1}`),
+                  tabindex: isSelectedCell(cell) ? 0 : -1,
+                  onKeydown: [
+                    withKeys(withModifiers(handleMonthTableClick, ["prevent", "stop"]), ["space"]),
+                    withKeys(withModifiers(handleMonthTableClick, ["prevent", "stop"]), ["enter"])
+                  ]
+                }, [
+                  createElementVNode("div", null, [
+                    createElementVNode("span", _hoisted_3$6, toDisplayString(unref(t)("el.datepicker.months." + months.value[cell.text])), 1)
+                  ])
+                ], 42, _hoisted_2$8);
+              }), 128))
+            ]);
+          }), 128))
+        ], 512)
+      ], 42, _hoisted_1$a);
+    };
+  }
+});
+var MonthTable = /* @__PURE__ */ _export_sfc$1(_sfc_main$f, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/date-picker/src/date-picker-com/basic-month-table.vue"]]);
+const { date: date3, disabledDate, parsedValue } = datePickerSharedProps;
+const basicYearTableProps = buildProps({
+  date: date3,
+  disabledDate,
+  parsedValue
+});
+const _hoisted_1$9 = ["aria-label"];
+const _hoisted_2$7 = ["aria-selected", "tabindex", "onKeydown"];
+const _hoisted_3$5 = { class: "cell" };
+const _hoisted_4$3 = { key: 1 };
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
+  __name: "basic-year-table",
+  props: basicYearTableProps,
+  emits: ["pick"],
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const datesInYear = (year, lang2) => {
+      const firstDay = dayjs(String(year)).locale(lang2).startOf("year");
+      const lastDay = firstDay.endOf("year");
+      const numOfDays = lastDay.dayOfYear();
+      return rangeArr(numOfDays).map((n) => firstDay.add(n, "day").toDate());
+    };
+    const ns = useNamespace("year-table");
+    const { t, lang } = useLocale();
+    const tbodyRef = ref();
+    const currentCellRef = ref();
+    const startYear = computed(() => {
+      return Math.floor(props.date.year() / 10) * 10;
+    });
+    const focus = () => {
+      var _a2;
+      (_a2 = currentCellRef.value) == null ? void 0 : _a2.focus();
+    };
+    const getCellKls = (year) => {
+      const kls = {};
+      const today = dayjs().locale(lang.value);
+      kls.disabled = props.disabledDate ? datesInYear(year, lang.value).every(props.disabledDate) : false;
+      kls.current = castArray(props.parsedValue).findIndex((d) => d.year() === year) >= 0;
+      kls.today = today.year() === year;
+      return kls;
+    };
+    const isSelectedCell = (year) => {
+      return year === startYear.value && props.date.year() < startYear.value && props.date.year() > startYear.value + 9 || castArray(props.date).findIndex((date4) => date4.year() === year) >= 0;
+    };
+    const handleYearTableClick = (event) => {
+      const clickTarget = event.target;
+      const target2 = clickTarget.closest("td");
+      if (target2 && target2.textContent) {
+        if (hasClass(target2, "disabled"))
+          return;
+        const year = target2.textContent || target2.innerText;
+        emit("pick", Number(year));
+      }
+    };
+    watch(() => props.date, async () => {
+      var _a2, _b;
+      if ((_a2 = tbodyRef.value) == null ? void 0 : _a2.contains(document.activeElement)) {
+        await nextTick();
+        (_b = currentCellRef.value) == null ? void 0 : _b.focus();
+      }
+    });
+    expose({
+      focus
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("table", {
+        role: "grid",
+        "aria-label": unref(t)("el.datepicker.yearTablePrompt"),
+        class: normalizeClass(unref(ns).b()),
+        onClick: handleYearTableClick
+      }, [
+        createElementVNode("tbody", {
+          ref_key: "tbodyRef",
+          ref: tbodyRef
+        }, [
+          (openBlock(), createElementBlock(Fragment, null, renderList(3, (_, i) => {
+            return createElementVNode("tr", { key: i }, [
+              (openBlock(), createElementBlock(Fragment, null, renderList(4, (__, j) => {
+                return openBlock(), createElementBlock(Fragment, {
+                  key: i + "_" + j
+                }, [
+                  i * 4 + j < 10 ? (openBlock(), createElementBlock("td", {
+                    key: 0,
+                    ref_for: true,
+                    ref: (el) => isSelectedCell(unref(startYear) + i * 4 + j) && (currentCellRef.value = el),
+                    class: normalizeClass(["available", getCellKls(unref(startYear) + i * 4 + j)]),
+                    "aria-selected": `${isSelectedCell(unref(startYear) + i * 4 + j)}`,
+                    tabindex: isSelectedCell(unref(startYear) + i * 4 + j) ? 0 : -1,
+                    onKeydown: [
+                      withKeys(withModifiers(handleYearTableClick, ["prevent", "stop"]), ["space"]),
+                      withKeys(withModifiers(handleYearTableClick, ["prevent", "stop"]), ["enter"])
+                    ]
+                  }, [
+                    createElementVNode("span", _hoisted_3$5, toDisplayString(unref(startYear) + i * 4 + j), 1)
+                  ], 42, _hoisted_2$7)) : (openBlock(), createElementBlock("td", _hoisted_4$3))
+                ], 64);
+              }), 64))
+            ]);
+          }), 64))
+        ], 512)
+      ], 10, _hoisted_1$9);
+    };
+  }
+});
+var YearTable = /* @__PURE__ */ _export_sfc$1(_sfc_main$e, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/date-picker/src/date-picker-com/basic-year-table.vue"]]);
+const _hoisted_1$8 = ["onClick"];
+const _hoisted_2$6 = ["aria-label"];
+const _hoisted_3$4 = ["aria-label"];
+const _hoisted_4$2 = ["aria-label"];
+const _hoisted_5$2 = ["aria-label"];
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
+  __name: "panel-date-pick",
+  props: panelDatePickProps,
+  emits: ["pick", "set-picker-option", "panel-change"],
+  setup(__props, { emit: contextEmit }) {
+    const props = __props;
+    const timeWithinRange = (_, __, ___) => true;
+    const ppNs = useNamespace("picker-panel");
+    const dpNs = useNamespace("date-picker");
+    const attrs = useAttrs$1();
+    const slots = useSlots();
+    const { t, lang } = useLocale();
+    const pickerBase = inject("EP_PICKER_BASE");
+    const popper = inject(TOOLTIP_INJECTION_KEY);
+    const { shortcuts, disabledDate: disabledDate2, cellClassName, defaultTime } = pickerBase.props;
+    const defaultValue = toRef(pickerBase.props, "defaultValue");
+    const currentViewRef = ref();
+    const innerDate = ref(dayjs().locale(lang.value));
+    const isChangeToNow = ref(false);
+    let isShortcut = false;
+    const defaultTimeD = computed(() => {
+      return dayjs(defaultTime).locale(lang.value);
+    });
+    const month = computed(() => {
+      return innerDate.value.month();
+    });
+    const year = computed(() => {
+      return innerDate.value.year();
+    });
+    const selectableRange = ref([]);
+    const userInputDate = ref(null);
+    const userInputTime = ref(null);
+    const checkDateWithinRange = (date4) => {
+      return selectableRange.value.length > 0 ? timeWithinRange(date4, selectableRange.value, props.format || "HH:mm:ss") : true;
+    };
+    const formatEmit = (emitDayjs) => {
+      if (defaultTime && !visibleTime.value && !isChangeToNow.value && !isShortcut) {
+        return defaultTimeD.value.year(emitDayjs.year()).month(emitDayjs.month()).date(emitDayjs.date());
+      }
+      if (showTime.value)
+        return emitDayjs.millisecond(0);
+      return emitDayjs.startOf("day");
+    };
+    const emit = (value, ...args) => {
+      if (!value) {
+        contextEmit("pick", value, ...args);
+      } else if (isArray$2(value)) {
+        const dates = value.map(formatEmit);
+        contextEmit("pick", dates, ...args);
+      } else {
+        contextEmit("pick", formatEmit(value), ...args);
+      }
+      userInputDate.value = null;
+      userInputTime.value = null;
+      isChangeToNow.value = false;
+      isShortcut = false;
+    };
+    const handleDatePick = (value, keepOpen) => {
+      if (selectionMode.value === "date") {
+        value = value;
+        let newDate = props.parsedValue ? props.parsedValue.year(value.year()).month(value.month()).date(value.date()) : value;
+        if (!checkDateWithinRange(newDate)) {
+          newDate = selectableRange.value[0][0].year(value.year()).month(value.month()).date(value.date());
+        }
+        innerDate.value = newDate;
+        emit(newDate, showTime.value || keepOpen);
+      } else if (selectionMode.value === "week") {
+        emit(value.date);
+      } else if (selectionMode.value === "dates") {
+        emit(value, true);
+      }
+    };
+    const moveByMonth = (forward) => {
+      const action = forward ? "add" : "subtract";
+      innerDate.value = innerDate.value[action](1, "month");
+      handlePanelChange("month");
+    };
+    const moveByYear = (forward) => {
+      const currentDate = innerDate.value;
+      const action = forward ? "add" : "subtract";
+      innerDate.value = currentView.value === "year" ? currentDate[action](10, "year") : currentDate[action](1, "year");
+      handlePanelChange("year");
+    };
+    const currentView = ref("date");
+    const yearLabel = computed(() => {
+      const yearTranslation = t("el.datepicker.year");
+      if (currentView.value === "year") {
+        const startYear = Math.floor(year.value / 10) * 10;
+        if (yearTranslation) {
+          return `${startYear} ${yearTranslation} - ${startYear + 9} ${yearTranslation}`;
+        }
+        return `${startYear} - ${startYear + 9}`;
+      }
+      return `${year.value} ${yearTranslation}`;
+    });
+    const handleShortcutClick = (shortcut) => {
+      const shortcutValue = isFunction$1(shortcut.value) ? shortcut.value() : shortcut.value;
+      if (shortcutValue) {
+        isShortcut = true;
+        emit(dayjs(shortcutValue).locale(lang.value));
+        return;
+      }
+      if (shortcut.onClick) {
+        shortcut.onClick({
+          attrs,
+          slots,
+          emit: contextEmit
+        });
+      }
+    };
+    const selectionMode = computed(() => {
+      const { type: type4 } = props;
+      if (["week", "month", "year", "dates"].includes(type4))
+        return type4;
+      return "date";
+    });
+    const keyboardMode = computed(() => {
+      return selectionMode.value === "date" ? currentView.value : selectionMode.value;
+    });
+    const hasShortcuts = computed(() => !!shortcuts.length);
+    const handleMonthPick = async (month2) => {
+      innerDate.value = innerDate.value.startOf("month").month(month2);
+      if (selectionMode.value === "month") {
+        emit(innerDate.value, false);
+      } else {
+        currentView.value = "date";
+        if (["month", "year", "date", "week"].includes(selectionMode.value)) {
+          emit(innerDate.value, true);
+          await nextTick();
+          handleFocusPicker();
+        }
+      }
+      handlePanelChange("month");
+    };
+    const handleYearPick = async (year2) => {
+      if (selectionMode.value === "year") {
+        innerDate.value = innerDate.value.startOf("year").year(year2);
+        emit(innerDate.value, false);
+      } else {
+        innerDate.value = innerDate.value.year(year2);
+        currentView.value = "month";
+        if (["month", "year", "date", "week"].includes(selectionMode.value)) {
+          emit(innerDate.value, true);
+          await nextTick();
+          handleFocusPicker();
+        }
+      }
+      handlePanelChange("year");
+    };
+    const showPicker = async (view) => {
+      currentView.value = view;
+      await nextTick();
+      handleFocusPicker();
+    };
+    const showTime = computed(() => props.type === "datetime" || props.type === "datetimerange");
+    const footerVisible = computed(() => {
+      return showTime.value || selectionMode.value === "dates";
+    });
+    const disabledConfirm = computed(() => {
+      if (!disabledDate2)
+        return false;
+      if (!props.parsedValue)
+        return true;
+      if (isArray$2(props.parsedValue)) {
+        return disabledDate2(props.parsedValue[0].toDate());
+      }
+      return disabledDate2(props.parsedValue.toDate());
+    });
+    const onConfirm = () => {
+      if (selectionMode.value === "dates") {
+        emit(props.parsedValue);
+      } else {
+        let result = props.parsedValue;
+        if (!result) {
+          const defaultTimeD2 = dayjs(defaultTime).locale(lang.value);
+          const defaultValueD = getDefaultValue2();
+          result = defaultTimeD2.year(defaultValueD.year()).month(defaultValueD.month()).date(defaultValueD.date());
+        }
+        innerDate.value = result;
+        emit(result);
+      }
+    };
+    const disabledNow = computed(() => {
+      if (!disabledDate2)
+        return false;
+      return disabledDate2(dayjs().locale(lang.value).toDate());
+    });
+    const changeToNow = () => {
+      const now2 = dayjs().locale(lang.value);
+      const nowDate = now2.toDate();
+      isChangeToNow.value = true;
+      if ((!disabledDate2 || !disabledDate2(nowDate)) && checkDateWithinRange(nowDate)) {
+        innerDate.value = dayjs().locale(lang.value);
+        emit(innerDate.value);
+      }
+    };
+    const timeFormat = computed(() => {
+      return props.timeFormat || extractTimeFormat(props.format);
+    });
+    const dateFormat = computed(() => {
+      return props.dateFormat || extractDateFormat(props.format);
+    });
+    const visibleTime = computed(() => {
+      if (userInputTime.value)
+        return userInputTime.value;
+      if (!props.parsedValue && !defaultValue.value)
+        return;
+      return (props.parsedValue || innerDate.value).format(timeFormat.value);
+    });
+    const visibleDate = computed(() => {
+      if (userInputDate.value)
+        return userInputDate.value;
+      if (!props.parsedValue && !defaultValue.value)
+        return;
+      return (props.parsedValue || innerDate.value).format(dateFormat.value);
+    });
+    const timePickerVisible = ref(false);
+    const onTimePickerInputFocus = () => {
+      timePickerVisible.value = true;
+    };
+    const handleTimePickClose = () => {
+      timePickerVisible.value = false;
+    };
+    const getUnits = (date4) => {
+      return {
+        hour: date4.hour(),
+        minute: date4.minute(),
+        second: date4.second(),
+        year: date4.year(),
+        month: date4.month(),
+        date: date4.date()
+      };
+    };
+    const handleTimePick = (value, visible, first) => {
+      const { hour, minute, second } = getUnits(value);
+      const newDate = props.parsedValue ? props.parsedValue.hour(hour).minute(minute).second(second) : value;
+      innerDate.value = newDate;
+      emit(innerDate.value, true);
+      if (!first) {
+        timePickerVisible.value = visible;
+      }
+    };
+    const handleVisibleTimeChange = (value) => {
+      const newDate = dayjs(value, timeFormat.value).locale(lang.value);
+      if (newDate.isValid() && checkDateWithinRange(newDate)) {
+        const { year: year2, month: month2, date: date4 } = getUnits(innerDate.value);
+        innerDate.value = newDate.year(year2).month(month2).date(date4);
+        userInputTime.value = null;
+        timePickerVisible.value = false;
+        emit(innerDate.value, true);
+      }
+    };
+    const handleVisibleDateChange = (value) => {
+      const newDate = dayjs(value, dateFormat.value).locale(lang.value);
+      if (newDate.isValid()) {
+        if (disabledDate2 && disabledDate2(newDate.toDate())) {
+          return;
+        }
+        const { hour, minute, second } = getUnits(innerDate.value);
+        innerDate.value = newDate.hour(hour).minute(minute).second(second);
+        userInputDate.value = null;
+        emit(innerDate.value, true);
+      }
+    };
+    const isValidValue2 = (date4) => {
+      return dayjs.isDayjs(date4) && date4.isValid() && (disabledDate2 ? !disabledDate2(date4.toDate()) : true);
+    };
+    const formatToString = (value) => {
+      if (selectionMode.value === "dates") {
+        return value.map((_) => _.format(props.format));
+      }
+      return value.format(props.format);
+    };
+    const parseUserInput = (value) => {
+      return dayjs(value, props.format).locale(lang.value);
+    };
+    const getDefaultValue2 = () => {
+      const parseDate2 = dayjs(defaultValue.value).locale(lang.value);
+      if (!defaultValue.value) {
+        const defaultTimeDValue = defaultTimeD.value;
+        return dayjs().hour(defaultTimeDValue.hour()).minute(defaultTimeDValue.minute()).second(defaultTimeDValue.second()).locale(lang.value);
+      }
+      return parseDate2;
+    };
+    const handleFocusPicker = async () => {
+      var _a2;
+      if (["week", "month", "year", "date"].includes(selectionMode.value)) {
+        (_a2 = currentViewRef.value) == null ? void 0 : _a2.focus();
+        if (selectionMode.value === "week") {
+          handleKeyControl(EVENT_CODE.down);
+        }
+      }
+    };
+    const handleKeydownTable = (event) => {
+      const { code } = event;
+      const validCode = [
+        EVENT_CODE.up,
+        EVENT_CODE.down,
+        EVENT_CODE.left,
+        EVENT_CODE.right,
+        EVENT_CODE.home,
+        EVENT_CODE.end,
+        EVENT_CODE.pageUp,
+        EVENT_CODE.pageDown
+      ];
+      if (validCode.includes(code)) {
+        handleKeyControl(code);
+        event.stopPropagation();
+        event.preventDefault();
+      }
+      if ([EVENT_CODE.enter, EVENT_CODE.space, EVENT_CODE.numpadEnter].includes(code) && userInputDate.value === null && userInputTime.value === null) {
+        event.preventDefault();
+        emit(innerDate.value, false);
+      }
+    };
+    const handleKeyControl = (code) => {
+      var _a2;
+      const { up: up2, down: down2, left: left2, right: right2, home: home2, end: end2, pageUp: pageUp2, pageDown: pageDown2 } = EVENT_CODE;
+      const mapping = {
+        year: {
+          [up2]: -4,
+          [down2]: 4,
+          [left2]: -1,
+          [right2]: 1,
+          offset: (date4, step) => date4.setFullYear(date4.getFullYear() + step)
+        },
+        month: {
+          [up2]: -4,
+          [down2]: 4,
+          [left2]: -1,
+          [right2]: 1,
+          offset: (date4, step) => date4.setMonth(date4.getMonth() + step)
+        },
+        week: {
+          [up2]: -1,
+          [down2]: 1,
+          [left2]: -1,
+          [right2]: 1,
+          offset: (date4, step) => date4.setDate(date4.getDate() + step * 7)
+        },
+        date: {
+          [up2]: -7,
+          [down2]: 7,
+          [left2]: -1,
+          [right2]: 1,
+          [home2]: (date4) => -date4.getDay(),
+          [end2]: (date4) => -date4.getDay() + 6,
+          [pageUp2]: (date4) => -new Date(date4.getFullYear(), date4.getMonth(), 0).getDate(),
+          [pageDown2]: (date4) => new Date(date4.getFullYear(), date4.getMonth() + 1, 0).getDate(),
+          offset: (date4, step) => date4.setDate(date4.getDate() + step)
+        }
+      };
+      const newDate = innerDate.value.toDate();
+      while (Math.abs(innerDate.value.diff(newDate, "year", true)) < 1) {
+        const map = mapping[keyboardMode.value];
+        if (!map)
+          return;
+        map.offset(newDate, isFunction$1(map[code]) ? map[code](newDate) : (_a2 = map[code]) != null ? _a2 : 0);
+        if (disabledDate2 && disabledDate2(newDate)) {
+          break;
+        }
+        const result = dayjs(newDate).locale(lang.value);
+        innerDate.value = result;
+        contextEmit("pick", result, true);
+        break;
+      }
+    };
+    const handlePanelChange = (mode) => {
+      contextEmit("panel-change", innerDate.value.toDate(), mode, currentView.value);
+    };
+    watch(() => selectionMode.value, (val) => {
+      if (["month", "year"].includes(val)) {
+        currentView.value = val;
+        return;
+      }
+      currentView.value = "date";
+    }, { immediate: true });
+    watch(() => currentView.value, () => {
+      popper == null ? void 0 : popper.updatePopper();
+    });
+    watch(() => defaultValue.value, (val) => {
+      if (val) {
+        innerDate.value = getDefaultValue2();
+      }
+    }, { immediate: true });
+    watch(() => props.parsedValue, (val) => {
+      if (val) {
+        if (selectionMode.value === "dates")
+          return;
+        if (Array.isArray(val))
+          return;
+        innerDate.value = val;
+      } else {
+        innerDate.value = getDefaultValue2();
+      }
+    }, { immediate: true });
+    contextEmit("set-picker-option", ["isValidValue", isValidValue2]);
+    contextEmit("set-picker-option", ["formatToString", formatToString]);
+    contextEmit("set-picker-option", ["parseUserInput", parseUserInput]);
+    contextEmit("set-picker-option", ["handleFocusPicker", handleFocusPicker]);
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass([
+          unref(ppNs).b(),
+          unref(dpNs).b(),
+          {
+            "has-sidebar": _ctx.$slots.sidebar || unref(hasShortcuts),
+            "has-time": unref(showTime)
+          }
+        ])
+      }, [
+        createElementVNode("div", {
+          class: normalizeClass(unref(ppNs).e("body-wrapper"))
+        }, [
+          renderSlot(_ctx.$slots, "sidebar", {
+            class: normalizeClass(unref(ppNs).e("sidebar"))
+          }),
+          unref(hasShortcuts) ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            class: normalizeClass(unref(ppNs).e("sidebar"))
+          }, [
+            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(shortcuts), (shortcut, key) => {
+              return openBlock(), createElementBlock("button", {
+                key,
+                type: "button",
+                class: normalizeClass(unref(ppNs).e("shortcut")),
+                onClick: ($event) => handleShortcutClick(shortcut)
+              }, toDisplayString(shortcut.text), 11, _hoisted_1$8);
+            }), 128))
+          ], 2)) : createCommentVNode("v-if", true),
+          createElementVNode("div", {
+            class: normalizeClass(unref(ppNs).e("body"))
+          }, [
+            unref(showTime) ? (openBlock(), createElementBlock("div", {
+              key: 0,
+              class: normalizeClass(unref(dpNs).e("time-header"))
+            }, [
+              createElementVNode("span", {
+                class: normalizeClass(unref(dpNs).e("editor-wrap"))
+              }, [
+                createVNode(unref(ElInput), {
+                  placeholder: unref(t)("el.datepicker.selectDate"),
+                  "model-value": unref(visibleDate),
+                  size: "small",
+                  "validate-event": false,
+                  onInput: _cache[0] || (_cache[0] = (val) => userInputDate.value = val),
+                  onChange: handleVisibleDateChange
+                }, null, 8, ["placeholder", "model-value"])
+              ], 2),
+              withDirectives((openBlock(), createElementBlock("span", {
+                class: normalizeClass(unref(dpNs).e("editor-wrap"))
+              }, [
+                createVNode(unref(ElInput), {
+                  placeholder: unref(t)("el.datepicker.selectTime"),
+                  "model-value": unref(visibleTime),
+                  size: "small",
+                  "validate-event": false,
+                  onFocus: onTimePickerInputFocus,
+                  onInput: _cache[1] || (_cache[1] = (val) => userInputTime.value = val),
+                  onChange: handleVisibleTimeChange
+                }, null, 8, ["placeholder", "model-value"]),
+                createVNode(unref(TimePickPanel), {
+                  visible: timePickerVisible.value,
+                  format: unref(timeFormat),
+                  "parsed-value": innerDate.value,
+                  onPick: handleTimePick
+                }, null, 8, ["visible", "format", "parsed-value"])
+              ], 2)), [
+                [unref(ClickOutside), handleTimePickClose]
+              ])
+            ], 2)) : createCommentVNode("v-if", true),
+            withDirectives(createElementVNode("div", {
+              class: normalizeClass([
+                unref(dpNs).e("header"),
+                (currentView.value === "year" || currentView.value === "month") && unref(dpNs).e("header--bordered")
+              ])
+            }, [
+              createElementVNode("span", {
+                class: normalizeClass(unref(dpNs).e("prev-btn"))
+              }, [
+                createElementVNode("button", {
+                  type: "button",
+                  "aria-label": unref(t)(`el.datepicker.prevYear`),
+                  class: normalizeClass(["d-arrow-left", unref(ppNs).e("icon-btn")]),
+                  onClick: _cache[2] || (_cache[2] = ($event) => moveByYear(false))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_2$6),
+                withDirectives(createElementVNode("button", {
+                  type: "button",
+                  "aria-label": unref(t)(`el.datepicker.prevMonth`),
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "arrow-left"]),
+                  onClick: _cache[3] || (_cache[3] = ($event) => moveByMonth(false))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_3$4), [
+                  [vShow, currentView.value === "date"]
+                ])
+              ], 2),
+              createElementVNode("span", {
+                role: "button",
+                class: normalizeClass(unref(dpNs).e("header-label")),
+                "aria-live": "polite",
+                tabindex: "0",
+                onKeydown: _cache[4] || (_cache[4] = withKeys(($event) => showPicker("year"), ["enter"])),
+                onClick: _cache[5] || (_cache[5] = ($event) => showPicker("year"))
+              }, toDisplayString(unref(yearLabel)), 35),
+              withDirectives(createElementVNode("span", {
+                role: "button",
+                "aria-live": "polite",
+                tabindex: "0",
+                class: normalizeClass([
+                  unref(dpNs).e("header-label"),
+                  { active: currentView.value === "month" }
+                ]),
+                onKeydown: _cache[6] || (_cache[6] = withKeys(($event) => showPicker("month"), ["enter"])),
+                onClick: _cache[7] || (_cache[7] = ($event) => showPicker("month"))
+              }, toDisplayString(unref(t)(`el.datepicker.month${unref(month) + 1}`)), 35), [
+                [vShow, currentView.value === "date"]
+              ]),
+              createElementVNode("span", {
+                class: normalizeClass(unref(dpNs).e("next-btn"))
+              }, [
+                withDirectives(createElementVNode("button", {
+                  type: "button",
+                  "aria-label": unref(t)(`el.datepicker.nextMonth`),
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "arrow-right"]),
+                  onClick: _cache[8] || (_cache[8] = ($event) => moveByMonth(true))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_4$2), [
+                  [vShow, currentView.value === "date"]
+                ]),
+                createElementVNode("button", {
+                  type: "button",
+                  "aria-label": unref(t)(`el.datepicker.nextYear`),
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "d-arrow-right"]),
+                  onClick: _cache[9] || (_cache[9] = ($event) => moveByYear(true))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_5$2)
+              ], 2)
+            ], 2), [
+              [vShow, currentView.value !== "time"]
+            ]),
+            createElementVNode("div", {
+              class: normalizeClass(unref(ppNs).e("content")),
+              onKeydown: handleKeydownTable
+            }, [
+              currentView.value === "date" ? (openBlock(), createBlock(DateTable, {
+                key: 0,
+                ref_key: "currentViewRef",
+                ref: currentViewRef,
+                "selection-mode": unref(selectionMode),
+                date: innerDate.value,
+                "parsed-value": _ctx.parsedValue,
+                "disabled-date": unref(disabledDate2),
+                "cell-class-name": unref(cellClassName),
+                onPick: handleDatePick
+              }, null, 8, ["selection-mode", "date", "parsed-value", "disabled-date", "cell-class-name"])) : createCommentVNode("v-if", true),
+              currentView.value === "year" ? (openBlock(), createBlock(YearTable, {
+                key: 1,
+                ref_key: "currentViewRef",
+                ref: currentViewRef,
+                date: innerDate.value,
+                "disabled-date": unref(disabledDate2),
+                "parsed-value": _ctx.parsedValue,
+                onPick: handleYearPick
+              }, null, 8, ["date", "disabled-date", "parsed-value"])) : createCommentVNode("v-if", true),
+              currentView.value === "month" ? (openBlock(), createBlock(MonthTable, {
+                key: 2,
+                ref_key: "currentViewRef",
+                ref: currentViewRef,
+                date: innerDate.value,
+                "parsed-value": _ctx.parsedValue,
+                "disabled-date": unref(disabledDate2),
+                onPick: handleMonthPick
+              }, null, 8, ["date", "parsed-value", "disabled-date"])) : createCommentVNode("v-if", true)
+            ], 34)
+          ], 2)
+        ], 2),
+        withDirectives(createElementVNode("div", {
+          class: normalizeClass(unref(ppNs).e("footer"))
+        }, [
+          withDirectives(createVNode(unref(ElButton), {
+            text: "",
+            size: "small",
+            class: normalizeClass(unref(ppNs).e("link-btn")),
+            disabled: unref(disabledNow),
+            onClick: changeToNow
+          }, {
+            default: withCtx(() => [
+              createTextVNode(toDisplayString(unref(t)("el.datepicker.now")), 1)
+            ]),
+            _: 1
+          }, 8, ["class", "disabled"]), [
+            [vShow, unref(selectionMode) !== "dates"]
+          ]),
+          createVNode(unref(ElButton), {
+            plain: "",
+            size: "small",
+            class: normalizeClass(unref(ppNs).e("link-btn")),
+            disabled: unref(disabledConfirm),
+            onClick: onConfirm
+          }, {
+            default: withCtx(() => [
+              createTextVNode(toDisplayString(unref(t)("el.datepicker.confirm")), 1)
+            ]),
+            _: 1
+          }, 8, ["class", "disabled"])
+        ], 2), [
+          [vShow, unref(footerVisible) && currentView.value === "date"]
+        ])
+      ], 2);
+    };
+  }
+});
+var DatePickPanel = /* @__PURE__ */ _export_sfc$1(_sfc_main$d, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/date-picker/src/date-picker-com/panel-date-pick.vue"]]);
+const panelDateRangeProps = buildProps({
+  ...panelSharedProps,
+  ...panelRangeSharedProps
+});
+const useShortcut = (lang) => {
+  const { emit } = getCurrentInstance();
+  const attrs = useAttrs$1();
+  const slots = useSlots();
+  const handleShortcutClick = (shortcut) => {
+    const shortcutValues = isFunction$1(shortcut.value) ? shortcut.value() : shortcut.value;
+    if (shortcutValues) {
+      emit("pick", [
+        dayjs(shortcutValues[0]).locale(lang.value),
+        dayjs(shortcutValues[1]).locale(lang.value)
+      ]);
+      return;
+    }
+    if (shortcut.onClick) {
+      shortcut.onClick({
+        attrs,
+        slots,
+        emit
+      });
+    }
+  };
+  return handleShortcutClick;
+};
+const useRangePicker = (props, {
+  defaultValue,
+  leftDate,
+  rightDate,
+  unit: unit2,
+  onParsedValueChanged
+}) => {
+  const { emit } = getCurrentInstance();
+  const { pickerNs } = inject(ROOT_PICKER_INJECTION_KEY);
+  const drpNs = useNamespace("date-range-picker");
+  const { t, lang } = useLocale();
+  const handleShortcutClick = useShortcut(lang);
+  const minDate = ref();
+  const maxDate = ref();
+  const rangeState = ref({
+    endDate: null,
+    selecting: false
+  });
+  const handleChangeRange = (val) => {
+    rangeState.value = val;
+  };
+  const handleRangeConfirm = (visible = false) => {
+    const _minDate = unref(minDate);
+    const _maxDate = unref(maxDate);
+    if (isValidRange([_minDate, _maxDate])) {
+      emit("pick", [_minDate, _maxDate], visible);
+    }
+  };
+  const onSelect = (selecting) => {
+    rangeState.value.selecting = selecting;
+    if (!selecting) {
+      rangeState.value.endDate = null;
+    }
+  };
+  const restoreDefault = () => {
+    const [start, end2] = getDefaultValue(unref(defaultValue), {
+      lang: unref(lang),
+      unit: unit2,
+      unlinkPanels: props.unlinkPanels
+    });
+    minDate.value = void 0;
+    maxDate.value = void 0;
+    leftDate.value = start;
+    rightDate.value = end2;
+  };
+  watch(defaultValue, (val) => {
+    if (val) {
+      restoreDefault();
+    }
+  }, { immediate: true });
+  watch(() => props.parsedValue, (parsedValue2) => {
+    if (isArray$2(parsedValue2) && parsedValue2.length === 2) {
+      const [start, end2] = parsedValue2;
+      minDate.value = start;
+      leftDate.value = start;
+      maxDate.value = end2;
+      onParsedValueChanged(unref(minDate), unref(maxDate));
+    } else {
+      restoreDefault();
+    }
+  }, { immediate: true });
+  return {
+    minDate,
+    maxDate,
+    rangeState,
+    lang,
+    ppNs: pickerNs,
+    drpNs,
+    handleChangeRange,
+    handleRangeConfirm,
+    handleShortcutClick,
+    onSelect,
+    t
+  };
+};
+const _hoisted_1$7 = ["onClick"];
+const _hoisted_2$5 = ["aria-label"];
+const _hoisted_3$3 = ["aria-label"];
+const _hoisted_4$1 = ["disabled", "aria-label"];
+const _hoisted_5$1 = ["disabled", "aria-label"];
+const _hoisted_6 = ["disabled", "aria-label"];
+const _hoisted_7 = ["disabled", "aria-label"];
+const _hoisted_8 = ["aria-label"];
+const _hoisted_9 = ["aria-label"];
+const unit$1 = "month";
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
+  __name: "panel-date-range",
+  props: panelDateRangeProps,
+  emits: [
+    "pick",
+    "set-picker-option",
+    "calendar-change",
+    "panel-change"
+  ],
+  setup(__props, { emit }) {
+    const props = __props;
+    const pickerBase = inject("EP_PICKER_BASE");
+    const { disabledDate: disabledDate2, cellClassName, format: format2, defaultTime, clearable } = pickerBase.props;
+    const shortcuts = toRef(pickerBase.props, "shortcuts");
+    const defaultValue = toRef(pickerBase.props, "defaultValue");
+    const { lang } = useLocale();
+    const leftDate = ref(dayjs().locale(lang.value));
+    const rightDate = ref(dayjs().locale(lang.value).add(1, unit$1));
+    const {
+      minDate,
+      maxDate,
+      rangeState,
+      ppNs,
+      drpNs,
+      handleChangeRange,
+      handleRangeConfirm,
+      handleShortcutClick,
+      onSelect,
+      t
+    } = useRangePicker(props, {
+      defaultValue,
+      leftDate,
+      rightDate,
+      unit: unit$1,
+      onParsedValueChanged
+    });
+    const dateUserInput = ref({
+      min: null,
+      max: null
+    });
+    const timeUserInput = ref({
+      min: null,
+      max: null
+    });
+    const leftLabel = computed(() => {
+      return `${leftDate.value.year()} ${t("el.datepicker.year")} ${t(`el.datepicker.month${leftDate.value.month() + 1}`)}`;
+    });
+    const rightLabel = computed(() => {
+      return `${rightDate.value.year()} ${t("el.datepicker.year")} ${t(`el.datepicker.month${rightDate.value.month() + 1}`)}`;
+    });
+    const leftYear = computed(() => {
+      return leftDate.value.year();
+    });
+    const leftMonth = computed(() => {
+      return leftDate.value.month();
+    });
+    const rightYear = computed(() => {
+      return rightDate.value.year();
+    });
+    const rightMonth = computed(() => {
+      return rightDate.value.month();
+    });
+    const hasShortcuts = computed(() => !!shortcuts.value.length);
+    const minVisibleDate = computed(() => {
+      if (dateUserInput.value.min !== null)
+        return dateUserInput.value.min;
+      if (minDate.value)
+        return minDate.value.format(dateFormat.value);
+      return "";
+    });
+    const maxVisibleDate = computed(() => {
+      if (dateUserInput.value.max !== null)
+        return dateUserInput.value.max;
+      if (maxDate.value || minDate.value)
+        return (maxDate.value || minDate.value).format(dateFormat.value);
+      return "";
+    });
+    const minVisibleTime = computed(() => {
+      if (timeUserInput.value.min !== null)
+        return timeUserInput.value.min;
+      if (minDate.value)
+        return minDate.value.format(timeFormat.value);
+      return "";
+    });
+    const maxVisibleTime = computed(() => {
+      if (timeUserInput.value.max !== null)
+        return timeUserInput.value.max;
+      if (maxDate.value || minDate.value)
+        return (maxDate.value || minDate.value).format(timeFormat.value);
+      return "";
+    });
+    const timeFormat = computed(() => {
+      return props.timeFormat || extractTimeFormat(format2);
+    });
+    const dateFormat = computed(() => {
+      return props.dateFormat || extractDateFormat(format2);
+    });
+    const isValidValue2 = (date4) => {
+      return isValidRange(date4) && (disabledDate2 ? !disabledDate2(date4[0].toDate()) && !disabledDate2(date4[1].toDate()) : true);
+    };
+    const leftPrevYear = () => {
+      leftDate.value = leftDate.value.subtract(1, "year");
+      if (!props.unlinkPanels) {
+        rightDate.value = leftDate.value.add(1, "month");
+      }
+      handlePanelChange("year");
+    };
+    const leftPrevMonth = () => {
+      leftDate.value = leftDate.value.subtract(1, "month");
+      if (!props.unlinkPanels) {
+        rightDate.value = leftDate.value.add(1, "month");
+      }
+      handlePanelChange("month");
+    };
+    const rightNextYear = () => {
+      if (!props.unlinkPanels) {
+        leftDate.value = leftDate.value.add(1, "year");
+        rightDate.value = leftDate.value.add(1, "month");
+      } else {
+        rightDate.value = rightDate.value.add(1, "year");
+      }
+      handlePanelChange("year");
+    };
+    const rightNextMonth = () => {
+      if (!props.unlinkPanels) {
+        leftDate.value = leftDate.value.add(1, "month");
+        rightDate.value = leftDate.value.add(1, "month");
+      } else {
+        rightDate.value = rightDate.value.add(1, "month");
+      }
+      handlePanelChange("month");
+    };
+    const leftNextYear = () => {
+      leftDate.value = leftDate.value.add(1, "year");
+      handlePanelChange("year");
+    };
+    const leftNextMonth = () => {
+      leftDate.value = leftDate.value.add(1, "month");
+      handlePanelChange("month");
+    };
+    const rightPrevYear = () => {
+      rightDate.value = rightDate.value.subtract(1, "year");
+      handlePanelChange("year");
+    };
+    const rightPrevMonth = () => {
+      rightDate.value = rightDate.value.subtract(1, "month");
+      handlePanelChange("month");
+    };
+    const handlePanelChange = (mode) => {
+      emit("panel-change", [leftDate.value.toDate(), rightDate.value.toDate()], mode);
+    };
+    const enableMonthArrow = computed(() => {
+      const nextMonth = (leftMonth.value + 1) % 12;
+      const yearOffset = leftMonth.value + 1 >= 12 ? 1 : 0;
+      return props.unlinkPanels && new Date(leftYear.value + yearOffset, nextMonth) < new Date(rightYear.value, rightMonth.value);
+    });
+    const enableYearArrow = computed(() => {
+      return props.unlinkPanels && rightYear.value * 12 + rightMonth.value - (leftYear.value * 12 + leftMonth.value + 1) >= 12;
+    });
+    const btnDisabled = computed(() => {
+      return !(minDate.value && maxDate.value && !rangeState.value.selecting && isValidRange([minDate.value, maxDate.value]));
+    });
+    const showTime = computed(() => props.type === "datetime" || props.type === "datetimerange");
+    const formatEmit = (emitDayjs, index) => {
+      if (!emitDayjs)
+        return;
+      if (defaultTime) {
+        const defaultTimeD = dayjs(defaultTime[index] || defaultTime).locale(lang.value);
+        return defaultTimeD.year(emitDayjs.year()).month(emitDayjs.month()).date(emitDayjs.date());
+      }
+      return emitDayjs;
+    };
+    const handleRangePick = (val, close = true) => {
+      const min_ = val.minDate;
+      const max_ = val.maxDate;
+      const minDate_ = formatEmit(min_, 0);
+      const maxDate_ = formatEmit(max_, 1);
+      if (maxDate.value === maxDate_ && minDate.value === minDate_) {
+        return;
+      }
+      emit("calendar-change", [min_.toDate(), max_ && max_.toDate()]);
+      maxDate.value = maxDate_;
+      minDate.value = minDate_;
+      if (!close || showTime.value)
+        return;
+      handleRangeConfirm();
+    };
+    const minTimePickerVisible = ref(false);
+    const maxTimePickerVisible = ref(false);
+    const handleMinTimeClose = () => {
+      minTimePickerVisible.value = false;
+    };
+    const handleMaxTimeClose = () => {
+      maxTimePickerVisible.value = false;
+    };
+    const handleDateInput = (value, type4) => {
+      dateUserInput.value[type4] = value;
+      const parsedValueD = dayjs(value, dateFormat.value).locale(lang.value);
+      if (parsedValueD.isValid()) {
+        if (disabledDate2 && disabledDate2(parsedValueD.toDate())) {
+          return;
+        }
+        if (type4 === "min") {
+          leftDate.value = parsedValueD;
+          minDate.value = (minDate.value || leftDate.value).year(parsedValueD.year()).month(parsedValueD.month()).date(parsedValueD.date());
+          if (!props.unlinkPanels && (!maxDate.value || maxDate.value.isBefore(minDate.value))) {
+            rightDate.value = parsedValueD.add(1, "month");
+            maxDate.value = minDate.value.add(1, "month");
+          }
+        } else {
+          rightDate.value = parsedValueD;
+          maxDate.value = (maxDate.value || rightDate.value).year(parsedValueD.year()).month(parsedValueD.month()).date(parsedValueD.date());
+          if (!props.unlinkPanels && (!minDate.value || minDate.value.isAfter(maxDate.value))) {
+            leftDate.value = parsedValueD.subtract(1, "month");
+            minDate.value = maxDate.value.subtract(1, "month");
+          }
+        }
+      }
+    };
+    const handleDateChange = (_, type4) => {
+      dateUserInput.value[type4] = null;
+    };
+    const handleTimeInput = (value, type4) => {
+      timeUserInput.value[type4] = value;
+      const parsedValueD = dayjs(value, timeFormat.value).locale(lang.value);
+      if (parsedValueD.isValid()) {
+        if (type4 === "min") {
+          minTimePickerVisible.value = true;
+          minDate.value = (minDate.value || leftDate.value).hour(parsedValueD.hour()).minute(parsedValueD.minute()).second(parsedValueD.second());
+          if (!maxDate.value || maxDate.value.isBefore(minDate.value)) {
+            maxDate.value = minDate.value;
+          }
+        } else {
+          maxTimePickerVisible.value = true;
+          maxDate.value = (maxDate.value || rightDate.value).hour(parsedValueD.hour()).minute(parsedValueD.minute()).second(parsedValueD.second());
+          rightDate.value = maxDate.value;
+          if (maxDate.value && maxDate.value.isBefore(minDate.value)) {
+            minDate.value = maxDate.value;
+          }
+        }
+      }
+    };
+    const handleTimeChange = (value, type4) => {
+      timeUserInput.value[type4] = null;
+      if (type4 === "min") {
+        leftDate.value = minDate.value;
+        minTimePickerVisible.value = false;
+      } else {
+        rightDate.value = maxDate.value;
+        maxTimePickerVisible.value = false;
+      }
+    };
+    const handleMinTimePick = (value, visible, first) => {
+      if (timeUserInput.value.min)
+        return;
+      if (value) {
+        leftDate.value = value;
+        minDate.value = (minDate.value || leftDate.value).hour(value.hour()).minute(value.minute()).second(value.second());
+      }
+      if (!first) {
+        minTimePickerVisible.value = visible;
+      }
+      if (!maxDate.value || maxDate.value.isBefore(minDate.value)) {
+        maxDate.value = minDate.value;
+        rightDate.value = value;
+      }
+    };
+    const handleMaxTimePick = (value, visible, first) => {
+      if (timeUserInput.value.max)
+        return;
+      if (value) {
+        rightDate.value = value;
+        maxDate.value = (maxDate.value || rightDate.value).hour(value.hour()).minute(value.minute()).second(value.second());
+      }
+      if (!first) {
+        maxTimePickerVisible.value = visible;
+      }
+      if (maxDate.value && maxDate.value.isBefore(minDate.value)) {
+        minDate.value = maxDate.value;
+      }
+    };
+    const handleClear = () => {
+      leftDate.value = getDefaultValue(unref(defaultValue), {
+        lang: unref(lang),
+        unit: "month",
+        unlinkPanels: props.unlinkPanels
+      })[0];
+      rightDate.value = leftDate.value.add(1, "month");
+      emit("pick", null);
+    };
+    const formatToString = (value) => {
+      return isArray$2(value) ? value.map((_) => _.format(format2)) : value.format(format2);
+    };
+    const parseUserInput = (value) => {
+      return isArray$2(value) ? value.map((_) => dayjs(_, format2).locale(lang.value)) : dayjs(value, format2).locale(lang.value);
+    };
+    function onParsedValueChanged(minDate2, maxDate2) {
+      if (props.unlinkPanels && maxDate2) {
+        const minDateYear = (minDate2 == null ? void 0 : minDate2.year()) || 0;
+        const minDateMonth = (minDate2 == null ? void 0 : minDate2.month()) || 0;
+        const maxDateYear = maxDate2.year();
+        const maxDateMonth = maxDate2.month();
+        rightDate.value = minDateYear === maxDateYear && minDateMonth === maxDateMonth ? maxDate2.add(1, unit$1) : maxDate2;
+      } else {
+        rightDate.value = leftDate.value.add(1, unit$1);
+        if (maxDate2) {
+          rightDate.value = rightDate.value.hour(maxDate2.hour()).minute(maxDate2.minute()).second(maxDate2.second());
+        }
+      }
+    }
+    emit("set-picker-option", ["isValidValue", isValidValue2]);
+    emit("set-picker-option", ["parseUserInput", parseUserInput]);
+    emit("set-picker-option", ["formatToString", formatToString]);
+    emit("set-picker-option", ["handleClear", handleClear]);
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass([
+          unref(ppNs).b(),
+          unref(drpNs).b(),
+          {
+            "has-sidebar": _ctx.$slots.sidebar || unref(hasShortcuts),
+            "has-time": unref(showTime)
+          }
+        ])
+      }, [
+        createElementVNode("div", {
+          class: normalizeClass(unref(ppNs).e("body-wrapper"))
+        }, [
+          renderSlot(_ctx.$slots, "sidebar", {
+            class: normalizeClass(unref(ppNs).e("sidebar"))
+          }),
+          unref(hasShortcuts) ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            class: normalizeClass(unref(ppNs).e("sidebar"))
+          }, [
+            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(shortcuts), (shortcut, key) => {
+              return openBlock(), createElementBlock("button", {
+                key,
+                type: "button",
+                class: normalizeClass(unref(ppNs).e("shortcut")),
+                onClick: ($event) => unref(handleShortcutClick)(shortcut)
+              }, toDisplayString(shortcut.text), 11, _hoisted_1$7);
+            }), 128))
+          ], 2)) : createCommentVNode("v-if", true),
+          createElementVNode("div", {
+            class: normalizeClass(unref(ppNs).e("body"))
+          }, [
+            unref(showTime) ? (openBlock(), createElementBlock("div", {
+              key: 0,
+              class: normalizeClass(unref(drpNs).e("time-header"))
+            }, [
+              createElementVNode("span", {
+                class: normalizeClass(unref(drpNs).e("editors-wrap"))
+              }, [
+                createElementVNode("span", {
+                  class: normalizeClass(unref(drpNs).e("time-picker-wrap"))
+                }, [
+                  createVNode(unref(ElInput), {
+                    size: "small",
+                    disabled: unref(rangeState).selecting,
+                    placeholder: unref(t)("el.datepicker.startDate"),
+                    class: normalizeClass(unref(drpNs).e("editor")),
+                    "model-value": unref(minVisibleDate),
+                    "validate-event": false,
+                    onInput: _cache[0] || (_cache[0] = (val) => handleDateInput(val, "min")),
+                    onChange: _cache[1] || (_cache[1] = (val) => handleDateChange(val, "min"))
+                  }, null, 8, ["disabled", "placeholder", "class", "model-value"])
+                ], 2),
+                withDirectives((openBlock(), createElementBlock("span", {
+                  class: normalizeClass(unref(drpNs).e("time-picker-wrap"))
+                }, [
+                  createVNode(unref(ElInput), {
+                    size: "small",
+                    class: normalizeClass(unref(drpNs).e("editor")),
+                    disabled: unref(rangeState).selecting,
+                    placeholder: unref(t)("el.datepicker.startTime"),
+                    "model-value": unref(minVisibleTime),
+                    "validate-event": false,
+                    onFocus: _cache[2] || (_cache[2] = ($event) => minTimePickerVisible.value = true),
+                    onInput: _cache[3] || (_cache[3] = (val) => handleTimeInput(val, "min")),
+                    onChange: _cache[4] || (_cache[4] = (val) => handleTimeChange(val, "min"))
+                  }, null, 8, ["class", "disabled", "placeholder", "model-value"]),
+                  createVNode(unref(TimePickPanel), {
+                    visible: minTimePickerVisible.value,
+                    format: unref(timeFormat),
+                    "datetime-role": "start",
+                    "parsed-value": leftDate.value,
+                    onPick: handleMinTimePick
+                  }, null, 8, ["visible", "format", "parsed-value"])
+                ], 2)), [
+                  [unref(ClickOutside), handleMinTimeClose]
+                ])
+              ], 2),
+              createElementVNode("span", null, [
+                createVNode(unref(ElIcon), null, {
+                  default: withCtx(() => [
+                    createVNode(unref(arrow_right_default))
+                  ]),
+                  _: 1
+                })
+              ]),
+              createElementVNode("span", {
+                class: normalizeClass([unref(drpNs).e("editors-wrap"), "is-right"])
+              }, [
+                createElementVNode("span", {
+                  class: normalizeClass(unref(drpNs).e("time-picker-wrap"))
+                }, [
+                  createVNode(unref(ElInput), {
+                    size: "small",
+                    class: normalizeClass(unref(drpNs).e("editor")),
+                    disabled: unref(rangeState).selecting,
+                    placeholder: unref(t)("el.datepicker.endDate"),
+                    "model-value": unref(maxVisibleDate),
+                    readonly: !unref(minDate),
+                    "validate-event": false,
+                    onInput: _cache[5] || (_cache[5] = (val) => handleDateInput(val, "max")),
+                    onChange: _cache[6] || (_cache[6] = (val) => handleDateChange(val, "max"))
+                  }, null, 8, ["class", "disabled", "placeholder", "model-value", "readonly"])
+                ], 2),
+                withDirectives((openBlock(), createElementBlock("span", {
+                  class: normalizeClass(unref(drpNs).e("time-picker-wrap"))
+                }, [
+                  createVNode(unref(ElInput), {
+                    size: "small",
+                    class: normalizeClass(unref(drpNs).e("editor")),
+                    disabled: unref(rangeState).selecting,
+                    placeholder: unref(t)("el.datepicker.endTime"),
+                    "model-value": unref(maxVisibleTime),
+                    readonly: !unref(minDate),
+                    "validate-event": false,
+                    onFocus: _cache[7] || (_cache[7] = ($event) => unref(minDate) && (maxTimePickerVisible.value = true)),
+                    onInput: _cache[8] || (_cache[8] = (val) => handleTimeInput(val, "max")),
+                    onChange: _cache[9] || (_cache[9] = (val) => handleTimeChange(val, "max"))
+                  }, null, 8, ["class", "disabled", "placeholder", "model-value", "readonly"]),
+                  createVNode(unref(TimePickPanel), {
+                    "datetime-role": "end",
+                    visible: maxTimePickerVisible.value,
+                    format: unref(timeFormat),
+                    "parsed-value": rightDate.value,
+                    onPick: handleMaxTimePick
+                  }, null, 8, ["visible", "format", "parsed-value"])
+                ], 2)), [
+                  [unref(ClickOutside), handleMaxTimeClose]
+                ])
+              ], 2)
+            ], 2)) : createCommentVNode("v-if", true),
+            createElementVNode("div", {
+              class: normalizeClass([[unref(ppNs).e("content"), unref(drpNs).e("content")], "is-left"])
+            }, [
+              createElementVNode("div", {
+                class: normalizeClass(unref(drpNs).e("header"))
+              }, [
+                createElementVNode("button", {
+                  type: "button",
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "d-arrow-left"]),
+                  "aria-label": unref(t)(`el.datepicker.prevYear`),
+                  onClick: leftPrevYear
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_2$5),
+                createElementVNode("button", {
+                  type: "button",
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "arrow-left"]),
+                  "aria-label": unref(t)(`el.datepicker.prevMonth`),
+                  onClick: leftPrevMonth
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_3$3),
+                _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
+                  key: 0,
+                  type: "button",
+                  disabled: !unref(enableYearArrow),
+                  class: normalizeClass([[unref(ppNs).e("icon-btn"), { "is-disabled": !unref(enableYearArrow) }], "d-arrow-right"]),
+                  "aria-label": unref(t)(`el.datepicker.nextYear`),
+                  onClick: leftNextYear
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_4$1)) : createCommentVNode("v-if", true),
+                _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
+                  key: 1,
+                  type: "button",
+                  disabled: !unref(enableMonthArrow),
+                  class: normalizeClass([[
+                    unref(ppNs).e("icon-btn"),
+                    { "is-disabled": !unref(enableMonthArrow) }
+                  ], "arrow-right"]),
+                  "aria-label": unref(t)(`el.datepicker.nextMonth`),
+                  onClick: leftNextMonth
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_5$1)) : createCommentVNode("v-if", true),
+                createElementVNode("div", null, toDisplayString(unref(leftLabel)), 1)
+              ], 2),
+              createVNode(DateTable, {
+                "selection-mode": "range",
+                date: leftDate.value,
+                "min-date": unref(minDate),
+                "max-date": unref(maxDate),
+                "range-state": unref(rangeState),
+                "disabled-date": unref(disabledDate2),
+                "cell-class-name": unref(cellClassName),
+                onChangerange: unref(handleChangeRange),
+                onPick: handleRangePick,
+                onSelect: unref(onSelect)
+              }, null, 8, ["date", "min-date", "max-date", "range-state", "disabled-date", "cell-class-name", "onChangerange", "onSelect"])
+            ], 2),
+            createElementVNode("div", {
+              class: normalizeClass([[unref(ppNs).e("content"), unref(drpNs).e("content")], "is-right"])
+            }, [
+              createElementVNode("div", {
+                class: normalizeClass(unref(drpNs).e("header"))
+              }, [
+                _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
+                  key: 0,
+                  type: "button",
+                  disabled: !unref(enableYearArrow),
+                  class: normalizeClass([[unref(ppNs).e("icon-btn"), { "is-disabled": !unref(enableYearArrow) }], "d-arrow-left"]),
+                  "aria-label": unref(t)(`el.datepicker.prevYear`),
+                  onClick: rightPrevYear
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_6)) : createCommentVNode("v-if", true),
+                _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
+                  key: 1,
+                  type: "button",
+                  disabled: !unref(enableMonthArrow),
+                  class: normalizeClass([[
+                    unref(ppNs).e("icon-btn"),
+                    { "is-disabled": !unref(enableMonthArrow) }
+                  ], "arrow-left"]),
+                  "aria-label": unref(t)(`el.datepicker.prevMonth`),
+                  onClick: rightPrevMonth
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_7)) : createCommentVNode("v-if", true),
+                createElementVNode("button", {
+                  type: "button",
+                  "aria-label": unref(t)(`el.datepicker.nextYear`),
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "d-arrow-right"]),
+                  onClick: rightNextYear
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_8),
+                createElementVNode("button", {
+                  type: "button",
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "arrow-right"]),
+                  "aria-label": unref(t)(`el.datepicker.nextMonth`),
+                  onClick: rightNextMonth
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_9),
+                createElementVNode("div", null, toDisplayString(unref(rightLabel)), 1)
+              ], 2),
+              createVNode(DateTable, {
+                "selection-mode": "range",
+                date: rightDate.value,
+                "min-date": unref(minDate),
+                "max-date": unref(maxDate),
+                "range-state": unref(rangeState),
+                "disabled-date": unref(disabledDate2),
+                "cell-class-name": unref(cellClassName),
+                onChangerange: unref(handleChangeRange),
+                onPick: handleRangePick,
+                onSelect: unref(onSelect)
+              }, null, 8, ["date", "min-date", "max-date", "range-state", "disabled-date", "cell-class-name", "onChangerange", "onSelect"])
+            ], 2)
+          ], 2)
+        ], 2),
+        unref(showTime) ? (openBlock(), createElementBlock("div", {
+          key: 0,
+          class: normalizeClass(unref(ppNs).e("footer"))
+        }, [
+          unref(clearable) ? (openBlock(), createBlock(unref(ElButton), {
+            key: 0,
+            text: "",
+            size: "small",
+            class: normalizeClass(unref(ppNs).e("link-btn")),
+            onClick: handleClear
+          }, {
+            default: withCtx(() => [
+              createTextVNode(toDisplayString(unref(t)("el.datepicker.clear")), 1)
+            ]),
+            _: 1
+          }, 8, ["class"])) : createCommentVNode("v-if", true),
+          createVNode(unref(ElButton), {
+            plain: "",
+            size: "small",
+            class: normalizeClass(unref(ppNs).e("link-btn")),
+            disabled: unref(btnDisabled),
+            onClick: _cache[10] || (_cache[10] = ($event) => unref(handleRangeConfirm)(false))
+          }, {
+            default: withCtx(() => [
+              createTextVNode(toDisplayString(unref(t)("el.datepicker.confirm")), 1)
+            ]),
+            _: 1
+          }, 8, ["class", "disabled"])
+        ], 2)) : createCommentVNode("v-if", true)
+      ], 2);
+    };
+  }
+});
+var DateRangePickPanel = /* @__PURE__ */ _export_sfc$1(_sfc_main$c, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/date-picker/src/date-picker-com/panel-date-range.vue"]]);
+const panelMonthRangeProps = buildProps({
+  ...panelRangeSharedProps
+});
+const panelMonthRangeEmits = [
+  "pick",
+  "set-picker-option",
+  "calendar-change"
+];
+const useMonthRangeHeader = ({
+  unlinkPanels,
+  leftDate,
+  rightDate
+}) => {
+  const { t } = useLocale();
+  const leftPrevYear = () => {
+    leftDate.value = leftDate.value.subtract(1, "year");
+    if (!unlinkPanels.value) {
+      rightDate.value = rightDate.value.subtract(1, "year");
+    }
+  };
+  const rightNextYear = () => {
+    if (!unlinkPanels.value) {
+      leftDate.value = leftDate.value.add(1, "year");
+    }
+    rightDate.value = rightDate.value.add(1, "year");
+  };
+  const leftNextYear = () => {
+    leftDate.value = leftDate.value.add(1, "year");
+  };
+  const rightPrevYear = () => {
+    rightDate.value = rightDate.value.subtract(1, "year");
+  };
+  const leftLabel = computed(() => {
+    return `${leftDate.value.year()} ${t("el.datepicker.year")}`;
+  });
+  const rightLabel = computed(() => {
+    return `${rightDate.value.year()} ${t("el.datepicker.year")}`;
+  });
+  const leftYear = computed(() => {
+    return leftDate.value.year();
+  });
+  const rightYear = computed(() => {
+    return rightDate.value.year() === leftDate.value.year() ? leftDate.value.year() + 1 : rightDate.value.year();
+  });
+  return {
+    leftPrevYear,
+    rightNextYear,
+    leftNextYear,
+    rightPrevYear,
+    leftLabel,
+    rightLabel,
+    leftYear,
+    rightYear
+  };
+};
+const _hoisted_1$6 = ["onClick"];
+const _hoisted_2$4 = ["disabled"];
+const _hoisted_3$2 = ["disabled"];
+const unit = "year";
+const __default__$4 = defineComponent({
+  name: "DatePickerMonthRange"
+});
+const _sfc_main$b = /* @__PURE__ */ defineComponent({
+  ...__default__$4,
+  props: panelMonthRangeProps,
+  emits: panelMonthRangeEmits,
+  setup(__props, { emit }) {
+    const props = __props;
+    const { lang } = useLocale();
+    const pickerBase = inject("EP_PICKER_BASE");
+    const { shortcuts, disabledDate: disabledDate2, format: format2 } = pickerBase.props;
+    const defaultValue = toRef(pickerBase.props, "defaultValue");
+    const leftDate = ref(dayjs().locale(lang.value));
+    const rightDate = ref(dayjs().locale(lang.value).add(1, unit));
+    const {
+      minDate,
+      maxDate,
+      rangeState,
+      ppNs,
+      drpNs,
+      handleChangeRange,
+      handleRangeConfirm,
+      handleShortcutClick,
+      onSelect
+    } = useRangePicker(props, {
+      defaultValue,
+      leftDate,
+      rightDate,
+      unit,
+      onParsedValueChanged
+    });
+    const hasShortcuts = computed(() => !!shortcuts.length);
+    const {
+      leftPrevYear,
+      rightNextYear,
+      leftNextYear,
+      rightPrevYear,
+      leftLabel,
+      rightLabel,
+      leftYear,
+      rightYear
+    } = useMonthRangeHeader({
+      unlinkPanels: toRef(props, "unlinkPanels"),
+      leftDate,
+      rightDate
+    });
+    const enableYearArrow = computed(() => {
+      return props.unlinkPanels && rightYear.value > leftYear.value + 1;
+    });
+    const handleRangePick = (val, close = true) => {
+      const minDate_ = val.minDate;
+      const maxDate_ = val.maxDate;
+      if (maxDate.value === maxDate_ && minDate.value === minDate_) {
+        return;
+      }
+      emit("calendar-change", [minDate_.toDate(), maxDate_ && maxDate_.toDate()]);
+      maxDate.value = maxDate_;
+      minDate.value = minDate_;
+      if (!close)
+        return;
+      handleRangeConfirm();
+    };
+    const formatToString = (days) => {
+      return days.map((day) => day.format(format2));
+    };
+    function onParsedValueChanged(minDate2, maxDate2) {
+      if (props.unlinkPanels && maxDate2) {
+        const minDateYear = (minDate2 == null ? void 0 : minDate2.year()) || 0;
+        const maxDateYear = maxDate2.year();
+        rightDate.value = minDateYear === maxDateYear ? maxDate2.add(1, unit) : maxDate2;
+      } else {
+        rightDate.value = leftDate.value.add(1, unit);
+      }
+    }
+    emit("set-picker-option", ["formatToString", formatToString]);
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass([
+          unref(ppNs).b(),
+          unref(drpNs).b(),
+          {
+            "has-sidebar": Boolean(_ctx.$slots.sidebar) || unref(hasShortcuts)
+          }
+        ])
+      }, [
+        createElementVNode("div", {
+          class: normalizeClass(unref(ppNs).e("body-wrapper"))
+        }, [
+          renderSlot(_ctx.$slots, "sidebar", {
+            class: normalizeClass(unref(ppNs).e("sidebar"))
+          }),
+          unref(hasShortcuts) ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            class: normalizeClass(unref(ppNs).e("sidebar"))
+          }, [
+            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(shortcuts), (shortcut, key) => {
+              return openBlock(), createElementBlock("button", {
+                key,
+                type: "button",
+                class: normalizeClass(unref(ppNs).e("shortcut")),
+                onClick: ($event) => unref(handleShortcutClick)(shortcut)
+              }, toDisplayString(shortcut.text), 11, _hoisted_1$6);
+            }), 128))
+          ], 2)) : createCommentVNode("v-if", true),
+          createElementVNode("div", {
+            class: normalizeClass(unref(ppNs).e("body"))
+          }, [
+            createElementVNode("div", {
+              class: normalizeClass([[unref(ppNs).e("content"), unref(drpNs).e("content")], "is-left"])
+            }, [
+              createElementVNode("div", {
+                class: normalizeClass(unref(drpNs).e("header"))
+              }, [
+                createElementVNode("button", {
+                  type: "button",
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "d-arrow-left"]),
+                  onClick: _cache[0] || (_cache[0] = (...args) => unref(leftPrevYear) && unref(leftPrevYear)(...args))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 2),
+                _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
+                  key: 0,
+                  type: "button",
+                  disabled: !unref(enableYearArrow),
+                  class: normalizeClass([[
+                    unref(ppNs).e("icon-btn"),
+                    { [unref(ppNs).is("disabled")]: !unref(enableYearArrow) }
+                  ], "d-arrow-right"]),
+                  onClick: _cache[1] || (_cache[1] = (...args) => unref(leftNextYear) && unref(leftNextYear)(...args))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_2$4)) : createCommentVNode("v-if", true),
+                createElementVNode("div", null, toDisplayString(unref(leftLabel)), 1)
+              ], 2),
+              createVNode(MonthTable, {
+                "selection-mode": "range",
+                date: leftDate.value,
+                "min-date": unref(minDate),
+                "max-date": unref(maxDate),
+                "range-state": unref(rangeState),
+                "disabled-date": unref(disabledDate2),
+                onChangerange: unref(handleChangeRange),
+                onPick: handleRangePick,
+                onSelect: unref(onSelect)
+              }, null, 8, ["date", "min-date", "max-date", "range-state", "disabled-date", "onChangerange", "onSelect"])
+            ], 2),
+            createElementVNode("div", {
+              class: normalizeClass([[unref(ppNs).e("content"), unref(drpNs).e("content")], "is-right"])
+            }, [
+              createElementVNode("div", {
+                class: normalizeClass(unref(drpNs).e("header"))
+              }, [
+                _ctx.unlinkPanels ? (openBlock(), createElementBlock("button", {
+                  key: 0,
+                  type: "button",
+                  disabled: !unref(enableYearArrow),
+                  class: normalizeClass([[unref(ppNs).e("icon-btn"), { "is-disabled": !unref(enableYearArrow) }], "d-arrow-left"]),
+                  onClick: _cache[2] || (_cache[2] = (...args) => unref(rightPrevYear) && unref(rightPrevYear)(...args))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_left_default))
+                    ]),
+                    _: 1
+                  })
+                ], 10, _hoisted_3$2)) : createCommentVNode("v-if", true),
+                createElementVNode("button", {
+                  type: "button",
+                  class: normalizeClass([unref(ppNs).e("icon-btn"), "d-arrow-right"]),
+                  onClick: _cache[3] || (_cache[3] = (...args) => unref(rightNextYear) && unref(rightNextYear)(...args))
+                }, [
+                  createVNode(unref(ElIcon), null, {
+                    default: withCtx(() => [
+                      createVNode(unref(d_arrow_right_default))
+                    ]),
+                    _: 1
+                  })
+                ], 2),
+                createElementVNode("div", null, toDisplayString(unref(rightLabel)), 1)
+              ], 2),
+              createVNode(MonthTable, {
+                "selection-mode": "range",
+                date: rightDate.value,
+                "min-date": unref(minDate),
+                "max-date": unref(maxDate),
+                "range-state": unref(rangeState),
+                "disabled-date": unref(disabledDate2),
+                onChangerange: unref(handleChangeRange),
+                onPick: handleRangePick,
+                onSelect: unref(onSelect)
+              }, null, 8, ["date", "min-date", "max-date", "range-state", "disabled-date", "onChangerange", "onSelect"])
+            ], 2)
+          ], 2)
+        ], 2)
+      ], 2);
+    };
+  }
+});
+var MonthRangePickPanel = /* @__PURE__ */ _export_sfc$1(_sfc_main$b, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/date-picker/src/date-picker-com/panel-month-range.vue"]]);
+const getPanel = function(type4) {
+  switch (type4) {
+    case "daterange":
+    case "datetimerange": {
+      return DateRangePickPanel;
+    }
+    case "monthrange": {
+      return MonthRangePickPanel;
+    }
+    default: {
+      return DatePickPanel;
+    }
+  }
+};
+dayjs.extend(localeData);
+dayjs.extend(advancedFormat);
+dayjs.extend(customParseFormat);
+dayjs.extend(weekOfYear);
+dayjs.extend(weekYear);
+dayjs.extend(dayOfYear);
+dayjs.extend(isSameOrAfter);
+dayjs.extend(isSameOrBefore);
+var DatePicker = defineComponent({
+  name: "ElDatePicker",
+  install: null,
+  props: datePickerProps,
+  emits: ["update:modelValue"],
+  setup(props, {
+    expose,
+    emit,
+    slots
+  }) {
+    const ns = useNamespace("picker-panel");
+    provide("ElPopperOptions", reactive(toRef(props, "popperOptions")));
+    provide(ROOT_PICKER_INJECTION_KEY, {
+      slots,
+      pickerNs: ns
+    });
+    const commonPicker = ref();
+    const refProps = {
+      focus: (focusStartInput = true) => {
+        var _a2;
+        (_a2 = commonPicker.value) == null ? void 0 : _a2.focus(focusStartInput);
+      },
+      handleOpen: () => {
+        var _a2;
+        (_a2 = commonPicker.value) == null ? void 0 : _a2.handleOpen();
+      },
+      handleClose: () => {
+        var _a2;
+        (_a2 = commonPicker.value) == null ? void 0 : _a2.handleClose();
+      }
+    };
+    expose(refProps);
+    const onModelValueUpdated = (val) => {
+      emit("update:modelValue", val);
+    };
+    return () => {
+      var _a2;
+      const format2 = (_a2 = props.format) != null ? _a2 : DEFAULT_FORMATS_DATEPICKER[props.type] || DEFAULT_FORMATS_DATE;
+      const Component = getPanel(props.type);
+      return createVNode(CommonPicker, mergeProps(props, {
+        "format": format2,
+        "type": props.type,
+        "ref": commonPicker,
+        "onUpdate:modelValue": onModelValueUpdated
+      }), {
+        default: (scopedProps) => createVNode(Component, scopedProps, null),
+        "range-separator": slots["range-separator"]
+      });
+    };
+  }
+});
+const _DatePicker = DatePicker;
+_DatePicker.install = (app) => {
+  app.component(_DatePicker.name, _DatePicker);
+};
+const ElDatePicker = _DatePicker;
 const inputNumberProps = buildProps({
   id: {
     type: String,
@@ -15346,7 +22404,7 @@ const useSliderButton = (props, initData, emit) => {
     }
     isPreventDefault && event.preventDefault();
   };
-  const getClientXY = (event) => {
+  const getClientXY2 = (event) => {
     let clientX;
     let clientY;
     if (event.type.startsWith("touch")) {
@@ -15364,7 +22422,7 @@ const useSliderButton = (props, initData, emit) => {
   const onDragStart = (event) => {
     initData.dragging = true;
     initData.isClick = true;
-    const { clientX, clientY } = getClientXY(event);
+    const { clientX, clientY } = getClientXY2(event);
     if (props.vertical) {
       initData.startY = clientY;
     } else {
@@ -15379,7 +22437,7 @@ const useSliderButton = (props, initData, emit) => {
       displayTooltip();
       resetSize();
       let diff;
-      const { clientX, clientY } = getClientXY(event);
+      const { clientX, clientY } = getClientXY2(event);
       if (props.vertical) {
         initData.currentY = clientY;
         diff = (initData.startY - initData.currentY) / sliderSize.value * 100;
@@ -16240,6 +23298,134 @@ const _export_sfc = (sfc, props) => {
   }
   return target2;
 };
+/*! Element Plus v2.4.1 */
+var zhCn = {
+  name: "zh-cn",
+  el: {
+    colorpicker: {
+      confirm: "确定",
+      clear: "清空"
+    },
+    datepicker: {
+      now: "此刻",
+      today: "今天",
+      cancel: "取消",
+      clear: "清空",
+      confirm: "确定",
+      selectDate: "选择日期",
+      selectTime: "选择时间",
+      startDate: "开始日期",
+      startTime: "开始时间",
+      endDate: "结束日期",
+      endTime: "结束时间",
+      prevYear: "前一年",
+      nextYear: "后一年",
+      prevMonth: "上个月",
+      nextMonth: "下个月",
+      year: "年",
+      month1: "1 月",
+      month2: "2 月",
+      month3: "3 月",
+      month4: "4 月",
+      month5: "5 月",
+      month6: "6 月",
+      month7: "7 月",
+      month8: "8 月",
+      month9: "9 月",
+      month10: "10 月",
+      month11: "11 月",
+      month12: "12 月",
+      weeks: {
+        sun: "日",
+        mon: "一",
+        tue: "二",
+        wed: "三",
+        thu: "四",
+        fri: "五",
+        sat: "六"
+      },
+      months: {
+        jan: "一月",
+        feb: "二月",
+        mar: "三月",
+        apr: "四月",
+        may: "五月",
+        jun: "六月",
+        jul: "七月",
+        aug: "八月",
+        sep: "九月",
+        oct: "十月",
+        nov: "十一月",
+        dec: "十二月"
+      }
+    },
+    select: {
+      loading: "加载中",
+      noMatch: "无匹配数据",
+      noData: "无数据",
+      placeholder: "请选择"
+    },
+    cascader: {
+      noMatch: "无匹配数据",
+      loading: "加载中",
+      placeholder: "请选择",
+      noData: "暂无数据"
+    },
+    pagination: {
+      goto: "前往",
+      pagesize: "条/页",
+      total: "共 {total} 条",
+      pageClassifier: "页",
+      page: "页",
+      prev: "上一页",
+      next: "下一页",
+      currentPage: "第 {pager} 页",
+      prevPages: "向前 {pager} 页",
+      nextPages: "向后 {pager} 页",
+      deprecationWarning: "你使用了一些已被废弃的用法，请参考 el-pagination 的官方文档"
+    },
+    messagebox: {
+      title: "提示",
+      confirm: "确定",
+      cancel: "取消",
+      error: "输入的数据不合法!"
+    },
+    upload: {
+      deleteTip: "按 delete 键可删除",
+      delete: "删除",
+      preview: "查看图片",
+      continue: "继续上传"
+    },
+    table: {
+      emptyText: "暂无数据",
+      confirmFilter: "筛选",
+      resetFilter: "重置",
+      clearFilter: "全部",
+      sumText: "合计"
+    },
+    tree: {
+      emptyText: "暂无数据"
+    },
+    transfer: {
+      noMatch: "无匹配数据",
+      noData: "无数据",
+      titles: ["列表 1", "列表 2"],
+      filterPlaceholder: "请输入搜索内容",
+      noCheckedFormat: "共 {total} 项",
+      hasCheckedFormat: "已选 {checked}/{total} 项"
+    },
+    image: {
+      error: "加载失败"
+    },
+    pageHeader: {
+      title: "返回"
+    },
+    popconfirm: {
+      confirmButtonText: "确定",
+      cancelButtonText: "取消"
+    }
+  }
+};
 var draggabilly = { exports: {} };
 var getSize = { exports: {} };
 /*!
@@ -16899,27 +24085,36 @@ function requireUnidragger() {
 var draggabillyExports = draggabilly.exports;
 const Draggabilly = /* @__PURE__ */ getDefaultExportFromCjs(draggabillyExports);
 export {
+  ElMenu as A,
+  ElConfigProvider as B,
+  zhCn as C,
   Draggabilly as D,
   ElHeader as E,
   _export_sfc as _,
   ElContainer as a,
   ElAside as b,
   ElMain as c,
-  ElInput as d,
-  ElSlider as e,
-  ElRadioGroup as f,
-  ElRadio as g,
-  ElSwitch as h,
-  ElSelect as i,
-  ElForm as j,
-  ElRow as k,
-  ElCol as l,
-  ElFormItem as m,
-  ElSubMenu as n,
-  ElIcon as o,
-  ElMenuItem as p,
-  ElMenu as q,
-  useAutoAnimate as u,
+  ElDatePicker as d,
+  ElInput as e,
+  ElColorPicker as f,
+  ElCheckboxGroup as g,
+  ElCheckboxButton as h,
+  ElCheckbox as i,
+  ElSlider as j,
+  ElRadioGroup as k,
+  ElRadio as l,
+  ElSwitch as m,
+  ElSelect as n,
+  ElInputNumber as o,
+  ElForm as p,
+  ElRow as q,
+  ElCol as r,
+  ElFormItem as s,
+  ElTooltip as t,
+  ElIcon as u,
   vAutoAnimate as v,
-  withInstall$1 as w
+  withInstall$1 as w,
+  useAutoAnimate as x,
+  ElSubMenu as y,
+  ElMenuItem as z
 };

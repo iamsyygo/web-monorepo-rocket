@@ -1,23 +1,27 @@
 <template>
-    <BaseArchitecture :option="option">
-        <template #header>
-            <Header></Header>
-        </template>
-        <template #aside>
-            <Aside
-                :aside-width="option.asideWidth"
-                :menus="menus"
-                :activeMenuKey="route.path"
-                @collapse="handleMenuCollapse"
-            ></Aside>
-        </template>
-        <template #main>
-            <Main :route="route" @click-tab="handleTabClick" @remove-tab="handleTabRemove"></Main>
-        </template>
-    </BaseArchitecture>
+    <ElConfigProvider :locale="zhCn" size="default">
+        <BaseArchitecture :option="option">
+            <template #header>
+                <Header></Header>
+            </template>
+            <template #aside>
+                <Aside
+                    :aside-width="option.asideWidth"
+                    :menus="menus"
+                    :activeMenuKey="route.path"
+                    @collapse="handleMenuCollapse"
+                ></Aside>
+            </template>
+            <template #main>
+                <Main :route="route" @click-tab="handleTabClick" @remove-tab="handleTabRemove"></Main>
+            </template>
+        </BaseArchitecture>
+    </ElConfigProvider>
 </template>
 
 <script setup lang="ts">
+import { ElConfigProvider } from 'element-plus';
+import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 import { Tab } from '@/tab-panel/index.vue';
 import { computed, ref } from 'vue';
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';

@@ -1,4 +1,4 @@
-import { _ as _export_sfc, n as ElSubMenu, o as ElIcon, p as ElMenuItem, q as ElMenu, w as withInstall } from "../vendor.js";
+import { _ as _export_sfc, y as ElSubMenu, u as ElIcon, z as ElMenuItem, A as ElMenu, B as ElConfigProvider, C as zhCn, w as withInstall } from "../vendor.js";
 import { openBlock, createElementBlock, defineComponent, useCssVars, ref, computed, shallowRef, watch, resolveComponent, createVNode, unref, createElementVNode, withCtx, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps } from "vue";
 import { A as AoeBaseArchitecture } from "../base-architecture/base-architecture.js";
 import { A as AoeTabPanel } from "../tab-panel/tab-panel.js";
@@ -238,27 +238,35 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
       __props.router.push(lastKey);
     };
     return (_ctx, _cache) => {
-      return openBlock(), createBlock(unref(AoeBaseArchitecture), { option: option.value }, {
-        header: withCtx(() => [
-          createVNode(Header)
-        ]),
-        aside: withCtx(() => [
-          createVNode(Aside, {
-            "aside-width": option.value.asideWidth,
-            menus: _ctx.menus,
-            activeMenuKey: route.value.path,
-            onCollapse: handleMenuCollapse
-          }, null, 8, ["aside-width", "menus", "activeMenuKey"])
-        ]),
-        main: withCtx(() => [
-          createVNode(Main, {
-            route: route.value,
-            onClickTab: handleTabClick,
-            onRemoveTab: handleTabRemove
-          }, null, 8, ["route"])
+      return openBlock(), createBlock(unref(ElConfigProvider), {
+        locale: unref(zhCn),
+        size: "default"
+      }, {
+        default: withCtx(() => [
+          createVNode(unref(AoeBaseArchitecture), { option: option.value }, {
+            header: withCtx(() => [
+              createVNode(Header)
+            ]),
+            aside: withCtx(() => [
+              createVNode(Aside, {
+                "aside-width": option.value.asideWidth,
+                menus: _ctx.menus,
+                activeMenuKey: route.value.path,
+                onCollapse: handleMenuCollapse
+              }, null, 8, ["aside-width", "menus", "activeMenuKey"])
+            ]),
+            main: withCtx(() => [
+              createVNode(Main, {
+                route: route.value,
+                onClickTab: handleTabClick,
+                onRemoveTab: handleTabRemove
+              }, null, 8, ["route"])
+            ]),
+            _: 1
+          }, 8, ["option"])
         ]),
         _: 1
-      }, 8, ["option"]);
+      }, 8, ["locale"]);
     };
   }
 });

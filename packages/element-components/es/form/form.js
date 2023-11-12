@@ -1,4 +1,4 @@
-import { d as ElInput, e as ElSlider, f as ElRadioGroup, g as ElRadio, h as ElSwitch, i as ElSelect, v as vAutoAnimate, j as ElForm, k as ElRow, l as ElCol, m as ElFormItem, w as withInstall } from "../vendor.js";
+import { d as ElDatePicker, e as ElInput, f as ElColorPicker, g as ElCheckboxGroup, h as ElCheckboxButton, i as ElCheckbox, j as ElSlider, k as ElRadioGroup, l as ElRadio, m as ElSwitch, n as ElSelect, o as ElInputNumber, v as vAutoAnimate, p as ElForm, q as ElRow, r as ElCol, s as ElFormItem, t as ElTooltip, u as ElIcon, w as withInstall } from "../vendor.js";
 import { defineComponent, reactive, createVNode, mergeProps, toRefs, onMounted, withDirectives, resolveDirective, isVNode } from "vue";
 import { u as useDefineModel } from "../hooks/hooks.js";
 const FormContent = /* @__PURE__ */ defineComponent({
@@ -25,7 +25,7 @@ const FormContent = /* @__PURE__ */ defineComponent({
       state: false,
       list: []
     });
-    if (props.option.type === "select" || "radio" === props.option.type) {
+    if (props.option.type === "select" || "radio" === props.option.type || "checkbox" === props.option.type || "checkboxButton" === props.option.type) {
       if (Array.isArray(props.option.options)) {
         selectOptions.list = props.option.options;
       } else {
@@ -40,16 +40,33 @@ const FormContent = /* @__PURE__ */ defineComponent({
     const modelValueCopy = useDefineModel(props, "modelValue", emit);
     return () => {
       const itemAttrs = Object.assign({}, props.option, attrs);
-      switch (props.option.type) {
+      const option = props.option;
+      if (["date", "datetime", "daterange", "datetimerange", "year", "month"].includes(option.type)) {
+        return createVNode(ElDatePicker, mergeProps({
+          "modelValue": modelValueCopy.value,
+          "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+        }, itemAttrs, {
+          "type": option.type
+        }), null);
+      }
+      switch (option.type) {
         case "input":
           return createVNode(ElInput, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), null);
+        case "inputNumber":
+          return createVNode(ElInputNumber, mergeProps({
             "modelValue": modelValueCopy.value,
             "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), null);
         case "select":
           return createVNode(ElSelect, mergeProps({
             "modelValue": modelValueCopy.value,
-            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event,
+            "style": {
+              width: "100%"
+            }
           }, itemAttrs, {
             "loading": selectOptions.state
           }), {
@@ -60,7 +77,7 @@ const FormContent = /* @__PURE__ */ defineComponent({
                   label = "label",
                   value = "value",
                   key
-                } = props.option.optionProps || {};
+                } = option.optionProps || {};
                 return createVNode(ElSelect.Option, {
                   "label": item[label],
                   "value": item[value],
@@ -91,7 +108,7 @@ const FormContent = /* @__PURE__ */ defineComponent({
                   label = "label",
                   value = "value",
                   key
-                } = props.option.optionProps || {};
+                } = option.optionProps || {};
                 return createVNode(ElRadio, {
                   "label": item[value],
                   "key": item[key || value]
@@ -103,6 +120,55 @@ const FormContent = /* @__PURE__ */ defineComponent({
           });
         case "slider":
           return createVNode(ElSlider, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), null);
+        case "checkbox":
+          return createVNode(ElCheckboxGroup, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), {
+            default: () => {
+              var _a;
+              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
+                const {
+                  label = "label",
+                  value = "value",
+                  key
+                } = option.optionProps || {};
+                return createVNode(ElCheckbox, {
+                  "label": item[value],
+                  "key": item[key || value]
+                }, {
+                  default: () => [item[label]]
+                });
+              })];
+            }
+          });
+        case "checkboxButton":
+          return createVNode(ElCheckboxGroup, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), {
+            default: () => {
+              var _a;
+              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
+                const {
+                  label = "label",
+                  value = "value",
+                  key
+                } = option.optionProps || {};
+                return createVNode(ElCheckboxButton, {
+                  "label": item[value],
+                  "key": item[key || value]
+                }, {
+                  default: () => [item[label]]
+                });
+              })];
+            }
+          });
+        case "color-picker":
+          return createVNode(ElColorPicker, mergeProps({
             "modelValue": modelValueCopy.value,
             "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), null);
@@ -162,7 +228,7 @@ const Form = /* @__PURE__ */ defineComponent({
       return createVNode(ElForm, mergeProps({
         "ref": "formRef",
         "model": model.value
-      }, formProps2, attrs), {
+      }, formProps2.value, attrs), {
         default: () => [withDirectives(createVNode(ElRow, {
           "gutter": 10
         }, {
@@ -177,6 +243,7 @@ const Form = /* @__PURE__ */ defineComponent({
               props: props2,
               type,
               span,
+              rules,
               ...rest
             } = item;
             if (item.controller && !item.controller({
@@ -187,23 +254,53 @@ const Form = /* @__PURE__ */ defineComponent({
             acc.push(createVNode(ElCol, mergeProps({
               "key": item.prop
             }, getSpan(isInlined ? 24 : span || formProps2.value.spans)), {
-              default: () => [createVNode(ElFormItem, rest, {
+              default: () => [createVNode(ElFormItem, mergeProps(rest, {
+                "rules": mergeRules(rules, item.required, item.label)
+              }), {
                 default: () => {
                   var _a;
-                  return [((_a = slots[rest.prop]) == null ? void 0 : _a.call(slots, {
+                  return ((_a = slots[rest.prop]) == null ? void 0 : _a.call(slots, {
                     ...item
                   })) || createVNode(FormContent, {
                     "modelValue": model.value[rest.prop],
                     "onUpdate:modelValue": ($event) => model.value[rest.prop] = $event,
                     "option": item
-                  }, null)];
+                  }, null);
+                },
+                label: () => {
+                  var _a, _b;
+                  return ((_a = slots[rest.prop + "-label"]) == null ? void 0 : _a.call(slots, {
+                    ...item
+                  })) || ((_b = slots["form-items-label"]) == null ? void 0 : _b.call(slots, {
+                    ...item
+                  })) || createVNode("div", null, [item.label, createVNode("div", {
+                    "style": {
+                      width: "11px",
+                      display: "inline-block"
+                    }
+                  }, [item.tooltip ? createVNode(ElTooltip, {
+                    "effect": "dark",
+                    "content": item.tooltip,
+                    "placement": "right"
+                  }, {
+                    default: () => [createVNode(ElIcon, null, {
+                      default: () => [createVNode("svg", {
+                        "viewBox": "0 0 1024 1024",
+                        "xmlns": "http://www.w3.org/2000/svg",
+                        "data-v-ea893728": ""
+                      }, [createVNode("path", {
+                        "fill": "currentColor",
+                        "d": "M512 64a448 448 0 1 1 0 896.064A448 448 0 0 1 512 64zm67.2 275.072c33.28 0 60.288-23.104 60.288-57.344s-27.072-57.344-60.288-57.344c-33.28 0-60.16 23.104-60.16 57.344s26.88 57.344 60.16 57.344zM590.912 699.2c0-6.848 2.368-24.64 1.024-34.752l-52.608 60.544c-10.88 11.456-24.512 19.392-30.912 17.28a12.992 12.992 0 0 1-8.256-14.72l87.68-276.992c7.168-35.136-12.544-67.2-54.336-71.296-44.096 0-108.992 44.736-148.48 101.504 0 6.784-1.28 23.68.064 33.792l52.544-60.608c10.88-11.328 23.552-19.328 29.952-17.152a12.8 12.8 0 0 1 7.808 16.128L388.48 728.576c-10.048 32.256 8.96 63.872 55.04 71.04 67.84 0 107.904-43.648 147.456-100.416z"
+                      }, null)])]
+                    })]
+                  }) : null])]);
                 }
               })]
             }));
             return acc;
           }, []), slots["insert-after"] ? createVNode(ElCol, mergeProps({
             "key": "insert-after"
-          }, getSpan(isInlined ? 24 : formProps2.value.spans)), _isSlot(_slot2 = slots["insert-after"]({
+          }, getSpan(isInlined ? formProps2.value.spans : 24)), _isSlot(_slot2 = slots["insert-after"]({
             value: props.modelValue
           })) ? _slot2 : {
             default: () => [_slot2]
@@ -233,6 +330,19 @@ function getSpan(value) {
     return getSpanModel(value);
   }
   return value;
+}
+function mergeRules(rules, required, label) {
+  const data = [];
+  if (rules)
+    data.push(...Array.isArray(rules) ? rules : [rules]);
+  if (required) {
+    data.unshift({
+      required: true,
+      message: label ? `${label}是必填项` : "必填项",
+      trigger: "blur"
+    });
+  }
+  return data;
 }
 const AoeForm = withInstall(Form);
 export {
