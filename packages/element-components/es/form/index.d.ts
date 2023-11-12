@@ -23,6 +23,13 @@ export declare const AoeForm: import("@aoe/utils").SFCWithInstall<import("vue").
 }, {
     modelValue: Record<string, any>;
     formProps: import("./src/props").FormProps;
-}, {}>> & Record<string, any>;
+}, import("vue").SlotsType<Record<string | number | symbol, (props: import("./src/props").FormItemTypeProps) => any> & {
+    'insert-after': ({ value: any }: {
+        value: any;
+    }) => any;
+    'insert-before': ({ value: any }: {
+        value: any;
+    }) => any;
+}>>> & Record<string, any>;
 export default AoeForm;
 export * from './src/props';

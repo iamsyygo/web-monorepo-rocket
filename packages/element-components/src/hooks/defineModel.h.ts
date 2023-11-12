@@ -14,13 +14,19 @@ export function useDefineModel<T extends Record<keyof any, any>, P extends keyof
     props: T,
     fieldName: P,
     emits,
+    defaultValue?: any,
 ): WritableComputedRef<T[P]> {
     return computed({
         get() {
             // 使用 Proxy 再代理 props[fieldName] 一层, 负责修改 props[fieldName] 的字段是无法触发 computed 的 set 函数，得修改 props[fieldName] 的引用才行
 
+            // 默认值处理
+            if (props[fieldName] === void 0) {
+                // emits('update:' + (fieldName as string), defaultValue);
+                return defaultValue;
+            }
             // 如果 props[fieldName] 不是对象，直接返回
-            if (!props[fieldName] || typeof props[fieldName] !== 'object') return props[fieldName];
+            if (typeof props[fieldName] !== 'object') return props[fieldName];
 
             const proxy = new Proxy(props[fieldName], {
                 get(target, key, receiver) {

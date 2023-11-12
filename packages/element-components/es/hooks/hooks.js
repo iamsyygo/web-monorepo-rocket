@@ -1,8 +1,11 @@
 import { computed } from "vue";
-function useDefineModel(props, fieldName, emits) {
+function useDefineModel(props, fieldName, emits, defaultValue) {
   return computed({
     get() {
-      if (!props[fieldName] || typeof props[fieldName] !== "object")
+      if (props[fieldName] === void 0) {
+        return defaultValue;
+      }
+      if (typeof props[fieldName] !== "object")
         return props[fieldName];
       const proxy = new Proxy(props[fieldName], {
         get(target, key, receiver) {

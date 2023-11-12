@@ -1,16 +1,6 @@
-import { d as ElInput, e as ElSelect, f as ElForm, g as ElRow, h as ElCol, i as ElFormItem, w as withInstall } from "../vendor.js";
-import { defineComponent, createVNode, mergeProps, isVNode } from "vue";
+import { d as ElInput, e as ElSlider, f as ElRadioGroup, g as ElRadio, h as ElSwitch, i as ElSelect, v as vAutoAnimate, j as ElForm, k as ElRow, l as ElCol, m as ElFormItem, w as withInstall } from "../vendor.js";
+import { defineComponent, reactive, createVNode, mergeProps, toRefs, onMounted, withDirectives, resolveDirective, isVNode } from "vue";
 import { u as useDefineModel } from "../hooks/hooks.js";
-const formProps = {
-  modelValue: {
-    type: Object,
-    default: () => ({})
-  },
-  formProps: {
-    type: Object,
-    default: () => ({})
-  }
-};
 const FormContent = /* @__PURE__ */ defineComponent({
   props: {
     option: {
@@ -31,48 +21,110 @@ const FormContent = /* @__PURE__ */ defineComponent({
     expose,
     slots
   }) {
-    const {
-      option
-    } = props;
-    const value = useDefineModel(props, "modelValue", emit);
+    const selectOptions = reactive({
+      state: false,
+      list: []
+    });
+    if (props.option.type === "select" || "radio" === props.option.type) {
+      if (Array.isArray(props.option.options)) {
+        selectOptions.list = props.option.options;
+      } else {
+        selectOptions.state = true;
+        Promise.resolve(props.option.options()).then((res) => {
+          selectOptions.list = res;
+        }).finally(() => {
+          selectOptions.state = false;
+        });
+      }
+    }
+    const modelValueCopy = useDefineModel(props, "modelValue", emit);
     return () => {
-      const itemAttrs = Object.assign({}, option, attrs);
-      switch (option.type) {
+      const itemAttrs = Object.assign({}, props.option, attrs);
+      switch (props.option.type) {
         case "input":
           return createVNode(ElInput, mergeProps({
-            "modelValue": value.value,
-            "onUpdate:modelValue": ($event) => value.value = $event
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), null);
         case "select":
           return createVNode(ElSelect, mergeProps({
-            "modelValue": value.value,
-            "onUpdate:modelValue": ($event) => value.value = $event
-          }, itemAttrs), {
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs, {
+            "loading": selectOptions.state
+          }), {
             default: () => {
               var _a;
-              return [(_a = option.options) == null ? void 0 : _a.map((item) => {
+              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
                 const {
                   label = "label",
-                  value: value2 = "value",
+                  value = "value",
                   key
-                } = option.optionProps || {};
+                } = props.option.optionProps || {};
                 return createVNode(ElSelect.Option, {
                   "label": item[label],
-                  "value": item[value2],
-                  "key": item[key || value2]
+                  "value": item[value],
+                  "key": item[key || value]
                 }, null);
               })];
             }
           });
+        case "switch":
+          return createVNode(ElSwitch, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), null);
+        case "textarea":
+          return createVNode(ElInput, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), null);
+        case "radio":
+          return createVNode(ElRadioGroup, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), {
+            default: () => {
+              var _a;
+              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
+                const {
+                  label = "label",
+                  value = "value",
+                  key
+                } = props.option.optionProps || {};
+                return createVNode(ElRadio, {
+                  "label": item[value],
+                  "key": item[key || value]
+                }, {
+                  default: () => [item[label]]
+                });
+              })];
+            }
+          });
+        case "slider":
+          return createVNode(ElSlider, mergeProps({
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+          }, itemAttrs), null);
         default:
           return createVNode(ElInput, mergeProps({
-            "modelValue": value.value,
-            "onUpdate:modelValue": ($event) => value.value = $event
+            "modelValue": modelValueCopy.value,
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), null);
       }
     };
   }
 });
+const formProps = {
+  modelValue: {
+    type: Object,
+    default: () => ({})
+  },
+  formProps: {
+    type: Object,
+    default: () => ({})
+  }
+};
 function _isSlot(s) {
   return typeof s === "function" || Object.prototype.toString.call(s) === "[object Object]" && !isVNode(s);
 }
@@ -81,49 +133,86 @@ const Form = /* @__PURE__ */ defineComponent({
   emits: {
     "update:modelValue": (val) => true
   },
-  // slots: ['default'],
+  slots: Object,
+  directives: {
+    "auto-animate": vAutoAnimate
+  },
   setup(props, {
     emit,
     attrs,
     expose,
     slots
   }) {
-    console.log(props);
     const {
-      formProps: formProps2
-    } = props;
+      formProps: formProps2,
+      modelValue
+    } = toRefs(props);
     const model = useDefineModel(props, "modelValue", emit);
-    const isInlined = formProps2.inline || attrs.inline;
+    onMounted(() => {
+      const defaultModelValues = props.formProps.formItems.reduce((acc, item) => {
+        if (item.defaultValue !== void 0)
+          acc[item.prop] = item.defaultValue;
+        return acc;
+      }, {});
+      model.value = Object.assign({}, defaultModelValues, modelValue.value);
+    });
+    const isInlined = formProps2.value.inline || attrs.inline;
     return () => {
-      let _slot;
+      let _slot, _slot2;
       return createVNode(ElForm, mergeProps({
         "ref": "formRef",
         "model": model.value
       }, formProps2, attrs), {
-        default: () => [createVNode(ElRow, {
+        default: () => [withDirectives(createVNode(ElRow, {
           "gutter": 10
-        }, _isSlot(_slot = formProps2.formItems.map((item) => {
-          const {
-            props: props2,
-            type,
-            span,
-            ...rest
-          } = item;
-          return createVNode(ElCol, getSpan(isInlined ? 24 : span || formProps2.spans), {
-            default: () => [createVNode(ElFormItem, rest, {
-              default: () => [createVNode("slot", {
-                "name": rest.prop,
-                "item": item
-              }, [createVNode(FormContent, {
-                "modelValue": model.value[rest.prop],
-                "onUpdate:modelValue": ($event) => model.value[rest.prop] = $event,
-                "option": item
-              }, null)])]
-            })]
-          });
-        })) ? _slot : {
-          default: () => [_slot]
-        })]
+        }, {
+          default: () => [slots["insert-before"] ? createVNode(ElCol, mergeProps({
+            "key": "insert-before"
+          }, getSpan(24)), _isSlot(_slot = slots["insert-before"]({
+            value: props.modelValue
+          })) ? _slot : {
+            default: () => [_slot]
+          }) : null, formProps2.value.formItems.reduce((acc, item) => {
+            const {
+              props: props2,
+              type,
+              span,
+              ...rest
+            } = item;
+            if (item.controller && !item.controller({
+              value: modelValue.value,
+              option: item
+            }))
+              return acc;
+            acc.push(createVNode(ElCol, mergeProps({
+              "key": item.prop
+            }, getSpan(isInlined ? 24 : span || formProps2.value.spans)), {
+              default: () => [createVNode(ElFormItem, rest, {
+                default: () => {
+                  var _a;
+                  return [((_a = slots[rest.prop]) == null ? void 0 : _a.call(slots, {
+                    ...item
+                  })) || createVNode(FormContent, {
+                    "modelValue": model.value[rest.prop],
+                    "onUpdate:modelValue": ($event) => model.value[rest.prop] = $event,
+                    "option": item
+                  }, null)];
+                }
+              })]
+            }));
+            return acc;
+          }, []), slots["insert-after"] ? createVNode(ElCol, mergeProps({
+            "key": "insert-after"
+          }, getSpan(isInlined ? 24 : formProps2.value.spans)), _isSlot(_slot2 = slots["insert-after"]({
+            value: props.modelValue
+          })) ? _slot2 : {
+            default: () => [_slot2]
+          }) : null]
+        }), [[resolveDirective("auto-animate"), {
+          easing: "linear",
+          duration: 300,
+          disrespectUserMotionPreference: true
+        }]])]
       });
     };
   }

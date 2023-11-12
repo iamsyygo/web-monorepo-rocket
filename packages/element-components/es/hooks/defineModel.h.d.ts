@@ -7,4 +7,4 @@ import { WritableComputedRef } from 'vue';
  * @returns
  * @ponder 组件销毁 使用 watchEffect or watch 在 hooks 中需要手动销毁
  */
-export declare function useDefineModel<T extends Record<keyof any, any>, P extends keyof T>(props: T, fieldName: P, emits: any): WritableComputedRef<T[P]>;
+export declare function useDefineModel<T extends Record<keyof any, any>, P extends keyof T>(props: T, fieldName: P, emits: any, defaultValue?: any): WritableComputedRef<T[P]>;

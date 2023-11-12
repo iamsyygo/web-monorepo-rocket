@@ -1,4 +1,4 @@
-import { _ as _export_sfc, j as ElSubMenu, k as ElIcon, l as ElMenuItem, m as ElMenu, w as withInstall } from "../vendor.js";
+import { _ as _export_sfc, n as ElSubMenu, o as ElIcon, p as ElMenuItem, q as ElMenu, w as withInstall } from "../vendor.js";
 import { openBlock, createElementBlock, defineComponent, useCssVars, ref, computed, shallowRef, watch, resolveComponent, createVNode, unref, createElementVNode, withCtx, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps } from "vue";
 import { A as AoeBaseArchitecture } from "../base-architecture/base-architecture.js";
 import { A as AoeTabPanel } from "../tab-panel/tab-panel.js";

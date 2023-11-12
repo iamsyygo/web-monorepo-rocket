@@ -1,11 +1,12 @@
-import { PropType } from 'vue';
+import { SlotsType } from 'vue';
+import { FormItemTypeProps } from './props';
 declare const _default: import("vue").DefineComponent<{
     modelValue: {
         type: ObjectConstructor;
         default: () => {};
     };
     formProps: {
-        type: PropType<import("./props").FormProps>;
+        type: import("vue").PropType<import("./props").FormProps>;
         default: () => {};
     };
 }, () => JSX.Element, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
@@ -16,7 +17,7 @@ declare const _default: import("vue").DefineComponent<{
         default: () => {};
     };
     formProps: {
-        type: PropType<import("./props").FormProps>;
+        type: import("vue").PropType<import("./props").FormProps>;
         default: () => {};
     };
 }>> & {
@@ -24,5 +25,12 @@ declare const _default: import("vue").DefineComponent<{
 }, {
     modelValue: Record<string, any>;
     formProps: import("./props").FormProps;
-}, {}>;
+}, SlotsType<Record<string | number | symbol, (props: FormItemTypeProps) => any> & {
+    'insert-after': ({ value: any }: {
+        value: any;
+    }) => any;
+    'insert-before': ({ value: any }: {
+        value: any;
+    }) => any;
+}>>;
 export default _default;

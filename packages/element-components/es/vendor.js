@@ -1,4 +1,496 @@
-import { ref, watch, getCurrentScope, onScopeDispose, readonly, unref, getCurrentInstance, onMounted, nextTick, openBlock, createElementBlock, createElementVNode, warn, isVNode, computed, inject, isRef, shallowRef, onBeforeUnmount, onBeforeMount, provide, defineComponent, mergeProps, renderSlot, toRef, onUnmounted, reactive, toRefs, normalizeClass, onUpdated, createVNode, Fragment, useSlots, withCtx, createBlock, resolveDynamicComponent, normalizeStyle, createTextVNode, toDisplayString, createCommentVNode, TransitionGroup, useAttrs as useAttrs$1, withDirectives, withModifiers, vShow, Transition, cloneVNode, Text, Comment, Teleport, onDeactivated, toHandlers, h, watchEffect, resolveComponent, toRaw, triggerRef, resolveDirective, renderList, withKeys, vModelText, createSlots } from "vue";
+import { ref, onMounted, watchEffect, watch, getCurrentScope, onScopeDispose, readonly, unref, getCurrentInstance, nextTick, openBlock, createElementBlock, createElementVNode, warn, isVNode, computed, inject, isRef, shallowRef, onBeforeUnmount, onBeforeMount, provide, defineComponent, mergeProps, renderSlot, toRef, onUnmounted, reactive, toRefs, normalizeClass, onUpdated, createVNode, Fragment, useSlots, withCtx, createBlock, resolveDynamicComponent, normalizeStyle, createTextVNode, toDisplayString, createCommentVNode, TransitionGroup, useAttrs as useAttrs$1, withDirectives, withModifiers, vShow, Transition, cloneVNode, Text, Comment, Teleport, onDeactivated, vModelRadio, toHandlers, withKeys, h, resolveComponent, toRaw, triggerRef, resolveDirective, renderList, vModelText, createSlots } from "vue";
+const parents = /* @__PURE__ */ new Set();
+const coords = /* @__PURE__ */ new WeakMap();
+const siblings = /* @__PURE__ */ new WeakMap();
+const animations = /* @__PURE__ */ new WeakMap();
+const intersections = /* @__PURE__ */ new WeakMap();
+const intervals = /* @__PURE__ */ new WeakMap();
+const options = /* @__PURE__ */ new WeakMap();
+const debounces = /* @__PURE__ */ new WeakMap();
+const enabled = /* @__PURE__ */ new WeakSet();
+let root$2;
+let scrollX = 0;
+let scrollY = 0;
+const TGT = "__aa_tgt";
+const DEL = "__aa_del";
+const NEW = "__aa_new";
+const handleMutations = (mutations2) => {
+  const elements = getElements(mutations2);
+  if (elements) {
+    elements.forEach((el) => animate(el));
+  }
+};
+const handleResizes = (entries) => {
+  entries.forEach((entry) => {
+    if (entry.target === root$2)
+      updateAllPos();
+    if (coords.has(entry.target))
+      updatePos(entry.target);
+  });
+};
+function observePosition(el) {
+  const oldObserver = intersections.get(el);
+  oldObserver === null || oldObserver === void 0 ? void 0 : oldObserver.disconnect();
+  let rect = coords.get(el);
+  let invocations = 0;
+  const buffer = 5;
+  if (!rect) {
+    rect = getCoords(el);
+    coords.set(el, rect);
+  }
+  const { offsetWidth, offsetHeight } = root$2;
+  const rootMargins = [
+    rect.top - buffer,
+    offsetWidth - (rect.left + buffer + rect.width),
+    offsetHeight - (rect.top + buffer + rect.height),
+    rect.left - buffer
+  ];
+  const rootMargin = rootMargins.map((px) => `${-1 * Math.floor(px)}px`).join(" ");
+  const observer = new IntersectionObserver(() => {
+    ++invocations > 1 && updatePos(el);
+  }, {
+    root: root$2,
+    threshold: 1,
+    rootMargin
+  });
+  observer.observe(el);
+  intersections.set(el, observer);
+}
+function updatePos(el) {
+  clearTimeout(debounces.get(el));
+  const optionsOrPlugin = getOptions(el);
+  const delay = isPlugin(optionsOrPlugin) ? 500 : optionsOrPlugin.duration;
+  debounces.set(el, setTimeout(async () => {
+    const currentAnimation = animations.get(el);
+    try {
+      await (currentAnimation === null || currentAnimation === void 0 ? void 0 : currentAnimation.finished);
+      coords.set(el, getCoords(el));
+      observePosition(el);
+    } catch {
+    }
+  }, delay));
+}
+function updateAllPos() {
+  clearTimeout(debounces.get(root$2));
+  debounces.set(root$2, setTimeout(() => {
+    parents.forEach((parent) => forEach(parent, (el) => lowPriority(() => updatePos(el))));
+  }, 100));
+}
+function poll(el) {
+  setTimeout(() => {
+    intervals.set(el, setInterval(() => lowPriority(updatePos.bind(null, el)), 2e3));
+  }, Math.round(2e3 * Math.random()));
+}
+function lowPriority(callback) {
+  if (typeof requestIdleCallback === "function") {
+    requestIdleCallback(() => callback());
+  } else {
+    requestAnimationFrame(() => callback());
+  }
+}
+let mutations;
+let resize;
+if (typeof window !== "undefined") {
+  root$2 = document.documentElement;
+  mutations = new MutationObserver(handleMutations);
+  resize = new ResizeObserver(handleResizes);
+  window.addEventListener("scroll", () => {
+    scrollY = window.scrollY;
+    scrollX = window.scrollX;
+  });
+  resize.observe(root$2);
+}
+function getElements(mutations2) {
+  const observedNodes = mutations2.reduce((nodes, mutation) => {
+    return [
+      ...nodes,
+      ...Array.from(mutation.addedNodes),
+      ...Array.from(mutation.removedNodes)
+    ];
+  }, []);
+  const onlyCommentNodesObserved = observedNodes.every((node) => node.nodeName === "#comment");
+  if (onlyCommentNodesObserved)
+    return false;
+  return mutations2.reduce((elements, mutation) => {
+    if (elements === false)
+      return false;
+    if (mutation.target instanceof Element) {
+      target(mutation.target);
+      if (!elements.has(mutation.target)) {
+        elements.add(mutation.target);
+        for (let i = 0; i < mutation.target.children.length; i++) {
+          const child = mutation.target.children.item(i);
+          if (!child)
+            continue;
+          if (DEL in child) {
+            return false;
+          }
+          target(mutation.target, child);
+          elements.add(child);
+        }
+      }
+      if (mutation.removedNodes.length) {
+        for (let i = 0; i < mutation.removedNodes.length; i++) {
+          const child = mutation.removedNodes[i];
+          if (DEL in child) {
+            return false;
+          }
+          if (child instanceof Element) {
+            elements.add(child);
+            target(mutation.target, child);
+            siblings.set(child, [
+              mutation.previousSibling,
+              mutation.nextSibling
+            ]);
+          }
+        }
+      }
+    }
+    return elements;
+  }, /* @__PURE__ */ new Set());
+}
+function target(el, child) {
+  if (!child && !(TGT in el))
+    Object.defineProperty(el, TGT, { value: el });
+  else if (child && !(TGT in child))
+    Object.defineProperty(child, TGT, { value: el });
+}
+function animate(el) {
+  var _a2;
+  const isMounted = el.isConnected;
+  const preExisting = coords.has(el);
+  if (isMounted && siblings.has(el))
+    siblings.delete(el);
+  if (animations.has(el)) {
+    (_a2 = animations.get(el)) === null || _a2 === void 0 ? void 0 : _a2.cancel();
+  }
+  if (NEW in el) {
+    add(el);
+  } else if (preExisting && isMounted) {
+    remain(el);
+  } else if (preExisting && !isMounted) {
+    remove(el);
+  } else {
+    add(el);
+  }
+}
+function raw(str) {
+  return Number(str.replace(/[^0-9.\-]/g, ""));
+}
+function getScrollOffset(el) {
+  let p = el.parentElement;
+  while (p) {
+    if (p.scrollLeft || p.scrollTop) {
+      return { x: p.scrollLeft, y: p.scrollTop };
+    }
+    p = p.parentElement;
+  }
+  return { x: 0, y: 0 };
+}
+function getCoords(el) {
+  const rect = el.getBoundingClientRect();
+  const { x, y } = getScrollOffset(el);
+  return {
+    top: rect.top + y,
+    left: rect.left + x,
+    width: rect.width,
+    height: rect.height
+  };
+}
+function getTransitionSizes(el, oldCoords, newCoords) {
+  let widthFrom = oldCoords.width;
+  let heightFrom = oldCoords.height;
+  let widthTo = newCoords.width;
+  let heightTo = newCoords.height;
+  const styles = getComputedStyle(el);
+  const sizing = styles.getPropertyValue("box-sizing");
+  if (sizing === "content-box") {
+    const paddingY = raw(styles.paddingTop) + raw(styles.paddingBottom) + raw(styles.borderTopWidth) + raw(styles.borderBottomWidth);
+    const paddingX = raw(styles.paddingLeft) + raw(styles.paddingRight) + raw(styles.borderRightWidth) + raw(styles.borderLeftWidth);
+    widthFrom -= paddingX;
+    widthTo -= paddingX;
+    heightFrom -= paddingY;
+    heightTo -= paddingY;
+  }
+  return [widthFrom, widthTo, heightFrom, heightTo].map(Math.round);
+}
+function getOptions(el) {
+  return TGT in el && options.has(el[TGT]) ? options.get(el[TGT]) : { duration: 250, easing: "ease-in-out" };
+}
+function getTarget(el) {
+  if (TGT in el)
+    return el[TGT];
+  return void 0;
+}
+function isEnabled(el) {
+  const target2 = getTarget(el);
+  return target2 ? enabled.has(target2) : false;
+}
+function forEach(parent, ...callbacks) {
+  callbacks.forEach((callback) => callback(parent, options.has(parent)));
+  for (let i = 0; i < parent.children.length; i++) {
+    const child = parent.children.item(i);
+    if (child) {
+      callbacks.forEach((callback) => callback(child, options.has(child)));
+    }
+  }
+}
+function getPluginTuple(pluginReturn) {
+  if (Array.isArray(pluginReturn))
+    return pluginReturn;
+  return [pluginReturn];
+}
+function isPlugin(config) {
+  return typeof config === "function";
+}
+function remain(el) {
+  const oldCoords = coords.get(el);
+  const newCoords = getCoords(el);
+  if (!isEnabled(el))
+    return coords.set(el, newCoords);
+  let animation;
+  if (!oldCoords)
+    return;
+  const pluginOrOptions = getOptions(el);
+  if (typeof pluginOrOptions !== "function") {
+    const deltaX = oldCoords.left - newCoords.left;
+    const deltaY = oldCoords.top - newCoords.top;
+    const [widthFrom, widthTo, heightFrom, heightTo] = getTransitionSizes(el, oldCoords, newCoords);
+    const start = {
+      transform: `translate(${deltaX}px, ${deltaY}px)`
+    };
+    const end2 = {
+      transform: `translate(0, 0)`
+    };
+    if (widthFrom !== widthTo) {
+      start.width = `${widthFrom}px`;
+      end2.width = `${widthTo}px`;
+    }
+    if (heightFrom !== heightTo) {
+      start.height = `${heightFrom}px`;
+      end2.height = `${heightTo}px`;
+    }
+    animation = el.animate([start, end2], {
+      duration: pluginOrOptions.duration,
+      easing: pluginOrOptions.easing
+    });
+  } else {
+    const [keyframes] = getPluginTuple(pluginOrOptions(el, "remain", oldCoords, newCoords));
+    animation = new Animation(keyframes);
+    animation.play();
+  }
+  animations.set(el, animation);
+  coords.set(el, newCoords);
+  animation.addEventListener("finish", updatePos.bind(null, el));
+}
+function add(el) {
+  if (NEW in el)
+    delete el[NEW];
+  const newCoords = getCoords(el);
+  coords.set(el, newCoords);
+  const pluginOrOptions = getOptions(el);
+  if (!isEnabled(el))
+    return;
+  let animation;
+  if (typeof pluginOrOptions !== "function") {
+    animation = el.animate([
+      { transform: "scale(.98)", opacity: 0 },
+      { transform: "scale(0.98)", opacity: 0, offset: 0.5 },
+      { transform: "scale(1)", opacity: 1 }
+    ], {
+      duration: pluginOrOptions.duration * 1.5,
+      easing: "ease-in"
+    });
+  } else {
+    const [keyframes] = getPluginTuple(pluginOrOptions(el, "add", newCoords));
+    animation = new Animation(keyframes);
+    animation.play();
+  }
+  animations.set(el, animation);
+  animation.addEventListener("finish", updatePos.bind(null, el));
+}
+function cleanUp(el, styles) {
+  var _a2;
+  el.remove();
+  coords.delete(el);
+  siblings.delete(el);
+  animations.delete(el);
+  (_a2 = intersections.get(el)) === null || _a2 === void 0 ? void 0 : _a2.disconnect();
+  setTimeout(() => {
+    if (DEL in el)
+      delete el[DEL];
+    Object.defineProperty(el, NEW, { value: true, configurable: true });
+    if (styles && el instanceof HTMLElement) {
+      for (const style in styles) {
+        el.style[style] = "";
+      }
+    }
+  }, 0);
+}
+function remove(el) {
+  var _a2;
+  if (!siblings.has(el) || !coords.has(el))
+    return;
+  const [prev, next] = siblings.get(el);
+  Object.defineProperty(el, DEL, { value: true, configurable: true });
+  const finalX = window.scrollX;
+  const finalY = window.scrollY;
+  if (next && next.parentNode && next.parentNode instanceof Element) {
+    next.parentNode.insertBefore(el, next);
+  } else if (prev && prev.parentNode) {
+    prev.parentNode.appendChild(el);
+  } else {
+    (_a2 = getTarget(el)) === null || _a2 === void 0 ? void 0 : _a2.appendChild(el);
+  }
+  if (!isEnabled(el))
+    return cleanUp(el);
+  const [top, left2, width, height] = deletePosition(el);
+  const optionsOrPlugin = getOptions(el);
+  const oldCoords = coords.get(el);
+  if (finalX !== scrollX || finalY !== scrollY) {
+    adjustScroll(el, finalX, finalY, optionsOrPlugin);
+  }
+  let animation;
+  let styleReset = {
+    position: "absolute",
+    top: `${top}px`,
+    left: `${left2}px`,
+    width: `${width}px`,
+    height: `${height}px`,
+    margin: "0",
+    pointerEvents: "none",
+    transformOrigin: "center",
+    zIndex: "100"
+  };
+  if (!isPlugin(optionsOrPlugin)) {
+    Object.assign(el.style, styleReset);
+    animation = el.animate([
+      {
+        transform: "scale(1)",
+        opacity: 1
+      },
+      {
+        transform: "scale(.98)",
+        opacity: 0
+      }
+    ], { duration: optionsOrPlugin.duration, easing: "ease-out" });
+  } else {
+    const [keyframes, options2] = getPluginTuple(optionsOrPlugin(el, "remove", oldCoords));
+    if ((options2 === null || options2 === void 0 ? void 0 : options2.styleReset) !== false) {
+      styleReset = (options2 === null || options2 === void 0 ? void 0 : options2.styleReset) || styleReset;
+      Object.assign(el.style, styleReset);
+    }
+    animation = new Animation(keyframes);
+    animation.play();
+  }
+  animations.set(el, animation);
+  animation.addEventListener("finish", cleanUp.bind(null, el, styleReset));
+}
+function adjustScroll(el, finalX, finalY, optionsOrPlugin) {
+  const scrollDeltaX = scrollX - finalX;
+  const scrollDeltaY = scrollY - finalY;
+  const scrollBefore = document.documentElement.style.scrollBehavior;
+  const scrollBehavior = getComputedStyle(root$2).scrollBehavior;
+  if (scrollBehavior === "smooth") {
+    document.documentElement.style.scrollBehavior = "auto";
+  }
+  window.scrollTo(window.scrollX + scrollDeltaX, window.scrollY + scrollDeltaY);
+  if (!el.parentElement)
+    return;
+  const parent = el.parentElement;
+  let lastHeight = parent.clientHeight;
+  let lastWidth = parent.clientWidth;
+  const startScroll = performance.now();
+  function smoothScroll() {
+    requestAnimationFrame(() => {
+      if (!isPlugin(optionsOrPlugin)) {
+        const deltaY = lastHeight - parent.clientHeight;
+        const deltaX = lastWidth - parent.clientWidth;
+        if (startScroll + optionsOrPlugin.duration > performance.now()) {
+          window.scrollTo({
+            left: window.scrollX - deltaX,
+            top: window.scrollY - deltaY
+          });
+          lastHeight = parent.clientHeight;
+          lastWidth = parent.clientWidth;
+          smoothScroll();
+        } else {
+          document.documentElement.style.scrollBehavior = scrollBefore;
+        }
+      }
+    });
+  }
+  smoothScroll();
+}
+function deletePosition(el) {
+  const oldCoords = coords.get(el);
+  const [width, , height] = getTransitionSizes(el, oldCoords, getCoords(el));
+  let offsetParent = el.parentElement;
+  while (offsetParent && (getComputedStyle(offsetParent).position === "static" || offsetParent instanceof HTMLBodyElement)) {
+    offsetParent = offsetParent.parentElement;
+  }
+  if (!offsetParent)
+    offsetParent = document.body;
+  const parentStyles = getComputedStyle(offsetParent);
+  const parentCoords = coords.get(offsetParent) || getCoords(offsetParent);
+  const top = Math.round(oldCoords.top - parentCoords.top) - raw(parentStyles.borderTopWidth);
+  const left2 = Math.round(oldCoords.left - parentCoords.left) - raw(parentStyles.borderLeftWidth);
+  return [top, left2, width, height];
+}
+function autoAnimate(el, config = {}) {
+  if (mutations && resize) {
+    const mediaQuery = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const isDisabledDueToReduceMotion = mediaQuery.matches && !isPlugin(config) && !config.disrespectUserMotionPreference;
+    if (!isDisabledDueToReduceMotion) {
+      enabled.add(el);
+      if (getComputedStyle(el).position === "static") {
+        Object.assign(el.style, { position: "relative" });
+      }
+      forEach(el, updatePos, poll, (element) => resize === null || resize === void 0 ? void 0 : resize.observe(element));
+      if (isPlugin(config)) {
+        options.set(el, config);
+      } else {
+        options.set(el, { duration: 250, easing: "ease-in-out", ...config });
+      }
+      mutations.observe(el, { childList: true });
+      parents.add(el);
+    }
+  }
+  return Object.freeze({
+    parent: el,
+    enable: () => {
+      enabled.add(el);
+    },
+    disable: () => {
+      enabled.delete(el);
+    },
+    isEnabled: () => enabled.has(el)
+  });
+}
+const vAutoAnimate$1 = {
+  mounted: (el, binding) => {
+    autoAnimate(el, binding.value || {});
+  },
+  // ignore ssr see #96:
+  getSSRProps: () => ({})
+};
+const vAutoAnimate = vAutoAnimate$1;
+function useAutoAnimate(options2) {
+  const element = ref();
+  let controller;
+  function setEnabled(enabled2) {
+    if (controller) {
+      enabled2 ? controller.enable() : controller.disable();
+    }
+  }
+  onMounted(() => {
+    watchEffect(() => {
+      if (element.value instanceof HTMLElement)
+        controller = autoAnimate(element.value, options2 || {});
+    });
+  });
+  return [element, setEnabled];
+}
 !!(process.env.NODE_ENV !== "production") ? Object.freeze({}) : {};
 !!(process.env.NODE_ENV !== "production") ? Object.freeze([]) : [];
 const withInstall$1 = (main, extra) => {
@@ -1576,7 +2068,7 @@ function createFilterWrapper(filter, fn2) {
   }
   return wrapper;
 }
-function debounceFilter(ms, options = {}) {
+function debounceFilter(ms, options2 = {}) {
   let timer;
   let maxTimer;
   let lastRejector = noop;
@@ -1587,7 +2079,7 @@ function debounceFilter(ms, options = {}) {
   };
   const filter = (invoke) => {
     const duration = resolveUnref(ms);
-    const maxDuration = resolveUnref(options.maxWait);
+    const maxDuration = resolveUnref(options2.maxWait);
     if (timer)
       _clearTimeout(timer);
     if (duration <= 0 || maxDuration !== void 0 && maxDuration <= 0) {
@@ -1598,7 +2090,7 @@ function debounceFilter(ms, options = {}) {
       return Promise.resolve(invoke());
     }
     return new Promise((resolve, reject) => {
-      lastRejector = options.rejectOnCancel ? reject : resolve;
+      lastRejector = options2.rejectOnCancel ? reject : resolve;
       if (maxDuration && !maxTimer) {
         maxTimer = setTimeout(() => {
           if (timer)
@@ -1627,14 +2119,14 @@ function tryOnScopeDispose(fn2) {
   }
   return false;
 }
-function useDebounceFn(fn2, ms = 200, options = {}) {
-  return createFilterWrapper(debounceFilter(ms, options), fn2);
+function useDebounceFn(fn2, ms = 200, options2 = {}) {
+  return createFilterWrapper(debounceFilter(ms, options2), fn2);
 }
-function refDebounced(value, ms = 200, options = {}) {
+function refDebounced(value, ms = 200, options2 = {}) {
   const debounced = ref(value.value);
   const updater = useDebounceFn(() => {
     debounced.value = value.value;
-  }, ms, options);
+  }, ms, options2);
   watch(value, () => updater());
   return debounced;
 }
@@ -1646,10 +2138,10 @@ function tryOnMounted(fn2, sync = true) {
   else
     nextTick(fn2);
 }
-function useTimeoutFn(cb, interval, options = {}) {
+function useTimeoutFn(cb, interval, options2 = {}) {
   const {
     immediate = true
-  } = options;
+  } = options2;
   const isPending = ref(false);
   let timer = null;
   function clear() {
@@ -1690,17 +2182,17 @@ function unrefElement(elRef) {
 }
 const defaultWindow = isClient ? window : void 0;
 function useEventListener(...args) {
-  let target;
+  let target2;
   let events;
   let listeners;
-  let options;
+  let options2;
   if (isString$1(args[0]) || Array.isArray(args[0])) {
-    [events, listeners, options] = args;
-    target = defaultWindow;
+    [events, listeners, options2] = args;
+    target2 = defaultWindow;
   } else {
-    [target, events, listeners, options] = args;
+    [target2, events, listeners, options2] = args;
   }
-  if (!target)
+  if (!target2)
     return noop;
   if (!Array.isArray(events))
     events = [events];
@@ -1711,16 +2203,16 @@ function useEventListener(...args) {
     cleanups.forEach((fn2) => fn2());
     cleanups.length = 0;
   };
-  const register2 = (el, event, listener, options2) => {
-    el.addEventListener(event, listener, options2);
-    return () => el.removeEventListener(event, listener, options2);
+  const register2 = (el, event, listener, options22) => {
+    el.addEventListener(event, listener, options22);
+    return () => el.removeEventListener(event, listener, options22);
   };
-  const stopWatch = watch(() => [unrefElement(target), resolveUnref(options)], ([el, options2]) => {
+  const stopWatch = watch(() => [unrefElement(target2), resolveUnref(options2)], ([el, options22]) => {
     cleanup();
     if (!el)
       return;
     cleanups.push(...events.flatMap((event) => {
-      return listeners.map((listener) => register2(el, event, listener, options2));
+      return listeners.map((listener) => register2(el, event, listener, options22));
     }));
   }, { immediate: true, flush: "post" });
   const stop = () => {
@@ -1731,8 +2223,8 @@ function useEventListener(...args) {
   return stop;
 }
 let _iOSWorkaround = false;
-function onClickOutside(target, handler, options = {}) {
-  const { window: window2 = defaultWindow, ignore = [], capture = true, detectIframe = false } = options;
+function onClickOutside(target2, handler, options2 = {}) {
+  const { window: window2 = defaultWindow, ignore = [], capture = true, detectIframe = false } = options2;
   if (!window2)
     return;
   if (isIOS && !_iOSWorkaround) {
@@ -1741,17 +2233,17 @@ function onClickOutside(target, handler, options = {}) {
   }
   let shouldListen = true;
   const shouldIgnore = (event) => {
-    return ignore.some((target2) => {
-      if (typeof target2 === "string") {
-        return Array.from(window2.document.querySelectorAll(target2)).some((el) => el === event.target || event.composedPath().includes(el));
+    return ignore.some((target22) => {
+      if (typeof target22 === "string") {
+        return Array.from(window2.document.querySelectorAll(target22)).some((el) => el === event.target || event.composedPath().includes(el));
       } else {
-        const el = unrefElement(target2);
+        const el = unrefElement(target22);
         return el && (event.target === el || event.composedPath().includes(el));
       }
     });
   };
   const listener = (event) => {
-    const el = unrefElement(target);
+    const el = unrefElement(target2);
     if (!el || el === event.target || event.composedPath().includes(el))
       return;
     if (event.detail === 0)
@@ -1765,13 +2257,13 @@ function onClickOutside(target, handler, options = {}) {
   const cleanup = [
     useEventListener(window2, "click", listener, { passive: true, capture }),
     useEventListener(window2, "pointerdown", (e) => {
-      const el = unrefElement(target);
+      const el = unrefElement(target2);
       if (el)
         shouldListen = !e.composedPath().includes(el) && !shouldIgnore(e);
     }, { passive: true }),
     detectIframe && useEventListener(window2, "blur", (event) => {
       var _a2;
-      const el = unrefElement(target);
+      const el = unrefElement(target2);
       if (((_a2 = window2.document.activeElement) == null ? void 0 : _a2.tagName) === "IFRAME" && !(el == null ? void 0 : el.contains(window2.document.activeElement)))
         handler(event);
     })
@@ -1793,19 +2285,19 @@ var __getOwnPropSymbols$g = Object.getOwnPropertySymbols;
 var __hasOwnProp$g = Object.prototype.hasOwnProperty;
 var __propIsEnum$g = Object.prototype.propertyIsEnumerable;
 var __objRest$2 = (source, exclude) => {
-  var target = {};
+  var target2 = {};
   for (var prop in source)
     if (__hasOwnProp$g.call(source, prop) && exclude.indexOf(prop) < 0)
-      target[prop] = source[prop];
+      target2[prop] = source[prop];
   if (source != null && __getOwnPropSymbols$g)
     for (var prop of __getOwnPropSymbols$g(source)) {
       if (exclude.indexOf(prop) < 0 && __propIsEnum$g.call(source, prop))
-        target[prop] = source[prop];
+        target2[prop] = source[prop];
     }
-  return target;
+  return target2;
 };
-function useResizeObserver(target, callback, options = {}) {
-  const _a2 = options, { window: window2 = defaultWindow } = _a2, observerOptions = __objRest$2(_a2, ["window"]);
+function useResizeObserver(target2, callback, options2 = {}) {
+  const _a2 = options2, { window: window2 = defaultWindow } = _a2, observerOptions = __objRest$2(_a2, ["window"]);
   let observer;
   const isSupported = useSupported(() => window2 && "ResizeObserver" in window2);
   const cleanup = () => {
@@ -1814,7 +2306,7 @@ function useResizeObserver(target, callback, options = {}) {
       observer = void 0;
     }
   };
-  const stopWatch = watch(() => unrefElement(target), (el) => {
+  const stopWatch = watch(() => unrefElement(target2), (el) => {
     cleanup();
     if (isSupported.value && window2 && el) {
       observer = new ResizeObserver(callback);
@@ -1895,6 +2387,9 @@ const isArray$2 = Array.isArray;
 const isFunction$1 = (val) => typeof val === "function";
 const isString = (val) => typeof val === "string";
 const isObject$1 = (val) => val !== null && typeof val === "object";
+const isPromise = (val) => {
+  return (isObject$1(val) || isFunction$1(val)) && isFunction$1(val.then) && isFunction$1(val.catch);
+};
 const objectToString$1 = Object.prototype.toString;
 const toTypeString = (value) => objectToString$1.call(value);
 const toRawType = (value) => {
@@ -2083,8 +2578,8 @@ function getNative(object4, key) {
   var value = getValue$1(object4, key);
   return baseIsNative(value) ? value : void 0;
 }
-var WeakMap = getNative(root$1, "WeakMap");
-const WeakMap$1 = WeakMap;
+var WeakMap$1 = getNative(root$1, "WeakMap");
+const WeakMap$2 = WeakMap$1;
 var objectCreate = Object.create;
 var baseCreate = function() {
   function object4() {
@@ -2695,9 +3190,9 @@ var Set$1 = getNative(root$1, "Set");
 const Set$2 = Set$1;
 var mapTag$4 = "[object Map]", objectTag$2 = "[object Object]", promiseTag = "[object Promise]", setTag$4 = "[object Set]", weakMapTag$1 = "[object WeakMap]";
 var dataViewTag$3 = "[object DataView]";
-var dataViewCtorString = toSource(DataView$1), mapCtorString = toSource(Map$2), promiseCtorString = toSource(Promise$2), setCtorString = toSource(Set$2), weakMapCtorString = toSource(WeakMap$1);
+var dataViewCtorString = toSource(DataView$1), mapCtorString = toSource(Map$2), promiseCtorString = toSource(Promise$2), setCtorString = toSource(Set$2), weakMapCtorString = toSource(WeakMap$2);
 var getTag = baseGetTag;
-if (DataView$1 && getTag(new DataView$1(new ArrayBuffer(1))) != dataViewTag$3 || Map$2 && getTag(new Map$2()) != mapTag$4 || Promise$2 && getTag(Promise$2.resolve()) != promiseTag || Set$2 && getTag(new Set$2()) != setTag$4 || WeakMap$1 && getTag(new WeakMap$1()) != weakMapTag$1) {
+if (DataView$1 && getTag(new DataView$1(new ArrayBuffer(1))) != dataViewTag$3 || Map$2 && getTag(new Map$2()) != mapTag$4 || Promise$2 && getTag(Promise$2.resolve()) != promiseTag || Set$2 && getTag(new Set$2()) != setTag$4 || WeakMap$2 && getTag(new WeakMap$2()) != weakMapTag$1) {
   getTag = function(value) {
     var result = baseGetTag(value), Ctor = result == objectTag$2 ? value.constructor : void 0, ctorString = Ctor ? toSource(Ctor) : "";
     if (ctorString) {
@@ -3224,17 +3719,17 @@ var now = function() {
 const now$1 = now;
 var FUNC_ERROR_TEXT = "Expected a function";
 var nativeMax$1 = Math.max, nativeMin$1 = Math.min;
-function debounce(func, wait, options) {
+function debounce(func, wait, options2) {
   var lastArgs, lastThis, maxWait, result, timerId, lastCallTime, lastInvokeTime = 0, leading = false, maxing = false, trailing = true;
   if (typeof func != "function") {
     throw new TypeError(FUNC_ERROR_TEXT);
   }
   wait = toNumber(wait) || 0;
-  if (isObject(options)) {
-    leading = !!options.leading;
-    maxing = "maxWait" in options;
-    maxWait = maxing ? nativeMax$1(toNumber(options.maxWait) || 0, wait) : maxWait;
-    trailing = "trailing" in options ? !!options.trailing : trailing;
+  if (isObject(options2)) {
+    leading = !!options2.leading;
+    maxing = "maxWait" in options2;
+    maxWait = maxing ? nativeMax$1(toNumber(options2.maxWait) || 0, wait) : maxWait;
+    trailing = "trailing" in options2 ? !!options2.trailing : trailing;
   }
   function invokeFunc(time) {
     var args = lastArgs, thisArg = lastThis;
@@ -3455,10 +3950,10 @@ function scrollIntoView(container, selected) {
 }
 /*! Element Plus Icons Vue v2.1.0 */
 var export_helper_default = (sfc, props) => {
-  let target = sfc.__vccOpts || sfc;
+  let target2 = sfc.__vccOpts || sfc;
   for (let [key, val] of props)
-    target[key] = val;
-  return target;
+    target2[key] = val;
+  return target2;
 };
 var arrow_down_vue_vue_type_script_lang_default = {
   name: "ArrowDown"
@@ -3504,6 +3999,28 @@ function _sfc_render10(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_110, _hoisted_310);
 }
 var arrow_right_default = /* @__PURE__ */ export_helper_default(arrow_right_vue_vue_type_script_lang_default, [["render", _sfc_render10], ["__file", "arrow-right.vue"]]);
+var arrow_up_vue_vue_type_script_lang_default = {
+  name: "ArrowUp"
+};
+var _hoisted_112 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_212 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "m488.832 344.32-339.84 356.672a32 32 0 0 0 0 44.16l.384.384a29.44 29.44 0 0 0 42.688 0l320-335.872 319.872 335.872a29.44 29.44 0 0 0 42.688 0l.384-.384a32 32 0 0 0 0-44.16L535.168 344.32a32 32 0 0 0-46.336 0z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_312 = [
+  _hoisted_212
+];
+function _sfc_render12(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_112, _hoisted_312);
+}
+var arrow_up_default = /* @__PURE__ */ export_helper_default(arrow_up_vue_vue_type_script_lang_default, [["render", _sfc_render12], ["__file", "arrow-up.vue"]]);
 var circle_check_vue_vue_type_script_lang_default = {
   name: "CircleCheck"
 };
@@ -3644,6 +4161,28 @@ function _sfc_render150(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_1150, _hoisted_3149);
 }
 var loading_default = /* @__PURE__ */ export_helper_default(loading_vue_vue_type_script_lang_default, [["render", _sfc_render150], ["__file", "loading.vue"]]);
+var minus_vue_vue_type_script_lang_default = {
+  name: "Minus"
+};
+var _hoisted_1169 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_2169 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M128 544h768a32 32 0 1 0 0-64H128a32 32 0 0 0 0 64z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_3168 = [
+  _hoisted_2169
+];
+function _sfc_render169(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_1169, _hoisted_3168);
+}
+var minus_default = /* @__PURE__ */ export_helper_default(minus_vue_vue_type_script_lang_default, [["render", _sfc_render169], ["__file", "minus.vue"]]);
 var more_vue_vue_type_script_lang_default = {
   name: "More"
 };
@@ -3666,6 +4205,28 @@ function _sfc_render175(_ctx, _cache, $props, $setup, $data, $options) {
   return openBlock(), createElementBlock("svg", _hoisted_1175, _hoisted_3174);
 }
 var more_default = /* @__PURE__ */ export_helper_default(more_vue_vue_type_script_lang_default, [["render", _sfc_render175], ["__file", "more.vue"]]);
+var plus_vue_vue_type_script_lang_default = {
+  name: "Plus"
+};
+var _hoisted_1201 = {
+  xmlns: "http://www.w3.org/2000/svg",
+  viewBox: "0 0 1024 1024"
+}, _hoisted_2201 = /* @__PURE__ */ createElementVNode(
+  "path",
+  {
+    fill: "currentColor",
+    d: "M480 480V128a32 32 0 0 1 64 0v352h352a32 32 0 1 1 0 64H544v352a32 32 0 1 1-64 0V544H128a32 32 0 0 1 0-64h352z"
+  },
+  null,
+  -1
+  /* HOISTED */
+), _hoisted_3200 = [
+  _hoisted_2201
+];
+function _sfc_render201(_ctx, _cache, $props, $setup, $data, $options) {
+  return openBlock(), createElementBlock("svg", _hoisted_1201, _hoisted_3200);
+}
+var plus_default = /* @__PURE__ */ export_helper_default(plus_vue_vue_type_script_lang_default, [["render", _sfc_render201], ["__file", "plus.vue"]]);
 var view_vue_vue_type_script_lang_default = {
   name: "View"
 };
@@ -3773,6 +4334,7 @@ const EVENT_CODE = {
 };
 const UPDATE_MODEL_EVENT = "update:modelValue";
 const CHANGE_EVENT = "change";
+const INPUT_EVENT = "input";
 const componentSizes = ["", "default", "small", "large"];
 const componentSizeMap = {
   large: 40,
@@ -4775,7 +5337,7 @@ const usePopper = (referenceElementRef, popperElementRef, opts = {}) => {
     },
     requires: ["computeStyles"]
   };
-  const options = computed(() => {
+  const options2 = computed(() => {
     const { onFirstUpdate, placement, strategy, modifiers } = unref(opts);
     return {
       onFirstUpdate,
@@ -4792,7 +5354,7 @@ const usePopper = (referenceElementRef, popperElementRef, opts = {}) => {
   const states = ref({
     styles: {
       popper: {
-        position: unref(options).strategy,
+        position: unref(options2).strategy,
         left: "0",
         top: "0"
       },
@@ -4808,7 +5370,7 @@ const usePopper = (referenceElementRef, popperElementRef, opts = {}) => {
     instanceRef.value.destroy();
     instanceRef.value = void 0;
   };
-  watch(options, (newOptions) => {
+  watch(options2, (newOptions) => {
     const instance = unref(instanceRef);
     if (instance) {
       instance.setOptions(newOptions);
@@ -4820,7 +5382,7 @@ const usePopper = (referenceElementRef, popperElementRef, opts = {}) => {
     destroy();
     if (!referenceElement || !popperElement)
       return;
-    instanceRef.value = yn(referenceElement, popperElement, unref(options));
+    instanceRef.value = yn(referenceElement, popperElement, unref(options2));
   });
   onBeforeUnmount(() => {
     destroy();
@@ -5085,7 +5647,7 @@ const useGlobalSize = () => {
     return unref(injectedSize.size) || "";
   });
 };
-function useFocusController(target, { afterFocus, beforeBlur, afterBlur } = {}) {
+function useFocusController(target2, { afterFocus, beforeBlur, afterBlur } = {}) {
   const instance = getCurrentInstance();
   const { emit } = instance;
   const wrapperRef = shallowRef();
@@ -5108,7 +5670,7 @@ function useFocusController(target, { afterFocus, beforeBlur, afterBlur } = {}) 
   };
   const handleClick = () => {
     var _a2;
-    (_a2 = target.value) == null ? void 0 : _a2.focus();
+    (_a2 = target2.value) == null ? void 0 : _a2.focus();
   };
   watch(wrapperRef, (el) => {
     if (el) {
@@ -5124,11 +5686,11 @@ function useFocusController(target, { afterFocus, beforeBlur, afterBlur } = {}) 
   };
 }
 var _export_sfc$1 = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
+  const target2 = sfc.__vccOpts || sfc;
   for (const [key, val] of props) {
-    target[key] = val;
+    target2[key] = val;
   }
-  return target;
+  return target2;
 };
 const iconProps = buildProps({
   size: {
@@ -5138,12 +5700,12 @@ const iconProps = buildProps({
     type: String
   }
 });
-const __default__$k = defineComponent({
+const __default__$r = defineComponent({
   name: "ElIcon",
   inheritAttrs: false
 });
-const _sfc_main$u = /* @__PURE__ */ defineComponent({
-  ...__default__$k,
+const _sfc_main$B = /* @__PURE__ */ defineComponent({
+  ...__default__$r,
   props: iconProps,
   setup(__props) {
     const props = __props;
@@ -5167,7 +5729,7 @@ const _sfc_main$u = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Icon = /* @__PURE__ */ _export_sfc$1(_sfc_main$u, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/icon/src/icon.vue"]]);
+var Icon = /* @__PURE__ */ _export_sfc$1(_sfc_main$B, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/icon/src/icon.vue"]]);
 const ElIcon = withInstall(Icon);
 const formContextKey = Symbol("formContextKey");
 const formItemContextKey = Symbol("formItemContextKey");
@@ -5325,12 +5887,12 @@ const filterFields = (fields, props) => {
   const normalized = castArray(props);
   return normalized.length > 0 ? fields.filter((field) => field.prop && normalized.includes(field.prop)) : fields;
 };
-const COMPONENT_NAME$7 = "ElForm";
-const __default__$j = defineComponent({
-  name: COMPONENT_NAME$7
+const COMPONENT_NAME$8 = "ElForm";
+const __default__$q = defineComponent({
+  name: COMPONENT_NAME$8
 });
-const _sfc_main$t = /* @__PURE__ */ defineComponent({
-  ...__default__$j,
+const _sfc_main$A = /* @__PURE__ */ defineComponent({
+  ...__default__$q,
   props: formProps,
   emits: formEmits,
   setup(__props, { expose, emit }) {
@@ -5359,7 +5921,7 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
     };
     const resetFields = (properties = []) => {
       if (!props.model) {
-        debugWarn(COMPONENT_NAME$7, "model is required for resetFields to work.");
+        debugWarn(COMPONENT_NAME$8, "model is required for resetFields to work.");
         return;
       }
       filterFields(fields, properties).forEach((field) => field.resetField());
@@ -5370,7 +5932,7 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
     const isValidatable = computed(() => {
       const hasModel = !!props.model;
       if (!hasModel) {
-        debugWarn(COMPONENT_NAME$7, "model is required for validate to work.");
+        debugWarn(COMPONENT_NAME$8, "model is required for validate to work.");
       }
       return hasModel;
     });
@@ -5379,7 +5941,7 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
         return [];
       const filteredFields = filterFields(fields, props2);
       if (!filteredFields.length) {
-        debugWarn(COMPONENT_NAME$7, "please pass correct props!");
+        debugWarn(COMPONENT_NAME$8, "please pass correct props!");
         return [];
       }
       return filteredFields;
@@ -5463,18 +6025,18 @@ const _sfc_main$t = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Form = /* @__PURE__ */ _export_sfc$1(_sfc_main$t, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form.vue"]]);
+var Form = /* @__PURE__ */ _export_sfc$1(_sfc_main$A, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form.vue"]]);
 function _extends() {
-  _extends = Object.assign ? Object.assign.bind() : function(target) {
+  _extends = Object.assign ? Object.assign.bind() : function(target2) {
     for (var i = 1; i < arguments.length; i++) {
       var source = arguments[i];
       for (var key in source) {
         if (Object.prototype.hasOwnProperty.call(source, key)) {
-          target[key] = source[key];
+          target2[key] = source[key];
         }
       }
     }
-    return target;
+    return target2;
   };
   return _extends.apply(this, arguments);
 }
@@ -5766,29 +6328,29 @@ function complementError(rule, source) {
     };
   };
 }
-function deepMerge(target, source) {
+function deepMerge(target2, source) {
   if (source) {
     for (var s in source) {
       if (source.hasOwnProperty(s)) {
         var value = source[s];
-        if (typeof value === "object" && typeof target[s] === "object") {
-          target[s] = _extends({}, target[s], value);
+        if (typeof value === "object" && typeof target2[s] === "object") {
+          target2[s] = _extends({}, target2[s], value);
         } else {
-          target[s] = value;
+          target2[s] = value;
         }
       }
     }
   }
-  return target;
+  return target2;
 }
-var required$1 = function required(rule, value, source, errors, options, type4) {
+var required$1 = function required(rule, value, source, errors, options2, type4) {
   if (rule.required && (!source.hasOwnProperty(rule.field) || isEmptyValue(value, type4 || rule.type))) {
-    errors.push(format(options.messages.required, rule.fullField));
+    errors.push(format(options2.messages.required, rule.fullField));
   }
 };
-var whitespace = function whitespace2(rule, value, source, errors, options) {
+var whitespace = function whitespace2(rule, value, source, errors, options2) {
   if (/^\s+$/.test(value) || value === "") {
-    errors.push(format(options.messages.whitespace, rule.fullField));
+    errors.push(format(options2.messages.whitespace, rule.fullField));
   }
 };
 var urlReg;
@@ -5797,8 +6359,8 @@ var getUrlRegex = function() {
     return urlReg;
   }
   var word = "[a-fA-F\\d:]";
-  var b = function b2(options) {
-    return options && options.includeBoundaries ? "(?:(?<=\\s|^)(?=" + word + ")|(?<=" + word + ")(?=\\s|$))" : "";
+  var b = function b2(options2) {
+    return options2 && options2.includeBoundaries ? "(?:(?<=\\s|^)(?=" + word + ")|(?<=" + word + ")(?=\\s|$))" : "";
   };
   var v4 = "(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)(?:\\.(?:25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]\\d|\\d)){3}";
   var v6seg = "[a-fA-F\\d]{1,4}";
@@ -5806,14 +6368,14 @@ var getUrlRegex = function() {
   var v46Exact = new RegExp("(?:^" + v4 + "$)|(?:^" + v6 + "$)");
   var v4exact = new RegExp("^" + v4 + "$");
   var v6exact = new RegExp("^" + v6 + "$");
-  var ip = function ip2(options) {
-    return options && options.exact ? v46Exact : new RegExp("(?:" + b(options) + v4 + b(options) + ")|(?:" + b(options) + v6 + b(options) + ")", "g");
+  var ip = function ip2(options2) {
+    return options2 && options2.exact ? v46Exact : new RegExp("(?:" + b(options2) + v4 + b(options2) + ")|(?:" + b(options2) + v6 + b(options2) + ")", "g");
   };
-  ip.v4 = function(options) {
-    return options && options.exact ? v4exact : new RegExp("" + b(options) + v4 + b(options), "g");
+  ip.v4 = function(options2) {
+    return options2 && options2.exact ? v4exact : new RegExp("" + b(options2) + v4 + b(options2), "g");
   };
-  ip.v6 = function(options) {
-    return options && options.exact ? v6exact : new RegExp("" + b(options) + v6 + b(options), "g");
+  ip.v6 = function(options2) {
+    return options2 && options2.exact ? v6exact : new RegExp("" + b(options2) + v6 + b(options2), "g");
   };
   var protocol = "(?:(?:[a-z]+:)?//)";
   var auth = "(?:\\S+(?::\\S*)?@)?";
@@ -5882,22 +6444,22 @@ var types = {
     return typeof value === "string" && !!value.match(pattern$2.hex);
   }
 };
-var type$1 = function type(rule, value, source, errors, options) {
+var type$1 = function type(rule, value, source, errors, options2) {
   if (rule.required && value === void 0) {
-    required$1(rule, value, source, errors, options);
+    required$1(rule, value, source, errors, options2);
     return;
   }
   var custom = ["integer", "float", "array", "regexp", "object", "method", "email", "number", "date", "url", "hex"];
   var ruleType = rule.type;
   if (custom.indexOf(ruleType) > -1) {
     if (!types[ruleType](value)) {
-      errors.push(format(options.messages.types[ruleType], rule.fullField, rule.type));
+      errors.push(format(options2.messages.types[ruleType], rule.fullField, rule.type));
     }
   } else if (ruleType && typeof value !== rule.type) {
-    errors.push(format(options.messages.types[ruleType], rule.fullField, rule.type));
+    errors.push(format(options2.messages.types[ruleType], rule.fullField, rule.type));
   }
 };
-var range = function range2(rule, value, source, errors, options) {
+var range = function range2(rule, value, source, errors, options2) {
   var len = typeof rule.len === "number";
   var min = typeof rule.min === "number";
   var max = typeof rule.max === "number";
@@ -5925,34 +6487,34 @@ var range = function range2(rule, value, source, errors, options) {
   }
   if (len) {
     if (val !== rule.len) {
-      errors.push(format(options.messages[key].len, rule.fullField, rule.len));
+      errors.push(format(options2.messages[key].len, rule.fullField, rule.len));
     }
   } else if (min && !max && val < rule.min) {
-    errors.push(format(options.messages[key].min, rule.fullField, rule.min));
+    errors.push(format(options2.messages[key].min, rule.fullField, rule.min));
   } else if (max && !min && val > rule.max) {
-    errors.push(format(options.messages[key].max, rule.fullField, rule.max));
+    errors.push(format(options2.messages[key].max, rule.fullField, rule.max));
   } else if (min && max && (val < rule.min || val > rule.max)) {
-    errors.push(format(options.messages[key].range, rule.fullField, rule.min, rule.max));
+    errors.push(format(options2.messages[key].range, rule.fullField, rule.min, rule.max));
   }
 };
 var ENUM$1 = "enum";
-var enumerable$1 = function enumerable(rule, value, source, errors, options) {
+var enumerable$1 = function enumerable(rule, value, source, errors, options2) {
   rule[ENUM$1] = Array.isArray(rule[ENUM$1]) ? rule[ENUM$1] : [];
   if (rule[ENUM$1].indexOf(value) === -1) {
-    errors.push(format(options.messages[ENUM$1], rule.fullField, rule[ENUM$1].join(", ")));
+    errors.push(format(options2.messages[ENUM$1], rule.fullField, rule[ENUM$1].join(", ")));
   }
 };
-var pattern$1 = function pattern(rule, value, source, errors, options) {
+var pattern$1 = function pattern(rule, value, source, errors, options2) {
   if (rule.pattern) {
     if (rule.pattern instanceof RegExp) {
       rule.pattern.lastIndex = 0;
       if (!rule.pattern.test(value)) {
-        errors.push(format(options.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
+        errors.push(format(options2.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
       }
     } else if (typeof rule.pattern === "string") {
       var _pattern = new RegExp(rule.pattern);
       if (!_pattern.test(value)) {
-        errors.push(format(options.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
+        errors.push(format(options2.messages.pattern.mismatch, rule.fullField, value, rule.pattern));
       }
     }
   }
@@ -5965,40 +6527,40 @@ var rules = {
   "enum": enumerable$1,
   pattern: pattern$1
 };
-var string = function string2(rule, value, callback, source, options) {
+var string = function string2(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value, "string") && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options, "string");
+    rules.required(rule, value, source, errors, options2, "string");
     if (!isEmptyValue(value, "string")) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
-      rules.pattern(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
+      rules.range(rule, value, source, errors, options2);
+      rules.pattern(rule, value, source, errors, options2);
       if (rule.whitespace === true) {
-        rules.whitespace(rule, value, source, errors, options);
+        rules.whitespace(rule, value, source, errors, options2);
       }
     }
   }
   callback(errors);
 };
-var method2 = function method3(rule, value, callback, source, options) {
+var method2 = function method3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (value !== void 0) {
-      rules.type(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var number2 = function number3(rule, value, callback, source, options) {
+var number2 = function number3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
@@ -6008,138 +6570,138 @@ var number2 = function number3(rule, value, callback, source, options) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (value !== void 0) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
+      rules.range(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var _boolean = function _boolean2(rule, value, callback, source, options) {
+var _boolean = function _boolean2(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (value !== void 0) {
-      rules.type(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var regexp2 = function regexp3(rule, value, callback, source, options) {
+var regexp2 = function regexp3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (!isEmptyValue(value)) {
-      rules.type(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var integer2 = function integer3(rule, value, callback, source, options) {
+var integer2 = function integer3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (value !== void 0) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
+      rules.range(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var floatFn = function floatFn2(rule, value, callback, source, options) {
+var floatFn = function floatFn2(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (value !== void 0) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
+      rules.range(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var array2 = function array3(rule, value, callback, source, options) {
+var array2 = function array3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if ((value === void 0 || value === null) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options, "array");
+    rules.required(rule, value, source, errors, options2, "array");
     if (value !== void 0 && value !== null) {
-      rules.type(rule, value, source, errors, options);
-      rules.range(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
+      rules.range(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var object2 = function object3(rule, value, callback, source, options) {
+var object2 = function object3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (value !== void 0) {
-      rules.type(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
 var ENUM = "enum";
-var enumerable2 = function enumerable3(rule, value, callback, source, options) {
+var enumerable2 = function enumerable3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (value !== void 0) {
-      rules[ENUM](rule, value, source, errors, options);
+      rules[ENUM](rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var pattern2 = function pattern3(rule, value, callback, source, options) {
+var pattern2 = function pattern3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value, "string") && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (!isEmptyValue(value, "string")) {
-      rules.pattern(rule, value, source, errors, options);
+      rules.pattern(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var date2 = function date3(rule, value, callback, source, options) {
+var date2 = function date3(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value, "date") && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
     if (!isEmptyValue(value, "date")) {
       var dateObject;
       if (value instanceof Date) {
@@ -6147,21 +6709,21 @@ var date2 = function date3(rule, value, callback, source, options) {
       } else {
         dateObject = new Date(value);
       }
-      rules.type(rule, dateObject, source, errors, options);
+      rules.type(rule, dateObject, source, errors, options2);
       if (dateObject) {
-        rules.range(rule, dateObject.getTime(), source, errors, options);
+        rules.range(rule, dateObject.getTime(), source, errors, options2);
       }
     }
   }
   callback(errors);
 };
-var required2 = function required3(rule, value, callback, source, options) {
+var required2 = function required3(rule, value, callback, source, options2) {
   var errors = [];
   var type4 = Array.isArray(value) ? "array" : typeof value;
-  rules.required(rule, value, source, errors, options, type4);
+  rules.required(rule, value, source, errors, options2, type4);
   callback(errors);
 };
-var type2 = function type3(rule, value, callback, source, options) {
+var type2 = function type3(rule, value, callback, source, options2) {
   var ruleType = rule.type;
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
@@ -6169,21 +6731,21 @@ var type2 = function type3(rule, value, callback, source, options) {
     if (isEmptyValue(value, ruleType) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options, ruleType);
+    rules.required(rule, value, source, errors, options2, ruleType);
     if (!isEmptyValue(value, ruleType)) {
-      rules.type(rule, value, source, errors, options);
+      rules.type(rule, value, source, errors, options2);
     }
   }
   callback(errors);
 };
-var any = function any2(rule, value, callback, source, options) {
+var any = function any2(rule, value, callback, source, options2) {
   var errors = [];
   var validate = rule.required || !rule.required && source.hasOwnProperty(rule.field);
   if (validate) {
     if (isEmptyValue(value) && !rule.required) {
       return callback();
     }
-    rules.required(rule, value, source, errors, options);
+    rules.required(rule, value, source, errors, options2);
   }
   callback(errors);
 };
@@ -6298,11 +6860,11 @@ var Schema = /* @__PURE__ */ function() {
       };
     }
     var source = source_;
-    var options = o;
+    var options2 = o;
     var callback = oc;
-    if (typeof options === "function") {
-      callback = options;
-      options = {};
+    if (typeof options2 === "function") {
+      callback = options2;
+      options2 = {};
     }
     if (!this.rules || Object.keys(this.rules).length === 0) {
       if (callback) {
@@ -6313,7 +6875,7 @@ var Schema = /* @__PURE__ */ function() {
     function complete(results) {
       var errors = [];
       var fields = {};
-      function add(e) {
+      function add2(e) {
         if (Array.isArray(e)) {
           var _errors;
           errors = (_errors = errors).concat.apply(_errors, e);
@@ -6322,7 +6884,7 @@ var Schema = /* @__PURE__ */ function() {
         }
       }
       for (var i = 0; i < results.length; i++) {
-        add(results[i]);
+        add2(results[i]);
       }
       if (!errors.length) {
         callback(null, source);
@@ -6331,18 +6893,18 @@ var Schema = /* @__PURE__ */ function() {
         callback(errors, fields);
       }
     }
-    if (options.messages) {
+    if (options2.messages) {
       var messages$1 = this.messages();
       if (messages$1 === messages) {
         messages$1 = newMessages();
       }
-      deepMerge(messages$1, options.messages);
-      options.messages = messages$1;
+      deepMerge(messages$1, options2.messages);
+      options2.messages = messages$1;
     } else {
-      options.messages = this.messages();
+      options2.messages = this.messages();
     }
     var series = {};
-    var keys2 = options.keys || Object.keys(this.rules);
+    var keys2 = options2.keys || Object.keys(this.rules);
     keys2.forEach(function(z) {
       var arr = _this2.rules[z];
       var value = source[z];
@@ -6378,7 +6940,7 @@ var Schema = /* @__PURE__ */ function() {
       });
     });
     var errorFields = {};
-    return asyncMap(series, options, function(data, doIt) {
+    return asyncMap(series, options2, function(data, doIt) {
       var rule = data.rule;
       var deep = (rule.type === "object" || rule.type === "array") && (typeof rule.fields === "object" || typeof rule.defaultField === "object");
       deep = deep && (rule.required || !rule.required && data.value);
@@ -6394,14 +6956,14 @@ var Schema = /* @__PURE__ */ function() {
           e = [];
         }
         var errorList = Array.isArray(e) ? e : [e];
-        if (!options.suppressWarning && errorList.length) {
+        if (!options2.suppressWarning && errorList.length) {
           Schema2.warning("async-validator:", errorList);
         }
         if (errorList.length && rule.message !== void 0) {
           errorList = [].concat(rule.message);
         }
         var filledErrors = errorList.map(complementError(rule, source));
-        if (options.first && filledErrors.length) {
+        if (options2.first && filledErrors.length) {
           errorFields[rule.field] = 1;
           return doIt(filledErrors);
         }
@@ -6411,8 +6973,8 @@ var Schema = /* @__PURE__ */ function() {
           if (rule.required && !data.value) {
             if (rule.message !== void 0) {
               filledErrors = [].concat(rule.message).map(complementError(rule, source));
-            } else if (options.error) {
-              filledErrors = [options.error(rule, format(options.messages.required, rule.field))];
+            } else if (options2.error) {
+              filledErrors = [options2.error(rule, format(options2.messages.required, rule.field))];
             }
             return doIt(filledErrors);
           }
@@ -6430,12 +6992,12 @@ var Schema = /* @__PURE__ */ function() {
             paredFieldsSchema[field] = fieldSchemaList.map(addFullField.bind(null, field));
           });
           var schema = new Schema2(paredFieldsSchema);
-          schema.messages(options.messages);
+          schema.messages(options2.messages);
           if (data.rule.options) {
-            data.rule.options.messages = options.messages;
-            data.rule.options.error = options.error;
+            data.rule.options.messages = options2.messages;
+            data.rule.options.error = options2.error;
           }
-          schema.validate(data.value, data.rule.options || options, function(errs) {
+          schema.validate(data.value, data.rule.options || options2, function(errs) {
             var finalErrors = [];
             if (filledErrors && filledErrors.length) {
               finalErrors.push.apply(finalErrors, filledErrors);
@@ -6449,13 +7011,13 @@ var Schema = /* @__PURE__ */ function() {
       }
       var res;
       if (rule.asyncValidator) {
-        res = rule.asyncValidator(rule, data.value, cb, data.source, options);
+        res = rule.asyncValidator(rule, data.value, cb, data.source, options2);
       } else if (rule.validator) {
         try {
-          res = rule.validator(rule, data.value, cb, data.source, options);
+          res = rule.validator(rule, data.value, cb, data.source, options2);
         } catch (error) {
           console.error == null ? void 0 : console.error(error);
-          if (!options.suppressValidatorError) {
+          if (!options2.suppressValidatorError) {
             setTimeout(function() {
               throw error;
             }, 0);
@@ -6558,9 +7120,9 @@ const formItemProps = buildProps({
     values: componentSizes
   }
 });
-const COMPONENT_NAME$6 = "ElLabelWrap";
+const COMPONENT_NAME$7 = "ElLabelWrap";
 var FormLabelWrap = defineComponent({
-  name: COMPONENT_NAME$6,
+  name: COMPONENT_NAME$7,
   props: {
     isAutoWidth: Boolean,
     updateAll: Boolean
@@ -6571,7 +7133,7 @@ var FormLabelWrap = defineComponent({
     const formContext = inject(formContextKey, void 0);
     const formItemContext = inject(formItemContextKey);
     if (!formItemContext)
-      throwError(COMPONENT_NAME$6, "usage: <el-form-item><label-wrap /></el-form-item>");
+      throwError(COMPONENT_NAME$7, "usage: <el-form-item><label-wrap /></el-form-item>");
     const ns = useNamespace("form");
     const el = ref();
     const computedWidth = ref(0);
@@ -6643,12 +7205,12 @@ var FormLabelWrap = defineComponent({
     };
   }
 });
-const _hoisted_1$4 = ["role", "aria-labelledby"];
-const __default__$i = defineComponent({
+const _hoisted_1$b = ["role", "aria-labelledby"];
+const __default__$p = defineComponent({
   name: "ElFormItem"
 });
-const _sfc_main$s = /* @__PURE__ */ defineComponent({
-  ...__default__$i,
+const _sfc_main$z = /* @__PURE__ */ defineComponent({
+  ...__default__$p,
   props: formItemProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -6939,11 +7501,11 @@ const _sfc_main$s = /* @__PURE__ */ defineComponent({
             _: 3
           }, 8, ["name"])
         ], 6)
-      ], 10, _hoisted_1$4);
+      ], 10, _hoisted_1$b);
     };
   }
 });
-var FormItem = /* @__PURE__ */ _export_sfc$1(_sfc_main$s, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form-item.vue"]]);
+var FormItem = /* @__PURE__ */ _export_sfc$1(_sfc_main$z, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/form/src/form-item.vue"]]);
 const ElForm = withInstall(Form, {
   FormItem
 });
@@ -7125,15 +7687,15 @@ const inputEmits = {
   compositionupdate: (evt) => evt instanceof CompositionEvent,
   compositionend: (evt) => evt instanceof CompositionEvent
 };
-const _hoisted_1$3 = ["role"];
-const _hoisted_2$2 = ["id", "type", "disabled", "formatter", "parser", "readonly", "autocomplete", "tabindex", "aria-label", "placeholder", "form", "autofocus"];
-const _hoisted_3$1 = ["id", "tabindex", "disabled", "readonly", "autocomplete", "aria-label", "placeholder", "form", "autofocus"];
-const __default__$h = defineComponent({
+const _hoisted_1$a = ["role"];
+const _hoisted_2$5 = ["id", "type", "disabled", "formatter", "parser", "readonly", "autocomplete", "tabindex", "aria-label", "placeholder", "form", "autofocus"];
+const _hoisted_3$2 = ["id", "tabindex", "disabled", "readonly", "autocomplete", "aria-label", "placeholder", "form", "autofocus"];
+const __default__$o = defineComponent({
   name: "ElInput",
   inheritAttrs: false
 });
-const _sfc_main$r = /* @__PURE__ */ defineComponent({
-  ...__default__$h,
+const _sfc_main$y = /* @__PURE__ */ defineComponent({
+  ...__default__$o,
   props: inputProps,
   emits: inputEmits,
   setup(__props, { expose, emit }) {
@@ -7447,7 +8009,7 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
               onBlur: _cache[1] || (_cache[1] = (...args) => unref(handleBlur) && unref(handleBlur)(...args)),
               onChange: handleChange,
               onKeydown: handleKeydown
-            }), null, 16, _hoisted_2$2),
+            }), null, 16, _hoisted_2$5),
             createCommentVNode(" suffix slot "),
             unref(suffixVisible) ? (openBlock(), createElementBlock("span", {
               key: 1,
@@ -7545,20 +8107,20 @@ const _sfc_main$r = /* @__PURE__ */ defineComponent({
             onBlur: _cache[3] || (_cache[3] = (...args) => unref(handleBlur) && unref(handleBlur)(...args)),
             onChange: handleChange,
             onKeydown: handleKeydown
-          }), null, 16, _hoisted_3$1),
+          }), null, 16, _hoisted_3$2),
           unref(isWordLimitVisible) ? (openBlock(), createElementBlock("span", {
             key: 0,
             style: normalizeStyle(countStyle.value),
             class: normalizeClass(unref(nsInput).e("count"))
           }, toDisplayString(unref(textLength)) + " / " + toDisplayString(unref(attrs).maxlength), 7)) : createCommentVNode("v-if", true)
         ], 64))
-      ], 16, _hoisted_1$3)), [
+      ], 16, _hoisted_1$a)), [
         [vShow, _ctx.type !== "hidden"]
       ]);
     };
   }
 });
-var Input = /* @__PURE__ */ _export_sfc$1(_sfc_main$r, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/input/src/input.vue"]]);
+var Input = /* @__PURE__ */ _export_sfc$1(_sfc_main$y, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/input/src/input.vue"]]);
 const ElInput = withInstall(Input);
 const GAP = 4;
 const BAR_MAP = {
@@ -7602,8 +8164,8 @@ const thumbProps = buildProps({
   },
   always: Boolean
 });
-const COMPONENT_NAME$5 = "Thumb";
-const _sfc_main$q = /* @__PURE__ */ defineComponent({
+const COMPONENT_NAME$6 = "Thumb";
+const _sfc_main$x = /* @__PURE__ */ defineComponent({
   __name: "thumb",
   props: thumbProps,
   setup(__props) {
@@ -7611,7 +8173,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     const scrollbar = inject(scrollbarContextKey);
     const ns = useNamespace("scrollbar");
     if (!scrollbar)
-      throwError(COMPONENT_NAME$5, "can not inject scrollbar context");
+      throwError(COMPONENT_NAME$6, "can not inject scrollbar context");
     const instance = ref();
     const thumb = ref();
     const thumbState = ref({});
@@ -7722,7 +8284,7 @@ const _sfc_main$q = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Thumb = /* @__PURE__ */ _export_sfc$1(_sfc_main$q, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/thumb.vue"]]);
+var Thumb = /* @__PURE__ */ _export_sfc$1(_sfc_main$x, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/thumb.vue"]]);
 const barProps = buildProps({
   always: {
     type: Boolean,
@@ -7739,7 +8301,7 @@ const barProps = buildProps({
     default: 1
   }
 });
-const _sfc_main$p = /* @__PURE__ */ defineComponent({
+const _sfc_main$w = /* @__PURE__ */ defineComponent({
   __name: "bar",
   props: barProps,
   setup(__props, { expose }) {
@@ -7776,7 +8338,7 @@ const _sfc_main$p = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Bar = /* @__PURE__ */ _export_sfc$1(_sfc_main$p, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/bar.vue"]]);
+var Bar = /* @__PURE__ */ _export_sfc$1(_sfc_main$w, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/bar.vue"]]);
 const scrollbarProps = buildProps({
   height: {
     type: [String, Number],
@@ -7830,12 +8392,12 @@ const scrollbarEmits = {
     scrollLeft
   }) => [scrollTop, scrollLeft].every(isNumber)
 };
-const COMPONENT_NAME$4 = "ElScrollbar";
-const __default__$g = defineComponent({
-  name: COMPONENT_NAME$4
+const COMPONENT_NAME$5 = "ElScrollbar";
+const __default__$n = defineComponent({
+  name: COMPONENT_NAME$5
 });
-const _sfc_main$o = /* @__PURE__ */ defineComponent({
-  ...__default__$g,
+const _sfc_main$v = /* @__PURE__ */ defineComponent({
+  ...__default__$n,
   props: scrollbarProps,
   emits: scrollbarEmits,
   setup(__props, { expose, emit }) {
@@ -7888,14 +8450,14 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     }
     const setScrollTop = (value) => {
       if (!isNumber(value)) {
-        debugWarn(COMPONENT_NAME$4, "value must be a number");
+        debugWarn(COMPONENT_NAME$5, "value must be a number");
         return;
       }
       wrapRef.value.scrollTop = value;
     };
     const setScrollLeft = (value) => {
       if (!isNumber(value)) {
-        debugWarn(COMPONENT_NAME$4, "value must be a number");
+        debugWarn(COMPONENT_NAME$5, "value must be a number");
         return;
       }
       wrapRef.value.scrollLeft = value;
@@ -7995,7 +8557,7 @@ const _sfc_main$o = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Scrollbar = /* @__PURE__ */ _export_sfc$1(_sfc_main$o, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/scrollbar.vue"]]);
+var Scrollbar = /* @__PURE__ */ _export_sfc$1(_sfc_main$v, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/scrollbar/src/scrollbar.vue"]]);
 const ElScrollbar = withInstall(Scrollbar);
 const POPPER_INJECTION_KEY = Symbol("popper");
 const POPPER_CONTENT_INJECTION_KEY = Symbol("popperContent");
@@ -8016,12 +8578,12 @@ const popperProps = buildProps({
     default: "tooltip"
   }
 });
-const __default__$f = defineComponent({
+const __default__$m = defineComponent({
   name: "ElPopper",
   inheritAttrs: false
 });
-const _sfc_main$n = /* @__PURE__ */ defineComponent({
-  ...__default__$f,
+const _sfc_main$u = /* @__PURE__ */ defineComponent({
+  ...__default__$m,
   props: popperProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -8044,19 +8606,19 @@ const _sfc_main$n = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Popper = /* @__PURE__ */ _export_sfc$1(_sfc_main$n, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/popper.vue"]]);
+var Popper = /* @__PURE__ */ _export_sfc$1(_sfc_main$u, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/popper.vue"]]);
 const popperArrowProps = buildProps({
   arrowOffset: {
     type: Number,
     default: 5
   }
 });
-const __default__$e = defineComponent({
+const __default__$l = defineComponent({
   name: "ElPopperArrow",
   inheritAttrs: false
 });
-const _sfc_main$m = /* @__PURE__ */ defineComponent({
-  ...__default__$e,
+const _sfc_main$t = /* @__PURE__ */ defineComponent({
+  ...__default__$l,
   props: popperArrowProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -8082,7 +8644,7 @@ const _sfc_main$m = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperArrow = /* @__PURE__ */ _export_sfc$1(_sfc_main$m, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/arrow.vue"]]);
+var ElPopperArrow = /* @__PURE__ */ _export_sfc$1(_sfc_main$t, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/arrow.vue"]]);
 const NAME = "ElOnlyChild";
 const OnlyChild = defineComponent({
   name: NAME,
@@ -8168,12 +8730,12 @@ const popperTriggerProps = buildProps({
   id: String,
   open: Boolean
 });
-const __default__$d = defineComponent({
+const __default__$k = defineComponent({
   name: "ElPopperTrigger",
   inheritAttrs: false
 });
-const _sfc_main$l = /* @__PURE__ */ defineComponent({
-  ...__default__$d,
+const _sfc_main$s = /* @__PURE__ */ defineComponent({
+  ...__default__$k,
   props: popperTriggerProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -8271,7 +8833,7 @@ const _sfc_main$l = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$l, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/trigger.vue"]]);
+var ElPopperTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$s, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/trigger.vue"]]);
 const FOCUS_AFTER_TRAPPED = "focus-trap.focus-after-trapped";
 const FOCUS_AFTER_RELEASED = "focus-trap.focus-after-released";
 const FOCUSOUT_PREVENTED = "focus-trap.focusout-prevented";
@@ -8361,14 +8923,14 @@ const createFocusableStack = () => {
     stack = removeFromStack(stack, layer);
     stack.unshift(layer);
   };
-  const remove = (layer) => {
+  const remove2 = (layer) => {
     var _a2, _b;
     stack = removeFromStack(stack, layer);
     (_b = (_a2 = stack[0]) == null ? void 0 : _a2.resume) == null ? void 0 : _b.call(_a2);
   };
   return {
     push,
-    remove
+    remove: remove2
   };
 };
 const focusFirstDescendant = (elements, shouldSelect = false) => {
@@ -8420,7 +8982,7 @@ const createFocusOutPreventedEvent = (detail) => {
     detail
   });
 };
-const _sfc_main$k = defineComponent({
+const _sfc_main$r = defineComponent({
   name: "ElFocusTrap",
   inheritAttrs: false,
   props: {
@@ -8536,9 +9098,9 @@ const _sfc_main$k = defineComponent({
       const trapContainer = unref(forwardRef);
       if (!trapContainer)
         return;
-      const target = e.target;
+      const target2 = e.target;
       const relatedTarget = e.relatedTarget;
-      const isFocusedInTrap = target && trapContainer.contains(target);
+      const isFocusedInTrap = target2 && trapContainer.contains(target2);
       if (!props.trapped) {
         const isPrevFocusedInTrap = relatedTarget && trapContainer.contains(relatedTarget);
         if (!isPrevFocusedInTrap) {
@@ -8551,7 +9113,7 @@ const _sfc_main$k = defineComponent({
         return;
       if (props.trapped) {
         if (isFocusedInTrap) {
-          lastFocusAfterTrapped = target;
+          lastFocusAfterTrapped = target2;
         } else {
           tryFocus(lastFocusAfterTrapped, true);
         }
@@ -8577,8 +9139,8 @@ const _sfc_main$k = defineComponent({
           }, 0);
         }
       } else {
-        const target = e.target;
-        const isFocusedInTrap = target && trapContainer.contains(target);
+        const target2 = e.target;
+        const isFocusedInTrap = target2 && trapContainer.contains(target2);
         if (!isFocusedInTrap)
           emit("focusout", e);
       }
@@ -8659,7 +9221,7 @@ const _sfc_main$k = defineComponent({
 function _sfc_render$7(_ctx, _cache, $props, $setup, $data, $options) {
   return renderSlot(_ctx.$slots, "default", { handleKeydown: _ctx.onKeydown });
 }
-var ElFocusTrap = /* @__PURE__ */ _export_sfc$1(_sfc_main$k, [["render", _sfc_render$7], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/focus-trap/src/focus-trap.vue"]]);
+var ElFocusTrap = /* @__PURE__ */ _export_sfc$1(_sfc_main$r, [["render", _sfc_render$7], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/focus-trap/src/focus-trap.vue"]]);
 const POSITIONING_STRATEGIES = ["fixed", "absolute"];
 const popperCoreConfigProps = buildProps({
   boundariesPadding: {
@@ -8752,22 +9314,22 @@ const popperContentEmits = {
 };
 const buildPopperOptions = (props, modifiers = []) => {
   const { placement, strategy, popperOptions } = props;
-  const options = {
+  const options2 = {
     placement,
     strategy,
     ...popperOptions,
     modifiers: [...genModifiers(props), ...modifiers]
   };
-  deriveExtraModifiers(options, popperOptions == null ? void 0 : popperOptions.modifiers);
-  return options;
+  deriveExtraModifiers(options2, popperOptions == null ? void 0 : popperOptions.modifiers);
+  return options2;
 };
 const unwrapMeasurableEl = ($el) => {
   if (!isClient)
     return;
   return unrefElement($el);
 };
-function genModifiers(options) {
-  const { offset, gpuAcceleration, fallbackPlacements } = options;
+function genModifiers(options2) {
+  const { offset, gpuAcceleration, fallbackPlacements } = options2;
   return [
     {
       name: "offset",
@@ -8801,9 +9363,9 @@ function genModifiers(options) {
     }
   ];
 }
-function deriveExtraModifiers(options, modifiers) {
+function deriveExtraModifiers(options2, modifiers) {
   if (modifiers) {
-    options.modifiers = [...options.modifiers, ...modifiers != null ? modifiers : []];
+    options2.modifiers = [...options2.modifiers, ...modifiers != null ? modifiers : []];
   }
 }
 const DEFAULT_ARROW_OFFSET = 0;
@@ -8830,7 +9392,7 @@ const usePopperContent = (props) => {
       }
     };
   });
-  const options = computed(() => {
+  const options2 = computed(() => {
     return {
       onFirstUpdate: () => {
         update();
@@ -8842,7 +9404,7 @@ const usePopperContent = (props) => {
     };
   });
   const computedReference = computed(() => unwrapMeasurableEl(props.referenceEl) || unref(triggerRef2));
-  const { attributes, state, styles, update, forceUpdate, instanceRef } = usePopper(computedReference, contentRef, options);
+  const { attributes, state, styles, update, forceUpdate, instanceRef } = usePopper(computedReference, contentRef, options2);
   watch(instanceRef, (instance) => popperInstanceRef.value = instance);
   onMounted(() => {
     watch(() => {
@@ -8944,11 +9506,11 @@ const usePopperContentFocusTrap = (props, emit) => {
     onReleaseRequested
   };
 };
-const __default__$c = defineComponent({
+const __default__$j = defineComponent({
   name: "ElPopperContent"
 });
-const _sfc_main$j = /* @__PURE__ */ defineComponent({
-  ...__default__$c,
+const _sfc_main$q = /* @__PURE__ */ defineComponent({
+  ...__default__$j,
   props: popperContentProps,
   emits: popperContentEmits,
   setup(__props, { expose, emit }) {
@@ -9064,7 +9626,7 @@ const _sfc_main$j = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElPopperContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$j, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/content.vue"]]);
+var ElPopperContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$q, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/popper/src/content.vue"]]);
 const ElPopper = withInstall(Popper);
 const TOOLTIP_INJECTION_KEY = Symbol("elTooltip");
 const useTooltipContentProps = buildProps({
@@ -9142,11 +9704,11 @@ const whenTrigger = (trigger, type4, handler) => {
     isTriggerType(unref(trigger), type4) && handler(e);
   };
 };
-const __default__$b = defineComponent({
+const __default__$i = defineComponent({
   name: "ElTooltipTrigger"
 });
-const _sfc_main$i = /* @__PURE__ */ defineComponent({
-  ...__default__$b,
+const _sfc_main$p = /* @__PURE__ */ defineComponent({
+  ...__default__$i,
   props: useTooltipTriggerProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -9205,13 +9767,13 @@ const _sfc_main$i = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElTooltipTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$i, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/trigger.vue"]]);
-const __default__$a = defineComponent({
+var ElTooltipTrigger = /* @__PURE__ */ _export_sfc$1(_sfc_main$p, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/trigger.vue"]]);
+const __default__$h = defineComponent({
   name: "ElTooltipContent",
   inheritAttrs: false
 });
-const _sfc_main$h = /* @__PURE__ */ defineComponent({
-  ...__default__$a,
+const _sfc_main$o = /* @__PURE__ */ defineComponent({
+  ...__default__$h,
   props: useTooltipContentProps,
   setup(__props, { expose }) {
     const props = __props;
@@ -9372,14 +9934,14 @@ const _sfc_main$h = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var ElTooltipContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$h, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/content.vue"]]);
-const _hoisted_1$2 = ["innerHTML"];
-const _hoisted_2$1 = { key: 1 };
-const __default__$9 = defineComponent({
+var ElTooltipContent = /* @__PURE__ */ _export_sfc$1(_sfc_main$o, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/content.vue"]]);
+const _hoisted_1$9 = ["innerHTML"];
+const _hoisted_2$4 = { key: 1 };
+const __default__$g = defineComponent({
   name: "ElTooltip"
 });
-const _sfc_main$g = /* @__PURE__ */ defineComponent({
-  ...__default__$9,
+const _sfc_main$n = /* @__PURE__ */ defineComponent({
+  ...__default__$g,
   props: useTooltipProps,
   emits: tooltipEmits,
   setup(__props, { expose, emit }) {
@@ -9516,7 +10078,7 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
                 _ctx.rawContent ? (openBlock(), createElementBlock("span", {
                   key: 0,
                   innerHTML: _ctx.content
-                }, null, 8, _hoisted_1$2)) : (openBlock(), createElementBlock("span", _hoisted_2$1, toDisplayString(_ctx.content), 1))
+                }, null, 8, _hoisted_1$9)) : (openBlock(), createElementBlock("span", _hoisted_2$4, toDisplayString(_ctx.content), 1))
               ]),
               _ctx.showArrow ? (openBlock(), createBlock(unref(ElPopperArrow), {
                 key: 0,
@@ -9531,7 +10093,7 @@ const _sfc_main$g = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Tooltip = /* @__PURE__ */ _export_sfc$1(_sfc_main$g, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/tooltip.vue"]]);
+var Tooltip = /* @__PURE__ */ _export_sfc$1(_sfc_main$n, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tooltip/src/tooltip.vue"]]);
 const ElTooltip = withInstall(Tooltip);
 function bound01(n, max) {
   if (isOnePointZero(n)) {
@@ -10485,6 +11047,333 @@ const ClickOutside = {
     nodeList.delete(el);
   }
 };
+const REPEAT_INTERVAL = 100;
+const REPEAT_DELAY = 600;
+const vRepeatClick = {
+  beforeMount(el, binding) {
+    const value = binding.value;
+    const { interval = REPEAT_INTERVAL, delay = REPEAT_DELAY } = isFunction$1(value) ? {} : value;
+    let intervalId;
+    let delayId;
+    const handler = () => isFunction$1(value) ? value() : value.handler();
+    const clear = () => {
+      if (delayId) {
+        clearTimeout(delayId);
+        delayId = void 0;
+      }
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = void 0;
+      }
+    };
+    el.addEventListener("mousedown", (evt) => {
+      if (evt.button !== 0)
+        return;
+      clear();
+      handler();
+      document.addEventListener("mouseup", () => clear(), {
+        once: true
+      });
+      delayId = setTimeout(() => {
+        intervalId = setInterval(() => {
+          handler();
+        }, interval);
+      }, delay);
+    });
+  }
+};
+const radioPropsBase = buildProps({
+  size: useSizeProp,
+  disabled: Boolean,
+  label: {
+    type: [String, Number, Boolean],
+    default: ""
+  }
+});
+const radioProps = buildProps({
+  ...radioPropsBase,
+  modelValue: {
+    type: [String, Number, Boolean],
+    default: ""
+  },
+  name: {
+    type: String,
+    default: ""
+  },
+  border: Boolean
+});
+const radioEmits = {
+  [UPDATE_MODEL_EVENT]: (val) => isString(val) || isNumber(val) || isBoolean(val),
+  [CHANGE_EVENT]: (val) => isString(val) || isNumber(val) || isBoolean(val)
+};
+const radioGroupKey = Symbol("radioGroupKey");
+const useRadio = (props, emit) => {
+  const radioRef = ref();
+  const radioGroup = inject(radioGroupKey, void 0);
+  const isGroup = computed(() => !!radioGroup);
+  const modelValue = computed({
+    get() {
+      return isGroup.value ? radioGroup.modelValue : props.modelValue;
+    },
+    set(val) {
+      if (isGroup.value) {
+        radioGroup.changeEvent(val);
+      } else {
+        emit && emit(UPDATE_MODEL_EVENT, val);
+      }
+      radioRef.value.checked = props.modelValue === props.label;
+    }
+  });
+  const size = useFormSize(computed(() => radioGroup == null ? void 0 : radioGroup.size));
+  const disabled = useFormDisabled(computed(() => radioGroup == null ? void 0 : radioGroup.disabled));
+  const focus = ref(false);
+  const tabIndex = computed(() => {
+    return disabled.value || isGroup.value && modelValue.value !== props.label ? -1 : 0;
+  });
+  return {
+    radioRef,
+    isGroup,
+    radioGroup,
+    focus,
+    size,
+    disabled,
+    tabIndex,
+    modelValue
+  };
+};
+const _hoisted_1$8 = ["value", "name", "disabled"];
+const __default__$f = defineComponent({
+  name: "ElRadio"
+});
+const _sfc_main$m = /* @__PURE__ */ defineComponent({
+  ...__default__$f,
+  props: radioProps,
+  emits: radioEmits,
+  setup(__props, { emit }) {
+    const props = __props;
+    const ns = useNamespace("radio");
+    const { radioRef, radioGroup, focus, size, disabled, modelValue } = useRadio(props, emit);
+    function handleChange() {
+      nextTick(() => emit("change", modelValue.value));
+    }
+    return (_ctx, _cache) => {
+      var _a2;
+      return openBlock(), createElementBlock("label", {
+        class: normalizeClass([
+          unref(ns).b(),
+          unref(ns).is("disabled", unref(disabled)),
+          unref(ns).is("focus", unref(focus)),
+          unref(ns).is("bordered", _ctx.border),
+          unref(ns).is("checked", unref(modelValue) === _ctx.label),
+          unref(ns).m(unref(size))
+        ])
+      }, [
+        createElementVNode("span", {
+          class: normalizeClass([
+            unref(ns).e("input"),
+            unref(ns).is("disabled", unref(disabled)),
+            unref(ns).is("checked", unref(modelValue) === _ctx.label)
+          ])
+        }, [
+          withDirectives(createElementVNode("input", {
+            ref_key: "radioRef",
+            ref: radioRef,
+            "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => isRef(modelValue) ? modelValue.value = $event : null),
+            class: normalizeClass(unref(ns).e("original")),
+            value: _ctx.label,
+            name: _ctx.name || ((_a2 = unref(radioGroup)) == null ? void 0 : _a2.name),
+            disabled: unref(disabled),
+            type: "radio",
+            onFocus: _cache[1] || (_cache[1] = ($event) => focus.value = true),
+            onBlur: _cache[2] || (_cache[2] = ($event) => focus.value = false),
+            onChange: handleChange,
+            onClick: _cache[3] || (_cache[3] = withModifiers(() => {
+            }, ["stop"]))
+          }, null, 42, _hoisted_1$8), [
+            [vModelRadio, unref(modelValue)]
+          ]),
+          createElementVNode("span", {
+            class: normalizeClass(unref(ns).e("inner"))
+          }, null, 2)
+        ], 2),
+        createElementVNode("span", {
+          class: normalizeClass(unref(ns).e("label")),
+          onKeydown: _cache[4] || (_cache[4] = withModifiers(() => {
+          }, ["stop"]))
+        }, [
+          renderSlot(_ctx.$slots, "default", {}, () => [
+            createTextVNode(toDisplayString(_ctx.label), 1)
+          ])
+        ], 34)
+      ], 2);
+    };
+  }
+});
+var Radio = /* @__PURE__ */ _export_sfc$1(_sfc_main$m, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio.vue"]]);
+const radioButtonProps = buildProps({
+  ...radioPropsBase,
+  name: {
+    type: String,
+    default: ""
+  }
+});
+const _hoisted_1$7 = ["value", "name", "disabled"];
+const __default__$e = defineComponent({
+  name: "ElRadioButton"
+});
+const _sfc_main$l = /* @__PURE__ */ defineComponent({
+  ...__default__$e,
+  props: radioButtonProps,
+  setup(__props) {
+    const props = __props;
+    const ns = useNamespace("radio");
+    const { radioRef, focus, size, disabled, modelValue, radioGroup } = useRadio(props);
+    const activeStyle = computed(() => {
+      return {
+        backgroundColor: (radioGroup == null ? void 0 : radioGroup.fill) || "",
+        borderColor: (radioGroup == null ? void 0 : radioGroup.fill) || "",
+        boxShadow: (radioGroup == null ? void 0 : radioGroup.fill) ? `-1px 0 0 0 ${radioGroup.fill}` : "",
+        color: (radioGroup == null ? void 0 : radioGroup.textColor) || ""
+      };
+    });
+    return (_ctx, _cache) => {
+      var _a2;
+      return openBlock(), createElementBlock("label", {
+        class: normalizeClass([
+          unref(ns).b("button"),
+          unref(ns).is("active", unref(modelValue) === _ctx.label),
+          unref(ns).is("disabled", unref(disabled)),
+          unref(ns).is("focus", unref(focus)),
+          unref(ns).bm("button", unref(size))
+        ])
+      }, [
+        withDirectives(createElementVNode("input", {
+          ref_key: "radioRef",
+          ref: radioRef,
+          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => isRef(modelValue) ? modelValue.value = $event : null),
+          class: normalizeClass(unref(ns).be("button", "original-radio")),
+          value: _ctx.label,
+          type: "radio",
+          name: _ctx.name || ((_a2 = unref(radioGroup)) == null ? void 0 : _a2.name),
+          disabled: unref(disabled),
+          onFocus: _cache[1] || (_cache[1] = ($event) => focus.value = true),
+          onBlur: _cache[2] || (_cache[2] = ($event) => focus.value = false),
+          onClick: _cache[3] || (_cache[3] = withModifiers(() => {
+          }, ["stop"]))
+        }, null, 42, _hoisted_1$7), [
+          [vModelRadio, unref(modelValue)]
+        ]),
+        createElementVNode("span", {
+          class: normalizeClass(unref(ns).be("button", "inner")),
+          style: normalizeStyle(unref(modelValue) === _ctx.label ? unref(activeStyle) : {}),
+          onKeydown: _cache[4] || (_cache[4] = withModifiers(() => {
+          }, ["stop"]))
+        }, [
+          renderSlot(_ctx.$slots, "default", {}, () => [
+            createTextVNode(toDisplayString(_ctx.label), 1)
+          ])
+        ], 38)
+      ], 2);
+    };
+  }
+});
+var RadioButton = /* @__PURE__ */ _export_sfc$1(_sfc_main$l, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio-button.vue"]]);
+const radioGroupProps = buildProps({
+  id: {
+    type: String,
+    default: void 0
+  },
+  size: useSizeProp,
+  disabled: Boolean,
+  modelValue: {
+    type: [String, Number, Boolean],
+    default: ""
+  },
+  fill: {
+    type: String,
+    default: ""
+  },
+  label: {
+    type: String,
+    default: void 0
+  },
+  textColor: {
+    type: String,
+    default: ""
+  },
+  name: {
+    type: String,
+    default: void 0
+  },
+  validateEvent: {
+    type: Boolean,
+    default: true
+  }
+});
+const radioGroupEmits = radioEmits;
+const _hoisted_1$6 = ["id", "aria-label", "aria-labelledby"];
+const __default__$d = defineComponent({
+  name: "ElRadioGroup"
+});
+const _sfc_main$k = /* @__PURE__ */ defineComponent({
+  ...__default__$d,
+  props: radioGroupProps,
+  emits: radioGroupEmits,
+  setup(__props, { emit }) {
+    const props = __props;
+    const ns = useNamespace("radio");
+    const radioId = useId();
+    const radioGroupRef = ref();
+    const { formItem } = useFormItem();
+    const { inputId: groupId, isLabeledByFormItem } = useFormItemInputId(props, {
+      formItemContext: formItem
+    });
+    const changeEvent = (value) => {
+      emit(UPDATE_MODEL_EVENT, value);
+      nextTick(() => emit("change", value));
+    };
+    onMounted(() => {
+      const radios = radioGroupRef.value.querySelectorAll("[type=radio]");
+      const firstLabel = radios[0];
+      if (!Array.from(radios).some((radio) => radio.checked) && firstLabel) {
+        firstLabel.tabIndex = 0;
+      }
+    });
+    const name = computed(() => {
+      return props.name || radioId.value;
+    });
+    provide(radioGroupKey, reactive({
+      ...toRefs(props),
+      changeEvent,
+      name
+    }));
+    watch(() => props.modelValue, () => {
+      if (props.validateEvent) {
+        formItem == null ? void 0 : formItem.validate("change").catch((err) => debugWarn(err));
+      }
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        id: unref(groupId),
+        ref_key: "radioGroupRef",
+        ref: radioGroupRef,
+        class: normalizeClass(unref(ns).b("group")),
+        role: "radiogroup",
+        "aria-label": !unref(isLabeledByFormItem) ? _ctx.label || "radio-group" : void 0,
+        "aria-labelledby": unref(isLabeledByFormItem) ? unref(formItem).labelId : void 0
+      }, [
+        renderSlot(_ctx.$slots, "default")
+      ], 10, _hoisted_1$6);
+    };
+  }
+});
+var RadioGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$k, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/radio/src/radio-group.vue"]]);
+const ElRadio = withInstall(Radio, {
+  RadioButton,
+  RadioGroup
+});
+const ElRadioGroup = withNoopInstall(RadioGroup);
+withNoopInstall(RadioButton);
 const tagProps = buildProps({
   type: {
     type: String,
@@ -10514,11 +11403,11 @@ const tagEmits = {
   close: (evt) => evt instanceof MouseEvent,
   click: (evt) => evt instanceof MouseEvent
 };
-const __default__$8 = defineComponent({
+const __default__$c = defineComponent({
   name: "ElTag"
 });
-const _sfc_main$f = /* @__PURE__ */ defineComponent({
-  ...__default__$8,
+const _sfc_main$j = /* @__PURE__ */ defineComponent({
+  ...__default__$c,
   props: tagProps,
   emits: tagEmits,
   setup(__props, { emit }) {
@@ -10598,7 +11487,7 @@ const _sfc_main$f = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Tag = /* @__PURE__ */ _export_sfc$1(_sfc_main$f, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tag/src/tag.vue"]]);
+var Tag = /* @__PURE__ */ _export_sfc$1(_sfc_main$j, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/tag/src/tag.vue"]]);
 const ElTag = withInstall(Tag);
 const rowContextKey = Symbol("rowContextKey");
 const RowJustify = [
@@ -10629,11 +11518,11 @@ const rowProps = buildProps({
     values: RowAlign
   }
 });
-const __default__$7 = defineComponent({
+const __default__$b = defineComponent({
   name: "ElRow"
 });
-const _sfc_main$e = /* @__PURE__ */ defineComponent({
-  ...__default__$7,
+const _sfc_main$i = /* @__PURE__ */ defineComponent({
+  ...__default__$b,
   props: rowProps,
   setup(__props) {
     const props = __props;
@@ -10668,7 +11557,7 @@ const _sfc_main$e = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Row = /* @__PURE__ */ _export_sfc$1(_sfc_main$e, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/row/src/row.vue"]]);
+var Row = /* @__PURE__ */ _export_sfc$1(_sfc_main$i, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/row/src/row.vue"]]);
 const ElRow = withInstall(Row);
 const colProps = buildProps({
   tag: {
@@ -10712,11 +11601,11 @@ const colProps = buildProps({
     default: () => mutable({})
   }
 });
-const __default__$6 = defineComponent({
+const __default__$a = defineComponent({
   name: "ElCol"
 });
-const _sfc_main$d = /* @__PURE__ */ defineComponent({
-  ...__default__$6,
+const _sfc_main$h = /* @__PURE__ */ defineComponent({
+  ...__default__$a,
   props: colProps,
   setup(__props) {
     const props = __props;
@@ -10769,13 +11658,13 @@ const _sfc_main$d = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Col = /* @__PURE__ */ _export_sfc$1(_sfc_main$d, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/col/src/col.vue"]]);
+var Col = /* @__PURE__ */ _export_sfc$1(_sfc_main$h, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/col/src/col.vue"]]);
 const ElCol = withInstall(Col);
-const __default__$5 = defineComponent({
+const __default__$9 = defineComponent({
   name: "ElCollapseTransition"
 });
-const _sfc_main$c = /* @__PURE__ */ defineComponent({
-  ...__default__$5,
+const _sfc_main$g = /* @__PURE__ */ defineComponent({
+  ...__default__$9,
   setup(__props) {
     const ns = useNamespace("collapse-transition");
     const reset = (el) => {
@@ -10847,16 +11736,16 @@ const _sfc_main$c = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var CollapseTransition = /* @__PURE__ */ _export_sfc$1(_sfc_main$c, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/collapse-transition/src/collapse-transition.vue"]]);
+var CollapseTransition = /* @__PURE__ */ _export_sfc$1(_sfc_main$g, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/collapse-transition/src/collapse-transition.vue"]]);
 CollapseTransition.install = (app) => {
   app.component(CollapseTransition.name, CollapseTransition);
 };
 const _CollapseTransition = CollapseTransition;
-const __default__$4 = defineComponent({
+const __default__$8 = defineComponent({
   name: "ElContainer"
 });
-const _sfc_main$b = /* @__PURE__ */ defineComponent({
-  ...__default__$4,
+const _sfc_main$f = /* @__PURE__ */ defineComponent({
+  ...__default__$8,
   props: {
     direction: {
       type: String
@@ -10891,12 +11780,12 @@ const _sfc_main$b = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Container = /* @__PURE__ */ _export_sfc$1(_sfc_main$b, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/container.vue"]]);
-const __default__$3 = defineComponent({
+var Container = /* @__PURE__ */ _export_sfc$1(_sfc_main$f, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/container.vue"]]);
+const __default__$7 = defineComponent({
   name: "ElAside"
 });
-const _sfc_main$a = /* @__PURE__ */ defineComponent({
-  ...__default__$3,
+const _sfc_main$e = /* @__PURE__ */ defineComponent({
+  ...__default__$7,
   props: {
     width: {
       type: String,
@@ -10917,12 +11806,12 @@ const _sfc_main$a = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Aside = /* @__PURE__ */ _export_sfc$1(_sfc_main$a, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/aside.vue"]]);
-const __default__$2 = defineComponent({
+var Aside = /* @__PURE__ */ _export_sfc$1(_sfc_main$e, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/aside.vue"]]);
+const __default__$6 = defineComponent({
   name: "ElFooter"
 });
-const _sfc_main$9 = /* @__PURE__ */ defineComponent({
-  ...__default__$2,
+const _sfc_main$d = /* @__PURE__ */ defineComponent({
+  ...__default__$6,
   props: {
     height: {
       type: String,
@@ -10943,12 +11832,12 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Footer = /* @__PURE__ */ _export_sfc$1(_sfc_main$9, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/footer.vue"]]);
-const __default__$1 = defineComponent({
+var Footer = /* @__PURE__ */ _export_sfc$1(_sfc_main$d, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/footer.vue"]]);
+const __default__$5 = defineComponent({
   name: "ElHeader"
 });
-const _sfc_main$8 = /* @__PURE__ */ defineComponent({
-  ...__default__$1,
+const _sfc_main$c = /* @__PURE__ */ defineComponent({
+  ...__default__$5,
   props: {
     height: {
       type: String,
@@ -10973,12 +11862,12 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Header = /* @__PURE__ */ _export_sfc$1(_sfc_main$8, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/header.vue"]]);
-const __default__ = defineComponent({
+var Header = /* @__PURE__ */ _export_sfc$1(_sfc_main$c, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/header.vue"]]);
+const __default__$4 = defineComponent({
   name: "ElMain"
 });
-const _sfc_main$7 = /* @__PURE__ */ defineComponent({
-  ...__default__,
+const _sfc_main$b = /* @__PURE__ */ defineComponent({
+  ...__default__$4,
   setup(__props) {
     const ns = useNamespace("main");
     return (_ctx, _cache) => {
@@ -10990,7 +11879,7 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-var Main = /* @__PURE__ */ _export_sfc$1(_sfc_main$7, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/main.vue"]]);
+var Main = /* @__PURE__ */ _export_sfc$1(_sfc_main$b, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/container/src/main.vue"]]);
 const ElContainer = withInstall(Container, {
   Aside,
   Footer,
@@ -11001,6 +11890,360 @@ const ElAside = withNoopInstall(Aside);
 withNoopInstall(Footer);
 const ElHeader = withNoopInstall(Header);
 const ElMain = withNoopInstall(Main);
+const inputNumberProps = buildProps({
+  id: {
+    type: String,
+    default: void 0
+  },
+  step: {
+    type: Number,
+    default: 1
+  },
+  stepStrictly: Boolean,
+  max: {
+    type: Number,
+    default: Number.POSITIVE_INFINITY
+  },
+  min: {
+    type: Number,
+    default: Number.NEGATIVE_INFINITY
+  },
+  modelValue: Number,
+  readonly: Boolean,
+  disabled: Boolean,
+  size: useSizeProp,
+  controls: {
+    type: Boolean,
+    default: true
+  },
+  controlsPosition: {
+    type: String,
+    default: "",
+    values: ["", "right"]
+  },
+  valueOnClear: {
+    type: [String, Number, null],
+    validator: (val) => val === null || isNumber(val) || ["min", "max"].includes(val),
+    default: null
+  },
+  name: String,
+  label: String,
+  placeholder: String,
+  precision: {
+    type: Number,
+    validator: (val) => val >= 0 && val === Number.parseInt(`${val}`, 10)
+  },
+  validateEvent: {
+    type: Boolean,
+    default: true
+  }
+});
+const inputNumberEmits = {
+  [CHANGE_EVENT]: (cur, prev) => prev !== cur,
+  blur: (e) => e instanceof FocusEvent,
+  focus: (e) => e instanceof FocusEvent,
+  [INPUT_EVENT]: (val) => isNumber(val) || isNil(val),
+  [UPDATE_MODEL_EVENT]: (val) => isNumber(val) || isNil(val)
+};
+const _hoisted_1$5 = ["aria-label", "onKeydown"];
+const _hoisted_2$3 = ["aria-label", "onKeydown"];
+const __default__$3 = defineComponent({
+  name: "ElInputNumber"
+});
+const _sfc_main$a = /* @__PURE__ */ defineComponent({
+  ...__default__$3,
+  props: inputNumberProps,
+  emits: inputNumberEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const { t } = useLocale();
+    const ns = useNamespace("input-number");
+    const input = ref();
+    const data = reactive({
+      currentValue: props.modelValue,
+      userInput: null
+    });
+    const { formItem } = useFormItem();
+    const minDisabled = computed(() => isNumber(props.modelValue) && props.modelValue <= props.min);
+    const maxDisabled = computed(() => isNumber(props.modelValue) && props.modelValue >= props.max);
+    const numPrecision = computed(() => {
+      const stepPrecision = getPrecision(props.step);
+      if (!isUndefined(props.precision)) {
+        if (stepPrecision > props.precision) {
+          debugWarn("InputNumber", "precision should not be less than the decimal places of step");
+        }
+        return props.precision;
+      } else {
+        return Math.max(getPrecision(props.modelValue), stepPrecision);
+      }
+    });
+    const controlsAtRight = computed(() => {
+      return props.controls && props.controlsPosition === "right";
+    });
+    const inputNumberSize = useFormSize();
+    const inputNumberDisabled = useFormDisabled();
+    const displayValue = computed(() => {
+      if (data.userInput !== null) {
+        return data.userInput;
+      }
+      let currentValue = data.currentValue;
+      if (isNil(currentValue))
+        return "";
+      if (isNumber(currentValue)) {
+        if (Number.isNaN(currentValue))
+          return "";
+        if (!isUndefined(props.precision)) {
+          currentValue = currentValue.toFixed(props.precision);
+        }
+      }
+      return currentValue;
+    });
+    const toPrecision = (num, pre) => {
+      if (isUndefined(pre))
+        pre = numPrecision.value;
+      if (pre === 0)
+        return Math.round(num);
+      let snum = String(num);
+      const pointPos = snum.indexOf(".");
+      if (pointPos === -1)
+        return num;
+      const nums = snum.replace(".", "").split("");
+      const datum = nums[pointPos + pre];
+      if (!datum)
+        return num;
+      const length = snum.length;
+      if (snum.charAt(length - 1) === "5") {
+        snum = `${snum.slice(0, Math.max(0, length - 1))}6`;
+      }
+      return Number.parseFloat(Number(snum).toFixed(pre));
+    };
+    const getPrecision = (value) => {
+      if (isNil(value))
+        return 0;
+      const valueString = value.toString();
+      const dotPosition = valueString.indexOf(".");
+      let precision = 0;
+      if (dotPosition !== -1) {
+        precision = valueString.length - dotPosition - 1;
+      }
+      return precision;
+    };
+    const ensurePrecision = (val, coefficient = 1) => {
+      if (!isNumber(val))
+        return data.currentValue;
+      return toPrecision(val + props.step * coefficient);
+    };
+    const increase = () => {
+      if (props.readonly || inputNumberDisabled.value || maxDisabled.value)
+        return;
+      const value = Number(displayValue.value) || 0;
+      const newVal = ensurePrecision(value);
+      setCurrentValue(newVal);
+      emit(INPUT_EVENT, data.currentValue);
+    };
+    const decrease = () => {
+      if (props.readonly || inputNumberDisabled.value || minDisabled.value)
+        return;
+      const value = Number(displayValue.value) || 0;
+      const newVal = ensurePrecision(value, -1);
+      setCurrentValue(newVal);
+      emit(INPUT_EVENT, data.currentValue);
+    };
+    const verifyValue = (value, update) => {
+      const { max, min, step, precision, stepStrictly, valueOnClear } = props;
+      if (max < min) {
+        throwError("InputNumber", "min should not be greater than max.");
+      }
+      let newVal = Number(value);
+      if (isNil(value) || Number.isNaN(newVal)) {
+        return null;
+      }
+      if (value === "") {
+        if (valueOnClear === null) {
+          return null;
+        }
+        newVal = isString(valueOnClear) ? { min, max }[valueOnClear] : valueOnClear;
+      }
+      if (stepStrictly) {
+        newVal = toPrecision(Math.round(newVal / step) * step, precision);
+      }
+      if (!isUndefined(precision)) {
+        newVal = toPrecision(newVal, precision);
+      }
+      if (newVal > max || newVal < min) {
+        newVal = newVal > max ? max : min;
+        update && emit(UPDATE_MODEL_EVENT, newVal);
+      }
+      return newVal;
+    };
+    const setCurrentValue = (value, emitChange = true) => {
+      var _a2;
+      const oldVal = data.currentValue;
+      const newVal = verifyValue(value);
+      if (!emitChange) {
+        emit(UPDATE_MODEL_EVENT, newVal);
+        return;
+      }
+      if (oldVal === newVal)
+        return;
+      data.userInput = null;
+      emit(UPDATE_MODEL_EVENT, newVal);
+      emit(CHANGE_EVENT, newVal, oldVal);
+      if (props.validateEvent) {
+        (_a2 = formItem == null ? void 0 : formItem.validate) == null ? void 0 : _a2.call(formItem, "change").catch((err) => debugWarn(err));
+      }
+      data.currentValue = newVal;
+    };
+    const handleInput = (value) => {
+      data.userInput = value;
+      const newVal = value === "" ? null : Number(value);
+      emit(INPUT_EVENT, newVal);
+      setCurrentValue(newVal, false);
+    };
+    const handleInputChange = (value) => {
+      const newVal = value !== "" ? Number(value) : "";
+      if (isNumber(newVal) && !Number.isNaN(newVal) || value === "") {
+        setCurrentValue(newVal);
+      }
+      data.userInput = null;
+    };
+    const focus = () => {
+      var _a2, _b;
+      (_b = (_a2 = input.value) == null ? void 0 : _a2.focus) == null ? void 0 : _b.call(_a2);
+    };
+    const blur = () => {
+      var _a2, _b;
+      (_b = (_a2 = input.value) == null ? void 0 : _a2.blur) == null ? void 0 : _b.call(_a2);
+    };
+    const handleFocus = (event) => {
+      emit("focus", event);
+    };
+    const handleBlur = (event) => {
+      var _a2;
+      emit("blur", event);
+      if (props.validateEvent) {
+        (_a2 = formItem == null ? void 0 : formItem.validate) == null ? void 0 : _a2.call(formItem, "blur").catch((err) => debugWarn(err));
+      }
+    };
+    watch(() => props.modelValue, (value) => {
+      const userInput = verifyValue(data.userInput);
+      const newValue = verifyValue(value, true);
+      if (!isNumber(userInput) && (!userInput || userInput !== newValue)) {
+        data.currentValue = newValue;
+        data.userInput = null;
+      }
+    }, { immediate: true });
+    onMounted(() => {
+      var _a2;
+      const { min, max, modelValue } = props;
+      const innerInput = (_a2 = input.value) == null ? void 0 : _a2.input;
+      innerInput.setAttribute("role", "spinbutton");
+      if (Number.isFinite(max)) {
+        innerInput.setAttribute("aria-valuemax", String(max));
+      } else {
+        innerInput.removeAttribute("aria-valuemax");
+      }
+      if (Number.isFinite(min)) {
+        innerInput.setAttribute("aria-valuemin", String(min));
+      } else {
+        innerInput.removeAttribute("aria-valuemin");
+      }
+      innerInput.setAttribute("aria-valuenow", data.currentValue || data.currentValue === 0 ? String(data.currentValue) : "");
+      innerInput.setAttribute("aria-disabled", String(inputNumberDisabled.value));
+      if (!isNumber(modelValue) && modelValue != null) {
+        let val = Number(modelValue);
+        if (Number.isNaN(val)) {
+          val = null;
+        }
+        emit(UPDATE_MODEL_EVENT, val);
+      }
+    });
+    onUpdated(() => {
+      var _a2, _b;
+      const innerInput = (_a2 = input.value) == null ? void 0 : _a2.input;
+      innerInput == null ? void 0 : innerInput.setAttribute("aria-valuenow", `${(_b = data.currentValue) != null ? _b : ""}`);
+    });
+    expose({
+      focus,
+      blur
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass([
+          unref(ns).b(),
+          unref(ns).m(unref(inputNumberSize)),
+          unref(ns).is("disabled", unref(inputNumberDisabled)),
+          unref(ns).is("without-controls", !_ctx.controls),
+          unref(ns).is("controls-right", unref(controlsAtRight))
+        ]),
+        onDragstart: _cache[1] || (_cache[1] = withModifiers(() => {
+        }, ["prevent"]))
+      }, [
+        _ctx.controls ? withDirectives((openBlock(), createElementBlock("span", {
+          key: 0,
+          role: "button",
+          "aria-label": unref(t)("el.inputNumber.decrease"),
+          class: normalizeClass([unref(ns).e("decrease"), unref(ns).is("disabled", unref(minDisabled))]),
+          onKeydown: withKeys(decrease, ["enter"])
+        }, [
+          createVNode(unref(ElIcon), null, {
+            default: withCtx(() => [
+              unref(controlsAtRight) ? (openBlock(), createBlock(unref(arrow_down_default), { key: 0 })) : (openBlock(), createBlock(unref(minus_default), { key: 1 }))
+            ]),
+            _: 1
+          })
+        ], 42, _hoisted_1$5)), [
+          [unref(vRepeatClick), decrease]
+        ]) : createCommentVNode("v-if", true),
+        _ctx.controls ? withDirectives((openBlock(), createElementBlock("span", {
+          key: 1,
+          role: "button",
+          "aria-label": unref(t)("el.inputNumber.increase"),
+          class: normalizeClass([unref(ns).e("increase"), unref(ns).is("disabled", unref(maxDisabled))]),
+          onKeydown: withKeys(increase, ["enter"])
+        }, [
+          createVNode(unref(ElIcon), null, {
+            default: withCtx(() => [
+              unref(controlsAtRight) ? (openBlock(), createBlock(unref(arrow_up_default), { key: 0 })) : (openBlock(), createBlock(unref(plus_default), { key: 1 }))
+            ]),
+            _: 1
+          })
+        ], 42, _hoisted_2$3)), [
+          [unref(vRepeatClick), increase]
+        ]) : createCommentVNode("v-if", true),
+        createVNode(unref(ElInput), {
+          id: _ctx.id,
+          ref_key: "input",
+          ref: input,
+          type: "number",
+          step: _ctx.step,
+          "model-value": unref(displayValue),
+          placeholder: _ctx.placeholder,
+          readonly: _ctx.readonly,
+          disabled: unref(inputNumberDisabled),
+          size: unref(inputNumberSize),
+          max: _ctx.max,
+          min: _ctx.min,
+          name: _ctx.name,
+          label: _ctx.label,
+          "validate-event": false,
+          onWheel: _cache[0] || (_cache[0] = withModifiers(() => {
+          }, ["prevent"])),
+          onKeydown: [
+            withKeys(withModifiers(increase, ["prevent"]), ["up"]),
+            withKeys(withModifiers(decrease, ["prevent"]), ["down"])
+          ],
+          onBlur: handleBlur,
+          onFocus: handleFocus,
+          onInput: handleInput,
+          onChange: handleInputChange
+        }, null, 8, ["id", "step", "model-value", "placeholder", "readonly", "disabled", "size", "max", "min", "name", "label", "onKeydown"])
+      ], 34);
+    };
+  }
+});
+var InputNumber = /* @__PURE__ */ _export_sfc$1(_sfc_main$a, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/input-number/src/input-number.vue"]]);
+const ElInputNumber = withInstall(InputNumber);
 let SubMenu$1 = class SubMenu {
   constructor(parent, domNode) {
     this.parent = parent;
@@ -11120,7 +12363,7 @@ let Menu$1 = class Menu {
     });
   }
 };
-const _sfc_main$6 = defineComponent({
+const _sfc_main$9 = defineComponent({
   name: "ElMenuCollapseTransition",
   setup() {
     const ns = useNamespace("menu");
@@ -11171,7 +12414,7 @@ function _sfc_render$6(_ctx, _cache, $props, $setup, $data, $options) {
     _: 3
   }, 16);
 }
-var ElMenuCollapseTransition = /* @__PURE__ */ _export_sfc$1(_sfc_main$6, [["render", _sfc_render$6], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/menu/src/menu-collapse-transition.vue"]]);
+var ElMenuCollapseTransition = /* @__PURE__ */ _export_sfc$1(_sfc_main$9, [["render", _sfc_render$6], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/menu/src/menu-collapse-transition.vue"]]);
 function useMenu(instance, currentIndex) {
   const indexPath = computed(() => {
     let parent = instance.parent;
@@ -11260,15 +12503,15 @@ const subMenuProps = buildProps({
     type: iconPropType
   }
 });
-const COMPONENT_NAME$3 = "ElSubMenu";
+const COMPONENT_NAME$4 = "ElSubMenu";
 var SubMenu2 = defineComponent({
-  name: COMPONENT_NAME$3,
+  name: COMPONENT_NAME$4,
   props: subMenuProps,
   setup(props, { slots, expose }) {
     useDeprecated({
       from: "popper-append-to-body",
       replacement: "teleported",
-      scope: COMPONENT_NAME$3,
+      scope: COMPONENT_NAME$4,
       version: "2.3.0",
       ref: "https://element-plus.org/en-US/component/menu.html#submenu-attributes"
     }, computed(() => props.popperAppendToBody !== void 0));
@@ -11278,10 +12521,10 @@ var SubMenu2 = defineComponent({
     const nsSubMenu = useNamespace("sub-menu");
     const rootMenu = inject("rootMenu");
     if (!rootMenu)
-      throwError(COMPONENT_NAME$3, "can not inject root menu");
+      throwError(COMPONENT_NAME$4, "can not inject root menu");
     const subMenu = inject(`subMenu:${parentMenu.value.uid}`);
     if (!subMenu)
-      throwError(COMPONENT_NAME$3, "can not inject sub menu");
+      throwError(COMPONENT_NAME$4, "can not inject sub menu");
     const items = ref({});
     const subMenus = ref({});
     let timeout;
@@ -11798,9 +13041,9 @@ const menuItemProps = buildProps({
 const menuItemEmits = {
   click: (item) => isString(item.index) && Array.isArray(item.indexPath)
 };
-const COMPONENT_NAME$2 = "ElMenuItem";
-const _sfc_main$5 = defineComponent({
-  name: COMPONENT_NAME$2,
+const COMPONENT_NAME$3 = "ElMenuItem";
+const _sfc_main$8 = defineComponent({
+  name: COMPONENT_NAME$3,
   components: {
     ElTooltip
   },
@@ -11812,11 +13055,11 @@ const _sfc_main$5 = defineComponent({
     const nsMenu = useNamespace("menu");
     const nsMenuItem = useNamespace("menu-item");
     if (!rootMenu)
-      throwError(COMPONENT_NAME$2, "can not inject root menu");
+      throwError(COMPONENT_NAME$3, "can not inject root menu");
     const { parentMenu, indexPath } = useMenu(instance, toRef(props, "index"));
     const subMenu = inject(`subMenu:${parentMenu.value.uid}`);
     if (!subMenu)
-      throwError(COMPONENT_NAME$2, "can not inject sub menu");
+      throwError(COMPONENT_NAME$3, "can not inject sub menu");
     const active = computed(() => props.index === rootMenu.activeIndex);
     const item = reactive({
       index: props.index,
@@ -11887,13 +13130,13 @@ function _sfc_render$5(_ctx, _cache, $props, $setup, $data, $options) {
     ], 64))
   ], 2);
 }
-var MenuItem2 = /* @__PURE__ */ _export_sfc$1(_sfc_main$5, [["render", _sfc_render$5], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/menu/src/menu-item.vue"]]);
+var MenuItem2 = /* @__PURE__ */ _export_sfc$1(_sfc_main$8, [["render", _sfc_render$5], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/menu/src/menu-item.vue"]]);
 const menuItemGroupProps = {
   title: String
 };
-const COMPONENT_NAME$1 = "ElMenuItemGroup";
-const _sfc_main$4 = defineComponent({
-  name: COMPONENT_NAME$1,
+const COMPONENT_NAME$2 = "ElMenuItemGroup";
+const _sfc_main$7 = defineComponent({
+  name: COMPONENT_NAME$2,
   props: menuItemGroupProps,
   setup() {
     const ns = useNamespace("menu-item-group");
@@ -11918,7 +13161,7 @@ function _sfc_render$4(_ctx, _cache, $props, $setup, $data, $options) {
     ])
   ], 2);
 }
-var MenuItemGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$4, [["render", _sfc_render$4], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/menu/src/menu-item-group.vue"]]);
+var MenuItemGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$7, [["render", _sfc_render$4], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/menu/src/menu-item-group.vue"]]);
 const ElMenu = withInstall(Menu2, {
   MenuItem: MenuItem2,
   MenuItemGroup,
@@ -11958,13 +13201,13 @@ function useOption(props, states) {
     return props.disabled || states.groupDisabled || limitReached.value;
   });
   const instance = getCurrentInstance();
-  const contains = (arr = [], target) => {
+  const contains = (arr = [], target2) => {
     if (!isObject$1$1.value) {
-      return arr && arr.includes(target);
+      return arr && arr.includes(target2);
     } else {
       const valueKey = select.props.valueKey;
       return arr && arr.some((item) => {
-        return toRaw(get(item, valueKey)) === get(target, valueKey);
+        return toRaw(get(item, valueKey)) === get(target2, valueKey);
       });
     }
   };
@@ -12019,7 +13262,7 @@ function useOption(props, states) {
     hoverItem
   };
 }
-const _sfc_main$3 = defineComponent({
+const _sfc_main$6 = defineComponent({
   name: "ElOption",
   componentName: "ElOption",
   props: {
@@ -12088,7 +13331,7 @@ const _sfc_main$3 = defineComponent({
     };
   }
 });
-const _hoisted_1$1 = ["id", "aria-disabled", "aria-selected"];
+const _hoisted_1$4 = ["id", "aria-disabled", "aria-selected"];
 function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
   return withDirectives((openBlock(), createElementBlock("li", {
     id: _ctx.id,
@@ -12102,12 +13345,12 @@ function _sfc_render$3(_ctx, _cache, $props, $setup, $data, $options) {
     renderSlot(_ctx.$slots, "default", {}, () => [
       createElementVNode("span", null, toDisplayString(_ctx.currentLabel), 1)
     ])
-  ], 42, _hoisted_1$1)), [
+  ], 42, _hoisted_1$4)), [
     [vShow, _ctx.visible]
   ]);
 }
-var Option = /* @__PURE__ */ _export_sfc$1(_sfc_main$3, [["render", _sfc_render$3], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/option.vue"]]);
-const _sfc_main$2 = defineComponent({
+var Option = /* @__PURE__ */ _export_sfc$1(_sfc_main$6, [["render", _sfc_render$3], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/option.vue"]]);
+const _sfc_main$5 = defineComponent({
   name: "ElSelectDropdown",
   componentName: "ElSelectDropdown",
   setup() {
@@ -12142,7 +13385,7 @@ function _sfc_render$2(_ctx, _cache, $props, $setup, $data, $options) {
     renderSlot(_ctx.$slots, "default")
   ], 6);
 }
-var ElSelectMenu = /* @__PURE__ */ _export_sfc$1(_sfc_main$2, [["render", _sfc_render$2], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/select-dropdown.vue"]]);
+var ElSelectMenu = /* @__PURE__ */ _export_sfc$1(_sfc_main$5, [["render", _sfc_render$2], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/select-dropdown.vue"]]);
 function useSelectStates(props) {
   const { t } = useLocale();
   return reactive({
@@ -12649,17 +13892,17 @@ const useSelect = (props, states, ctx) => {
   const scrollToOption = (option) => {
     var _a2, _b, _c, _d, _e;
     const targetOption = Array.isArray(option) ? option[0] : option;
-    let target = null;
+    let target2 = null;
     if (targetOption == null ? void 0 : targetOption.value) {
-      const options = optionsArray.value.filter((item) => item.value === targetOption.value);
-      if (options.length > 0) {
-        target = options[0].$el;
+      const options2 = optionsArray.value.filter((item) => item.value === targetOption.value);
+      if (options2.length > 0) {
+        target2 = options2[0].$el;
       }
     }
-    if (tooltipRef.value && target) {
+    if (tooltipRef.value && target2) {
       const menu = (_d = (_c = (_b = (_a2 = tooltipRef.value) == null ? void 0 : _a2.popperRef) == null ? void 0 : _b.contentRef) == null ? void 0 : _c.querySelector) == null ? void 0 : _d.call(_c, `.${ns.be("dropdown", "wrap")}`);
       if (menu) {
-        scrollIntoView(menu, target);
+        scrollIntoView(menu, target2);
       }
     }
     (_e = scrollbar.value) == null ? void 0 : _e.handleScroll();
@@ -12937,10 +14180,10 @@ var ElOptions = defineComponent({
     };
   }
 });
-const COMPONENT_NAME = "ElSelect";
-const _sfc_main$1 = defineComponent({
-  name: COMPONENT_NAME,
-  componentName: COMPONENT_NAME,
+const COMPONENT_NAME$1 = "ElSelect";
+const _sfc_main$4 = defineComponent({
+  name: COMPONENT_NAME$1,
+  componentName: COMPONENT_NAME$1,
   components: {
     ElInput,
     ElSelectMenu,
@@ -13135,7 +14378,7 @@ const _sfc_main$1 = defineComponent({
       currentPlaceholder,
       menuVisibleOnFocus,
       isOnComposition,
-      options,
+      options: options2,
       cachedOptions,
       optionsCount,
       prefixWidth
@@ -13184,7 +14427,7 @@ const _sfc_main$1 = defineComponent({
     }));
     provide(selectKey, reactive({
       props,
-      options,
+      options: options2,
       optionsArray,
       cachedOptions,
       optionsCount,
@@ -13261,7 +14504,7 @@ const _sfc_main$1 = defineComponent({
       currentPlaceholder,
       menuVisibleOnFocus,
       isOnComposition,
-      options,
+      options: options2,
       resetInputHeight,
       managePlaceholder,
       showClose,
@@ -13314,9 +14557,9 @@ const _sfc_main$1 = defineComponent({
     };
   }
 });
-const _hoisted_1 = ["disabled", "autocomplete", "aria-activedescendant", "aria-controls", "aria-expanded", "aria-label"];
-const _hoisted_2 = ["disabled"];
-const _hoisted_3 = { style: { "height": "100%", "display": "flex", "justify-content": "center", "align-items": "center" } };
+const _hoisted_1$3 = ["disabled", "autocomplete", "aria-activedescendant", "aria-controls", "aria-expanded", "aria-label"];
+const _hoisted_2$2 = ["disabled"];
+const _hoisted_3$1 = { style: { "height": "100%", "display": "flex", "justify-content": "center", "align-items": "center" } };
 function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
   const _component_el_tag = resolveComponent("el-tag");
   const _component_el_tooltip = resolveComponent("el-tooltip");
@@ -13525,7 +14768,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
                 onCompositionupdate: _cache[12] || (_cache[12] = (...args) => _ctx.handleComposition && _ctx.handleComposition(...args)),
                 onCompositionend: _cache[13] || (_cache[13] = (...args) => _ctx.handleComposition && _ctx.handleComposition(...args)),
                 onInput: _cache[14] || (_cache[14] = (...args) => _ctx.debouncedQueryChange && _ctx.debouncedQueryChange(...args))
-              }, null, 46, _hoisted_1)), [
+              }, null, 46, _hoisted_1$3)), [
                 [vModelText, _ctx.query]
               ]) : createCommentVNode("v-if", true)
             ], 6)) : createCommentVNode("v-if", true),
@@ -13535,7 +14778,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
               class: normalizeClass(_ctx.iOSInputKls),
               disabled: _ctx.selectDisabled,
               type: "text"
-            }, null, 10, _hoisted_2)) : createCommentVNode("v-if", true),
+            }, null, 10, _hoisted_2$2)) : createCommentVNode("v-if", true),
             createVNode(_component_el_input, {
               id: _ctx.id,
               ref: "reference",
@@ -13599,7 +14842,7 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
               _ctx.$slots.prefix ? {
                 name: "prefix",
                 fn: withCtx(() => [
-                  createElementVNode("div", _hoisted_3, [
+                  createElementVNode("div", _hoisted_3$1, [
                     renderSlot(_ctx.$slots, "prefix")
                   ])
                 ])
@@ -13655,8 +14898,8 @@ function _sfc_render$1(_ctx, _cache, $props, $setup, $data, $options) {
     [_directive_click_outside, _ctx.handleClose, _ctx.popperPaneRef]
   ]);
 }
-var Select = /* @__PURE__ */ _export_sfc$1(_sfc_main$1, [["render", _sfc_render$1], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/select.vue"]]);
-const _sfc_main = defineComponent({
+var Select = /* @__PURE__ */ _export_sfc$1(_sfc_main$4, [["render", _sfc_render$1], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/select.vue"]]);
+const _sfc_main$3 = defineComponent({
   name: "ElOptionGroup",
   componentName: "ElOptionGroup",
   props: {
@@ -13717,19 +14960,1285 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
     [vShow, _ctx.visible]
   ]);
 }
-var OptionGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main, [["render", _sfc_render], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/option-group.vue"]]);
+var OptionGroup = /* @__PURE__ */ _export_sfc$1(_sfc_main$3, [["render", _sfc_render], ["__file", "/home/runner/work/element-plus/element-plus/packages/components/select/src/option-group.vue"]]);
 const ElSelect = withInstall(Select, {
   Option,
   OptionGroup
 });
 withNoopInstall(Option);
 withNoopInstall(OptionGroup);
-const _export_sfc = (sfc, props) => {
-  const target = sfc.__vccOpts || sfc;
-  for (const [key, val] of props) {
-    target[key] = val;
+const sliderContextKey = Symbol("sliderContextKey");
+const sliderProps = buildProps({
+  modelValue: {
+    type: definePropType([Number, Array]),
+    default: 0
+  },
+  id: {
+    type: String,
+    default: void 0
+  },
+  min: {
+    type: Number,
+    default: 0
+  },
+  max: {
+    type: Number,
+    default: 100
+  },
+  step: {
+    type: Number,
+    default: 1
+  },
+  showInput: Boolean,
+  showInputControls: {
+    type: Boolean,
+    default: true
+  },
+  size: useSizeProp,
+  inputSize: useSizeProp,
+  showStops: Boolean,
+  showTooltip: {
+    type: Boolean,
+    default: true
+  },
+  formatTooltip: {
+    type: definePropType(Function),
+    default: void 0
+  },
+  disabled: Boolean,
+  range: Boolean,
+  vertical: Boolean,
+  height: String,
+  debounce: {
+    type: Number,
+    default: 300
+  },
+  label: {
+    type: String,
+    default: void 0
+  },
+  rangeStartLabel: {
+    type: String,
+    default: void 0
+  },
+  rangeEndLabel: {
+    type: String,
+    default: void 0
+  },
+  formatValueText: {
+    type: definePropType(Function),
+    default: void 0
+  },
+  tooltipClass: {
+    type: String,
+    default: void 0
+  },
+  placement: {
+    type: String,
+    values: Ee,
+    default: "top"
+  },
+  marks: {
+    type: definePropType(Object)
+  },
+  validateEvent: {
+    type: Boolean,
+    default: true
   }
-  return target;
+});
+const isValidValue = (value) => isNumber(value) || isArray$2(value) && value.every(isNumber);
+const sliderEmits = {
+  [UPDATE_MODEL_EVENT]: isValidValue,
+  [INPUT_EVENT]: isValidValue,
+  [CHANGE_EVENT]: isValidValue
+};
+const useLifecycle = (props, initData, resetSize) => {
+  const sliderWrapper = ref();
+  onMounted(async () => {
+    if (props.range) {
+      if (Array.isArray(props.modelValue)) {
+        initData.firstValue = Math.max(props.min, props.modelValue[0]);
+        initData.secondValue = Math.min(props.max, props.modelValue[1]);
+      } else {
+        initData.firstValue = props.min;
+        initData.secondValue = props.max;
+      }
+      initData.oldValue = [initData.firstValue, initData.secondValue];
+    } else {
+      if (typeof props.modelValue !== "number" || Number.isNaN(props.modelValue)) {
+        initData.firstValue = props.min;
+      } else {
+        initData.firstValue = Math.min(props.max, Math.max(props.min, props.modelValue));
+      }
+      initData.oldValue = initData.firstValue;
+    }
+    useEventListener(window, "resize", resetSize);
+    await nextTick();
+    resetSize();
+  });
+  return {
+    sliderWrapper
+  };
+};
+const useMarks = (props) => {
+  return computed(() => {
+    if (!props.marks) {
+      return [];
+    }
+    const marksKeys = Object.keys(props.marks);
+    return marksKeys.map(Number.parseFloat).sort((a, b) => a - b).filter((point) => point <= props.max && point >= props.min).map((point) => ({
+      point,
+      position: (point - props.min) * 100 / (props.max - props.min),
+      mark: props.marks[point]
+    }));
+  });
+};
+const useSlide = (props, initData, emit) => {
+  const { form: elForm, formItem: elFormItem } = useFormItem();
+  const slider = shallowRef();
+  const firstButton = ref();
+  const secondButton = ref();
+  const buttonRefs = {
+    firstButton,
+    secondButton
+  };
+  const sliderDisabled = computed(() => {
+    return props.disabled || (elForm == null ? void 0 : elForm.disabled) || false;
+  });
+  const minValue = computed(() => {
+    return Math.min(initData.firstValue, initData.secondValue);
+  });
+  const maxValue = computed(() => {
+    return Math.max(initData.firstValue, initData.secondValue);
+  });
+  const barSize = computed(() => {
+    return props.range ? `${100 * (maxValue.value - minValue.value) / (props.max - props.min)}%` : `${100 * (initData.firstValue - props.min) / (props.max - props.min)}%`;
+  });
+  const barStart = computed(() => {
+    return props.range ? `${100 * (minValue.value - props.min) / (props.max - props.min)}%` : "0%";
+  });
+  const runwayStyle = computed(() => {
+    return props.vertical ? { height: props.height } : {};
+  });
+  const barStyle = computed(() => {
+    return props.vertical ? {
+      height: barSize.value,
+      bottom: barStart.value
+    } : {
+      width: barSize.value,
+      left: barStart.value
+    };
+  });
+  const resetSize = () => {
+    if (slider.value) {
+      initData.sliderSize = slider.value[`client${props.vertical ? "Height" : "Width"}`];
+    }
+  };
+  const getButtonRefByPercent = (percent) => {
+    const targetValue = props.min + percent * (props.max - props.min) / 100;
+    if (!props.range) {
+      return firstButton;
+    }
+    let buttonRefName;
+    if (Math.abs(minValue.value - targetValue) < Math.abs(maxValue.value - targetValue)) {
+      buttonRefName = initData.firstValue < initData.secondValue ? "firstButton" : "secondButton";
+    } else {
+      buttonRefName = initData.firstValue > initData.secondValue ? "firstButton" : "secondButton";
+    }
+    return buttonRefs[buttonRefName];
+  };
+  const setPosition = (percent) => {
+    const buttonRef = getButtonRefByPercent(percent);
+    buttonRef.value.setPosition(percent);
+    return buttonRef;
+  };
+  const setFirstValue = (firstValue) => {
+    initData.firstValue = firstValue;
+    _emit(props.range ? [minValue.value, maxValue.value] : firstValue);
+  };
+  const setSecondValue = (secondValue) => {
+    initData.secondValue = secondValue;
+    if (props.range) {
+      _emit([minValue.value, maxValue.value]);
+    }
+  };
+  const _emit = (val) => {
+    emit(UPDATE_MODEL_EVENT, val);
+    emit(INPUT_EVENT, val);
+  };
+  const emitChange = async () => {
+    await nextTick();
+    emit(CHANGE_EVENT, props.range ? [minValue.value, maxValue.value] : props.modelValue);
+  };
+  const handleSliderPointerEvent = (event) => {
+    var _a2, _b, _c, _d, _e, _f;
+    if (sliderDisabled.value || initData.dragging)
+      return;
+    resetSize();
+    let newPercent = 0;
+    if (props.vertical) {
+      const clientY = (_c = (_b = (_a2 = event.touches) == null ? void 0 : _a2.item(0)) == null ? void 0 : _b.clientY) != null ? _c : event.clientY;
+      const sliderOffsetBottom = slider.value.getBoundingClientRect().bottom;
+      newPercent = (sliderOffsetBottom - clientY) / initData.sliderSize * 100;
+    } else {
+      const clientX = (_f = (_e = (_d = event.touches) == null ? void 0 : _d.item(0)) == null ? void 0 : _e.clientX) != null ? _f : event.clientX;
+      const sliderOffsetLeft = slider.value.getBoundingClientRect().left;
+      newPercent = (clientX - sliderOffsetLeft) / initData.sliderSize * 100;
+    }
+    if (newPercent < 0 || newPercent > 100)
+      return;
+    return setPosition(newPercent);
+  };
+  const onSliderWrapperPrevent = (event) => {
+    var _a2, _b;
+    if (((_a2 = buttonRefs["firstButton"].value) == null ? void 0 : _a2.dragging) || ((_b = buttonRefs["secondButton"].value) == null ? void 0 : _b.dragging)) {
+      event.preventDefault();
+    }
+  };
+  const onSliderDown = async (event) => {
+    const buttonRef = handleSliderPointerEvent(event);
+    if (buttonRef) {
+      await nextTick();
+      buttonRef.value.onButtonDown(event);
+    }
+  };
+  const onSliderClick = (event) => {
+    const buttonRef = handleSliderPointerEvent(event);
+    if (buttonRef) {
+      emitChange();
+    }
+  };
+  return {
+    elFormItem,
+    slider,
+    firstButton,
+    secondButton,
+    sliderDisabled,
+    minValue,
+    maxValue,
+    runwayStyle,
+    barStyle,
+    resetSize,
+    setPosition,
+    emitChange,
+    onSliderWrapperPrevent,
+    onSliderClick,
+    onSliderDown,
+    setFirstValue,
+    setSecondValue
+  };
+};
+const { left, down, right, up, home, end, pageUp, pageDown } = EVENT_CODE;
+const useTooltip = (props, formatTooltip, showTooltip) => {
+  const tooltip = ref();
+  const tooltipVisible = ref(false);
+  const enableFormat = computed(() => {
+    return formatTooltip.value instanceof Function;
+  });
+  const formatValue = computed(() => {
+    return enableFormat.value && formatTooltip.value(props.modelValue) || props.modelValue;
+  });
+  const displayTooltip = debounce(() => {
+    showTooltip.value && (tooltipVisible.value = true);
+  }, 50);
+  const hideTooltip = debounce(() => {
+    showTooltip.value && (tooltipVisible.value = false);
+  }, 50);
+  return {
+    tooltip,
+    tooltipVisible,
+    formatValue,
+    displayTooltip,
+    hideTooltip
+  };
+};
+const useSliderButton = (props, initData, emit) => {
+  const {
+    disabled,
+    min,
+    max,
+    step,
+    showTooltip,
+    precision,
+    sliderSize,
+    formatTooltip,
+    emitChange,
+    resetSize,
+    updateDragging
+  } = inject(sliderContextKey);
+  const { tooltip, tooltipVisible, formatValue, displayTooltip, hideTooltip } = useTooltip(props, formatTooltip, showTooltip);
+  const button = ref();
+  const currentPosition = computed(() => {
+    return `${(props.modelValue - min.value) / (max.value - min.value) * 100}%`;
+  });
+  const wrapperStyle = computed(() => {
+    return props.vertical ? { bottom: currentPosition.value } : { left: currentPosition.value };
+  });
+  const handleMouseEnter = () => {
+    initData.hovering = true;
+    displayTooltip();
+  };
+  const handleMouseLeave = () => {
+    initData.hovering = false;
+    if (!initData.dragging) {
+      hideTooltip();
+    }
+  };
+  const onButtonDown = (event) => {
+    if (disabled.value)
+      return;
+    event.preventDefault();
+    onDragStart(event);
+    window.addEventListener("mousemove", onDragging);
+    window.addEventListener("touchmove", onDragging);
+    window.addEventListener("mouseup", onDragEnd);
+    window.addEventListener("touchend", onDragEnd);
+    window.addEventListener("contextmenu", onDragEnd);
+    button.value.focus();
+  };
+  const incrementPosition = (amount) => {
+    if (disabled.value)
+      return;
+    initData.newPosition = Number.parseFloat(currentPosition.value) + amount / (max.value - min.value) * 100;
+    setPosition(initData.newPosition);
+    emitChange();
+  };
+  const onLeftKeyDown = () => {
+    incrementPosition(-step.value);
+  };
+  const onRightKeyDown = () => {
+    incrementPosition(step.value);
+  };
+  const onPageDownKeyDown = () => {
+    incrementPosition(-step.value * 4);
+  };
+  const onPageUpKeyDown = () => {
+    incrementPosition(step.value * 4);
+  };
+  const onHomeKeyDown = () => {
+    if (disabled.value)
+      return;
+    setPosition(0);
+    emitChange();
+  };
+  const onEndKeyDown = () => {
+    if (disabled.value)
+      return;
+    setPosition(100);
+    emitChange();
+  };
+  const onKeyDown = (event) => {
+    let isPreventDefault = true;
+    if ([left, down].includes(event.key)) {
+      onLeftKeyDown();
+    } else if ([right, up].includes(event.key)) {
+      onRightKeyDown();
+    } else if (event.key === home) {
+      onHomeKeyDown();
+    } else if (event.key === end) {
+      onEndKeyDown();
+    } else if (event.key === pageDown) {
+      onPageDownKeyDown();
+    } else if (event.key === pageUp) {
+      onPageUpKeyDown();
+    } else {
+      isPreventDefault = false;
+    }
+    isPreventDefault && event.preventDefault();
+  };
+  const getClientXY = (event) => {
+    let clientX;
+    let clientY;
+    if (event.type.startsWith("touch")) {
+      clientY = event.touches[0].clientY;
+      clientX = event.touches[0].clientX;
+    } else {
+      clientY = event.clientY;
+      clientX = event.clientX;
+    }
+    return {
+      clientX,
+      clientY
+    };
+  };
+  const onDragStart = (event) => {
+    initData.dragging = true;
+    initData.isClick = true;
+    const { clientX, clientY } = getClientXY(event);
+    if (props.vertical) {
+      initData.startY = clientY;
+    } else {
+      initData.startX = clientX;
+    }
+    initData.startPosition = Number.parseFloat(currentPosition.value);
+    initData.newPosition = initData.startPosition;
+  };
+  const onDragging = (event) => {
+    if (initData.dragging) {
+      initData.isClick = false;
+      displayTooltip();
+      resetSize();
+      let diff;
+      const { clientX, clientY } = getClientXY(event);
+      if (props.vertical) {
+        initData.currentY = clientY;
+        diff = (initData.startY - initData.currentY) / sliderSize.value * 100;
+      } else {
+        initData.currentX = clientX;
+        diff = (initData.currentX - initData.startX) / sliderSize.value * 100;
+      }
+      initData.newPosition = initData.startPosition + diff;
+      setPosition(initData.newPosition);
+    }
+  };
+  const onDragEnd = () => {
+    if (initData.dragging) {
+      setTimeout(() => {
+        initData.dragging = false;
+        if (!initData.hovering) {
+          hideTooltip();
+        }
+        if (!initData.isClick) {
+          setPosition(initData.newPosition);
+        }
+        emitChange();
+      }, 0);
+      window.removeEventListener("mousemove", onDragging);
+      window.removeEventListener("touchmove", onDragging);
+      window.removeEventListener("mouseup", onDragEnd);
+      window.removeEventListener("touchend", onDragEnd);
+      window.removeEventListener("contextmenu", onDragEnd);
+    }
+  };
+  const setPosition = async (newPosition) => {
+    if (newPosition === null || Number.isNaN(+newPosition))
+      return;
+    if (newPosition < 0) {
+      newPosition = 0;
+    } else if (newPosition > 100) {
+      newPosition = 100;
+    }
+    const lengthPerStep = 100 / ((max.value - min.value) / step.value);
+    const steps = Math.round(newPosition / lengthPerStep);
+    let value = steps * lengthPerStep * (max.value - min.value) * 0.01 + min.value;
+    value = Number.parseFloat(value.toFixed(precision.value));
+    if (value !== props.modelValue) {
+      emit(UPDATE_MODEL_EVENT, value);
+    }
+    if (!initData.dragging && props.modelValue !== initData.oldValue) {
+      initData.oldValue = props.modelValue;
+    }
+    await nextTick();
+    initData.dragging && displayTooltip();
+    tooltip.value.updatePopper();
+  };
+  watch(() => initData.dragging, (val) => {
+    updateDragging(val);
+  });
+  return {
+    disabled,
+    button,
+    tooltip,
+    tooltipVisible,
+    showTooltip,
+    wrapperStyle,
+    formatValue,
+    handleMouseEnter,
+    handleMouseLeave,
+    onButtonDown,
+    onKeyDown,
+    setPosition
+  };
+};
+const useStops = (props, initData, minValue, maxValue) => {
+  const stops = computed(() => {
+    if (!props.showStops || props.min > props.max)
+      return [];
+    if (props.step === 0) {
+      debugWarn("ElSlider", "step should not be 0.");
+      return [];
+    }
+    const stopCount = (props.max - props.min) / props.step;
+    const stepWidth = 100 * props.step / (props.max - props.min);
+    const result = Array.from({ length: stopCount - 1 }).map((_, index) => (index + 1) * stepWidth);
+    if (props.range) {
+      return result.filter((step) => {
+        return step < 100 * (minValue.value - props.min) / (props.max - props.min) || step > 100 * (maxValue.value - props.min) / (props.max - props.min);
+      });
+    } else {
+      return result.filter((step) => step > 100 * (initData.firstValue - props.min) / (props.max - props.min));
+    }
+  });
+  const getStopStyle = (position) => {
+    return props.vertical ? { bottom: `${position}%` } : { left: `${position}%` };
+  };
+  return {
+    stops,
+    getStopStyle
+  };
+};
+const useWatch = (props, initData, minValue, maxValue, emit, elFormItem) => {
+  const _emit = (val) => {
+    emit(UPDATE_MODEL_EVENT, val);
+    emit(INPUT_EVENT, val);
+  };
+  const valueChanged = () => {
+    if (props.range) {
+      return ![minValue.value, maxValue.value].every((item, index) => item === initData.oldValue[index]);
+    } else {
+      return props.modelValue !== initData.oldValue;
+    }
+  };
+  const setValues = () => {
+    var _a2, _b;
+    if (props.min > props.max) {
+      throwError("Slider", "min should not be greater than max.");
+    }
+    const val = props.modelValue;
+    if (props.range && Array.isArray(val)) {
+      if (val[1] < props.min) {
+        _emit([props.min, props.min]);
+      } else if (val[0] > props.max) {
+        _emit([props.max, props.max]);
+      } else if (val[0] < props.min) {
+        _emit([props.min, val[1]]);
+      } else if (val[1] > props.max) {
+        _emit([val[0], props.max]);
+      } else {
+        initData.firstValue = val[0];
+        initData.secondValue = val[1];
+        if (valueChanged()) {
+          if (props.validateEvent) {
+            (_a2 = elFormItem == null ? void 0 : elFormItem.validate) == null ? void 0 : _a2.call(elFormItem, "change").catch((err) => debugWarn(err));
+          }
+          initData.oldValue = val.slice();
+        }
+      }
+    } else if (!props.range && typeof val === "number" && !Number.isNaN(val)) {
+      if (val < props.min) {
+        _emit(props.min);
+      } else if (val > props.max) {
+        _emit(props.max);
+      } else {
+        initData.firstValue = val;
+        if (valueChanged()) {
+          if (props.validateEvent) {
+            (_b = elFormItem == null ? void 0 : elFormItem.validate) == null ? void 0 : _b.call(elFormItem, "change").catch((err) => debugWarn(err));
+          }
+          initData.oldValue = val;
+        }
+      }
+    }
+  };
+  setValues();
+  watch(() => initData.dragging, (val) => {
+    if (!val) {
+      setValues();
+    }
+  });
+  watch(() => props.modelValue, (val, oldVal) => {
+    if (initData.dragging || Array.isArray(val) && Array.isArray(oldVal) && val.every((item, index) => item === oldVal[index]) && initData.firstValue === val[0] && initData.secondValue === val[1]) {
+      return;
+    }
+    setValues();
+  }, {
+    deep: true
+  });
+  watch(() => [props.min, props.max], () => {
+    setValues();
+  });
+};
+const sliderButtonProps = buildProps({
+  modelValue: {
+    type: Number,
+    default: 0
+  },
+  vertical: Boolean,
+  tooltipClass: String,
+  placement: {
+    type: String,
+    values: Ee,
+    default: "top"
+  }
+});
+const sliderButtonEmits = {
+  [UPDATE_MODEL_EVENT]: (value) => isNumber(value)
+};
+const _hoisted_1$2 = ["tabindex"];
+const __default__$2 = defineComponent({
+  name: "ElSliderButton"
+});
+const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+  ...__default__$2,
+  props: sliderButtonProps,
+  emits: sliderButtonEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const ns = useNamespace("slider");
+    const initData = reactive({
+      hovering: false,
+      dragging: false,
+      isClick: false,
+      startX: 0,
+      currentX: 0,
+      startY: 0,
+      currentY: 0,
+      startPosition: 0,
+      newPosition: 0,
+      oldValue: props.modelValue
+    });
+    const {
+      disabled,
+      button,
+      tooltip,
+      showTooltip,
+      tooltipVisible,
+      wrapperStyle,
+      formatValue,
+      handleMouseEnter,
+      handleMouseLeave,
+      onButtonDown,
+      onKeyDown,
+      setPosition
+    } = useSliderButton(props, initData, emit);
+    const { hovering, dragging } = toRefs(initData);
+    expose({
+      onButtonDown,
+      onKeyDown,
+      setPosition,
+      hovering,
+      dragging
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        ref_key: "button",
+        ref: button,
+        class: normalizeClass([unref(ns).e("button-wrapper"), { hover: unref(hovering), dragging: unref(dragging) }]),
+        style: normalizeStyle(unref(wrapperStyle)),
+        tabindex: unref(disabled) ? -1 : 0,
+        onMouseenter: _cache[0] || (_cache[0] = (...args) => unref(handleMouseEnter) && unref(handleMouseEnter)(...args)),
+        onMouseleave: _cache[1] || (_cache[1] = (...args) => unref(handleMouseLeave) && unref(handleMouseLeave)(...args)),
+        onMousedown: _cache[2] || (_cache[2] = (...args) => unref(onButtonDown) && unref(onButtonDown)(...args)),
+        onTouchstart: _cache[3] || (_cache[3] = (...args) => unref(onButtonDown) && unref(onButtonDown)(...args)),
+        onFocus: _cache[4] || (_cache[4] = (...args) => unref(handleMouseEnter) && unref(handleMouseEnter)(...args)),
+        onBlur: _cache[5] || (_cache[5] = (...args) => unref(handleMouseLeave) && unref(handleMouseLeave)(...args)),
+        onKeydown: _cache[6] || (_cache[6] = (...args) => unref(onKeyDown) && unref(onKeyDown)(...args))
+      }, [
+        createVNode(unref(ElTooltip), {
+          ref_key: "tooltip",
+          ref: tooltip,
+          visible: unref(tooltipVisible),
+          placement: _ctx.placement,
+          "fallback-placements": ["top", "bottom", "right", "left"],
+          "stop-popper-mouse-event": false,
+          "popper-class": _ctx.tooltipClass,
+          disabled: !unref(showTooltip),
+          persistent: ""
+        }, {
+          content: withCtx(() => [
+            createElementVNode("span", null, toDisplayString(unref(formatValue)), 1)
+          ]),
+          default: withCtx(() => [
+            createElementVNode("div", {
+              class: normalizeClass([unref(ns).e("button"), { hover: unref(hovering), dragging: unref(dragging) }])
+            }, null, 2)
+          ]),
+          _: 1
+        }, 8, ["visible", "placement", "popper-class", "disabled"])
+      ], 46, _hoisted_1$2);
+    };
+  }
+});
+var SliderButton = /* @__PURE__ */ _export_sfc$1(_sfc_main$2, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/slider/src/button.vue"]]);
+const sliderMarkerProps = buildProps({
+  mark: {
+    type: definePropType([String, Object]),
+    default: void 0
+  }
+});
+var SliderMarker = defineComponent({
+  name: "ElSliderMarker",
+  props: sliderMarkerProps,
+  setup(props) {
+    const ns = useNamespace("slider");
+    const label = computed(() => {
+      return isString(props.mark) ? props.mark : props.mark.label;
+    });
+    const style = computed(() => isString(props.mark) ? void 0 : props.mark.style);
+    return () => h("div", {
+      class: ns.e("marks-text"),
+      style: style.value
+    }, label.value);
+  }
+});
+const _hoisted_1$1 = ["id", "role", "aria-label", "aria-labelledby"];
+const _hoisted_2$1 = { key: 1 };
+const __default__$1 = defineComponent({
+  name: "ElSlider"
+});
+const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+  ...__default__$1,
+  props: sliderProps,
+  emits: sliderEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const ns = useNamespace("slider");
+    const { t } = useLocale();
+    const initData = reactive({
+      firstValue: 0,
+      secondValue: 0,
+      oldValue: 0,
+      dragging: false,
+      sliderSize: 1
+    });
+    const {
+      elFormItem,
+      slider,
+      firstButton,
+      secondButton,
+      sliderDisabled,
+      minValue,
+      maxValue,
+      runwayStyle,
+      barStyle,
+      resetSize,
+      emitChange,
+      onSliderWrapperPrevent,
+      onSliderClick,
+      onSliderDown,
+      setFirstValue,
+      setSecondValue
+    } = useSlide(props, initData, emit);
+    const { stops, getStopStyle } = useStops(props, initData, minValue, maxValue);
+    const { inputId, isLabeledByFormItem } = useFormItemInputId(props, {
+      formItemContext: elFormItem
+    });
+    const sliderWrapperSize = useFormSize();
+    const sliderInputSize = computed(() => props.inputSize || sliderWrapperSize.value);
+    const groupLabel = computed(() => {
+      return props.label || t("el.slider.defaultLabel", {
+        min: props.min,
+        max: props.max
+      });
+    });
+    const firstButtonLabel = computed(() => {
+      if (props.range) {
+        return props.rangeStartLabel || t("el.slider.defaultRangeStartLabel");
+      } else {
+        return groupLabel.value;
+      }
+    });
+    const firstValueText = computed(() => {
+      return props.formatValueText ? props.formatValueText(firstValue.value) : `${firstValue.value}`;
+    });
+    const secondButtonLabel = computed(() => {
+      return props.rangeEndLabel || t("el.slider.defaultRangeEndLabel");
+    });
+    const secondValueText = computed(() => {
+      return props.formatValueText ? props.formatValueText(secondValue.value) : `${secondValue.value}`;
+    });
+    const sliderKls = computed(() => [
+      ns.b(),
+      ns.m(sliderWrapperSize.value),
+      ns.is("vertical", props.vertical),
+      { [ns.m("with-input")]: props.showInput }
+    ]);
+    const markList = useMarks(props);
+    useWatch(props, initData, minValue, maxValue, emit, elFormItem);
+    const precision = computed(() => {
+      const precisions = [props.min, props.max, props.step].map((item) => {
+        const decimal = `${item}`.split(".")[1];
+        return decimal ? decimal.length : 0;
+      });
+      return Math.max.apply(null, precisions);
+    });
+    const { sliderWrapper } = useLifecycle(props, initData, resetSize);
+    const { firstValue, secondValue, sliderSize } = toRefs(initData);
+    const updateDragging = (val) => {
+      initData.dragging = val;
+    };
+    provide(sliderContextKey, {
+      ...toRefs(props),
+      sliderSize,
+      disabled: sliderDisabled,
+      precision,
+      emitChange,
+      resetSize,
+      updateDragging
+    });
+    expose({
+      onSliderClick
+    });
+    return (_ctx, _cache) => {
+      var _a2, _b;
+      return openBlock(), createElementBlock("div", {
+        id: _ctx.range ? unref(inputId) : void 0,
+        ref_key: "sliderWrapper",
+        ref: sliderWrapper,
+        class: normalizeClass(unref(sliderKls)),
+        role: _ctx.range ? "group" : void 0,
+        "aria-label": _ctx.range && !unref(isLabeledByFormItem) ? unref(groupLabel) : void 0,
+        "aria-labelledby": _ctx.range && unref(isLabeledByFormItem) ? (_a2 = unref(elFormItem)) == null ? void 0 : _a2.labelId : void 0,
+        onTouchstart: _cache[2] || (_cache[2] = (...args) => unref(onSliderWrapperPrevent) && unref(onSliderWrapperPrevent)(...args)),
+        onTouchmove: _cache[3] || (_cache[3] = (...args) => unref(onSliderWrapperPrevent) && unref(onSliderWrapperPrevent)(...args))
+      }, [
+        createElementVNode("div", {
+          ref_key: "slider",
+          ref: slider,
+          class: normalizeClass([
+            unref(ns).e("runway"),
+            { "show-input": _ctx.showInput && !_ctx.range },
+            unref(ns).is("disabled", unref(sliderDisabled))
+          ]),
+          style: normalizeStyle(unref(runwayStyle)),
+          onMousedown: _cache[0] || (_cache[0] = (...args) => unref(onSliderDown) && unref(onSliderDown)(...args)),
+          onTouchstart: _cache[1] || (_cache[1] = (...args) => unref(onSliderDown) && unref(onSliderDown)(...args))
+        }, [
+          createElementVNode("div", {
+            class: normalizeClass(unref(ns).e("bar")),
+            style: normalizeStyle(unref(barStyle))
+          }, null, 6),
+          createVNode(SliderButton, {
+            id: !_ctx.range ? unref(inputId) : void 0,
+            ref_key: "firstButton",
+            ref: firstButton,
+            "model-value": unref(firstValue),
+            vertical: _ctx.vertical,
+            "tooltip-class": _ctx.tooltipClass,
+            placement: _ctx.placement,
+            role: "slider",
+            "aria-label": _ctx.range || !unref(isLabeledByFormItem) ? unref(firstButtonLabel) : void 0,
+            "aria-labelledby": !_ctx.range && unref(isLabeledByFormItem) ? (_b = unref(elFormItem)) == null ? void 0 : _b.labelId : void 0,
+            "aria-valuemin": _ctx.min,
+            "aria-valuemax": _ctx.range ? unref(secondValue) : _ctx.max,
+            "aria-valuenow": unref(firstValue),
+            "aria-valuetext": unref(firstValueText),
+            "aria-orientation": _ctx.vertical ? "vertical" : "horizontal",
+            "aria-disabled": unref(sliderDisabled),
+            "onUpdate:modelValue": unref(setFirstValue)
+          }, null, 8, ["id", "model-value", "vertical", "tooltip-class", "placement", "aria-label", "aria-labelledby", "aria-valuemin", "aria-valuemax", "aria-valuenow", "aria-valuetext", "aria-orientation", "aria-disabled", "onUpdate:modelValue"]),
+          _ctx.range ? (openBlock(), createBlock(SliderButton, {
+            key: 0,
+            ref_key: "secondButton",
+            ref: secondButton,
+            "model-value": unref(secondValue),
+            vertical: _ctx.vertical,
+            "tooltip-class": _ctx.tooltipClass,
+            placement: _ctx.placement,
+            role: "slider",
+            "aria-label": unref(secondButtonLabel),
+            "aria-valuemin": unref(firstValue),
+            "aria-valuemax": _ctx.max,
+            "aria-valuenow": unref(secondValue),
+            "aria-valuetext": unref(secondValueText),
+            "aria-orientation": _ctx.vertical ? "vertical" : "horizontal",
+            "aria-disabled": unref(sliderDisabled),
+            "onUpdate:modelValue": unref(setSecondValue)
+          }, null, 8, ["model-value", "vertical", "tooltip-class", "placement", "aria-label", "aria-valuemin", "aria-valuemax", "aria-valuenow", "aria-valuetext", "aria-orientation", "aria-disabled", "onUpdate:modelValue"])) : createCommentVNode("v-if", true),
+          _ctx.showStops ? (openBlock(), createElementBlock("div", _hoisted_2$1, [
+            (openBlock(true), createElementBlock(Fragment, null, renderList(unref(stops), (item, key) => {
+              return openBlock(), createElementBlock("div", {
+                key,
+                class: normalizeClass(unref(ns).e("stop")),
+                style: normalizeStyle(unref(getStopStyle)(item))
+              }, null, 6);
+            }), 128))
+          ])) : createCommentVNode("v-if", true),
+          unref(markList).length > 0 ? (openBlock(), createElementBlock(Fragment, { key: 2 }, [
+            createElementVNode("div", null, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(unref(markList), (item, key) => {
+                return openBlock(), createElementBlock("div", {
+                  key,
+                  style: normalizeStyle(unref(getStopStyle)(item.position)),
+                  class: normalizeClass([unref(ns).e("stop"), unref(ns).e("marks-stop")])
+                }, null, 6);
+              }), 128))
+            ]),
+            createElementVNode("div", {
+              class: normalizeClass(unref(ns).e("marks"))
+            }, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(unref(markList), (item, key) => {
+                return openBlock(), createBlock(unref(SliderMarker), {
+                  key,
+                  mark: item.mark,
+                  style: normalizeStyle(unref(getStopStyle)(item.position))
+                }, null, 8, ["mark", "style"]);
+              }), 128))
+            ], 2)
+          ], 64)) : createCommentVNode("v-if", true)
+        ], 38),
+        _ctx.showInput && !_ctx.range ? (openBlock(), createBlock(unref(ElInputNumber), {
+          key: 0,
+          ref: "input",
+          "model-value": unref(firstValue),
+          class: normalizeClass(unref(ns).e("input")),
+          step: _ctx.step,
+          disabled: unref(sliderDisabled),
+          controls: _ctx.showInputControls,
+          min: _ctx.min,
+          max: _ctx.max,
+          debounce: _ctx.debounce,
+          size: unref(sliderInputSize),
+          "onUpdate:modelValue": unref(setFirstValue),
+          onChange: unref(emitChange)
+        }, null, 8, ["model-value", "class", "step", "disabled", "controls", "min", "max", "debounce", "size", "onUpdate:modelValue", "onChange"])) : createCommentVNode("v-if", true)
+      ], 42, _hoisted_1$1);
+    };
+  }
+});
+var Slider = /* @__PURE__ */ _export_sfc$1(_sfc_main$1, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/slider/src/slider.vue"]]);
+const ElSlider = withInstall(Slider);
+const switchProps = buildProps({
+  modelValue: {
+    type: [Boolean, String, Number],
+    default: false
+  },
+  disabled: {
+    type: Boolean,
+    default: false
+  },
+  loading: {
+    type: Boolean,
+    default: false
+  },
+  size: {
+    type: String,
+    validator: isValidComponentSize
+  },
+  width: {
+    type: [String, Number],
+    default: ""
+  },
+  inlinePrompt: {
+    type: Boolean,
+    default: false
+  },
+  inactiveActionIcon: {
+    type: iconPropType
+  },
+  activeActionIcon: {
+    type: iconPropType
+  },
+  activeIcon: {
+    type: iconPropType
+  },
+  inactiveIcon: {
+    type: iconPropType
+  },
+  activeText: {
+    type: String,
+    default: ""
+  },
+  inactiveText: {
+    type: String,
+    default: ""
+  },
+  activeValue: {
+    type: [Boolean, String, Number],
+    default: true
+  },
+  inactiveValue: {
+    type: [Boolean, String, Number],
+    default: false
+  },
+  activeColor: {
+    type: String,
+    default: ""
+  },
+  inactiveColor: {
+    type: String,
+    default: ""
+  },
+  borderColor: {
+    type: String,
+    default: ""
+  },
+  name: {
+    type: String,
+    default: ""
+  },
+  validateEvent: {
+    type: Boolean,
+    default: true
+  },
+  beforeChange: {
+    type: definePropType(Function)
+  },
+  id: String,
+  tabindex: {
+    type: [String, Number]
+  },
+  value: {
+    type: [Boolean, String, Number],
+    default: false
+  },
+  label: {
+    type: String,
+    default: void 0
+  }
+});
+const switchEmits = {
+  [UPDATE_MODEL_EVENT]: (val) => isBoolean(val) || isString(val) || isNumber(val),
+  [CHANGE_EVENT]: (val) => isBoolean(val) || isString(val) || isNumber(val),
+  [INPUT_EVENT]: (val) => isBoolean(val) || isString(val) || isNumber(val)
+};
+const _hoisted_1 = ["onClick"];
+const _hoisted_2 = ["id", "aria-checked", "aria-disabled", "aria-label", "name", "true-value", "false-value", "disabled", "tabindex", "onKeydown"];
+const _hoisted_3 = ["aria-hidden"];
+const _hoisted_4 = ["aria-hidden"];
+const _hoisted_5 = ["aria-hidden"];
+const COMPONENT_NAME = "ElSwitch";
+const __default__ = defineComponent({
+  name: COMPONENT_NAME
+});
+const _sfc_main = /* @__PURE__ */ defineComponent({
+  ...__default__,
+  props: switchProps,
+  emits: switchEmits,
+  setup(__props, { expose, emit }) {
+    const props = __props;
+    const vm = getCurrentInstance();
+    const { formItem } = useFormItem();
+    const switchSize = useFormSize();
+    const ns = useNamespace("switch");
+    const useBatchDeprecated = (list) => {
+      list.forEach((param) => {
+        useDeprecated({
+          from: param[0],
+          replacement: param[1],
+          scope: COMPONENT_NAME,
+          version: "2.3.0",
+          ref: "https://element-plus.org/en-US/component/switch.html#attributes",
+          type: "Attribute"
+        }, computed(() => {
+          var _a2;
+          return !!((_a2 = vm.vnode.props) == null ? void 0 : _a2[param[2]]);
+        }));
+      });
+    };
+    useBatchDeprecated([
+      ['"value"', '"model-value" or "v-model"', "value"],
+      ['"active-color"', "CSS var `--el-switch-on-color`", "activeColor"],
+      ['"inactive-color"', "CSS var `--el-switch-off-color`", "inactiveColor"],
+      ['"border-color"', "CSS var `--el-switch-border-color`", "borderColor"]
+    ]);
+    const { inputId } = useFormItemInputId(props, {
+      formItemContext: formItem
+    });
+    const switchDisabled = useFormDisabled(computed(() => props.loading));
+    const isControlled = ref(props.modelValue !== false);
+    const input = ref();
+    const core = ref();
+    const switchKls = computed(() => [
+      ns.b(),
+      ns.m(switchSize.value),
+      ns.is("disabled", switchDisabled.value),
+      ns.is("checked", checked.value)
+    ]);
+    const labelLeftKls = computed(() => [
+      ns.e("label"),
+      ns.em("label", "left"),
+      ns.is("active", !checked.value)
+    ]);
+    const labelRightKls = computed(() => [
+      ns.e("label"),
+      ns.em("label", "right"),
+      ns.is("active", checked.value)
+    ]);
+    const coreStyle = computed(() => ({
+      width: addUnit(props.width)
+    }));
+    watch(() => props.modelValue, () => {
+      isControlled.value = true;
+    });
+    watch(() => props.value, () => {
+      isControlled.value = false;
+    });
+    const actualValue = computed(() => {
+      return isControlled.value ? props.modelValue : props.value;
+    });
+    const checked = computed(() => actualValue.value === props.activeValue);
+    if (![props.activeValue, props.inactiveValue].includes(actualValue.value)) {
+      emit(UPDATE_MODEL_EVENT, props.inactiveValue);
+      emit(CHANGE_EVENT, props.inactiveValue);
+      emit(INPUT_EVENT, props.inactiveValue);
+    }
+    watch(checked, (val) => {
+      var _a2;
+      input.value.checked = val;
+      if (props.validateEvent) {
+        (_a2 = formItem == null ? void 0 : formItem.validate) == null ? void 0 : _a2.call(formItem, "change").catch((err) => debugWarn(err));
+      }
+    });
+    const handleChange = () => {
+      const val = checked.value ? props.inactiveValue : props.activeValue;
+      emit(UPDATE_MODEL_EVENT, val);
+      emit(CHANGE_EVENT, val);
+      emit(INPUT_EVENT, val);
+      nextTick(() => {
+        input.value.checked = checked.value;
+      });
+    };
+    const switchValue = () => {
+      if (switchDisabled.value)
+        return;
+      const { beforeChange } = props;
+      if (!beforeChange) {
+        handleChange();
+        return;
+      }
+      const shouldChange = beforeChange();
+      const isPromiseOrBool = [
+        isPromise(shouldChange),
+        isBoolean(shouldChange)
+      ].includes(true);
+      if (!isPromiseOrBool) {
+        throwError(COMPONENT_NAME, "beforeChange must return type `Promise<boolean>` or `boolean`");
+      }
+      if (isPromise(shouldChange)) {
+        shouldChange.then((result) => {
+          if (result) {
+            handleChange();
+          }
+        }).catch((e) => {
+          debugWarn(COMPONENT_NAME, `some error occurred: ${e}`);
+        });
+      } else if (shouldChange) {
+        handleChange();
+      }
+    };
+    const styles = computed(() => {
+      return ns.cssVarBlock({
+        ...props.activeColor ? { "on-color": props.activeColor } : null,
+        ...props.inactiveColor ? { "off-color": props.inactiveColor } : null,
+        ...props.borderColor ? { "border-color": props.borderColor } : null
+      });
+    });
+    const focus = () => {
+      var _a2, _b;
+      (_b = (_a2 = input.value) == null ? void 0 : _a2.focus) == null ? void 0 : _b.call(_a2);
+    };
+    onMounted(() => {
+      input.value.checked = checked.value;
+    });
+    expose({
+      focus,
+      checked
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock("div", {
+        class: normalizeClass(unref(switchKls)),
+        style: normalizeStyle(unref(styles)),
+        onClick: withModifiers(switchValue, ["prevent"])
+      }, [
+        createElementVNode("input", {
+          id: unref(inputId),
+          ref_key: "input",
+          ref: input,
+          class: normalizeClass(unref(ns).e("input")),
+          type: "checkbox",
+          role: "switch",
+          "aria-checked": unref(checked),
+          "aria-disabled": unref(switchDisabled),
+          "aria-label": _ctx.label,
+          name: _ctx.name,
+          "true-value": _ctx.activeValue,
+          "false-value": _ctx.inactiveValue,
+          disabled: unref(switchDisabled),
+          tabindex: _ctx.tabindex,
+          onChange: handleChange,
+          onKeydown: withKeys(switchValue, ["enter"])
+        }, null, 42, _hoisted_2),
+        !_ctx.inlinePrompt && (_ctx.inactiveIcon || _ctx.inactiveText) ? (openBlock(), createElementBlock("span", {
+          key: 0,
+          class: normalizeClass(unref(labelLeftKls))
+        }, [
+          _ctx.inactiveIcon ? (openBlock(), createBlock(unref(ElIcon), { key: 0 }, {
+            default: withCtx(() => [
+              (openBlock(), createBlock(resolveDynamicComponent(_ctx.inactiveIcon)))
+            ]),
+            _: 1
+          })) : createCommentVNode("v-if", true),
+          !_ctx.inactiveIcon && _ctx.inactiveText ? (openBlock(), createElementBlock("span", {
+            key: 1,
+            "aria-hidden": unref(checked)
+          }, toDisplayString(_ctx.inactiveText), 9, _hoisted_3)) : createCommentVNode("v-if", true)
+        ], 2)) : createCommentVNode("v-if", true),
+        createElementVNode("span", {
+          ref_key: "core",
+          ref: core,
+          class: normalizeClass(unref(ns).e("core")),
+          style: normalizeStyle(unref(coreStyle))
+        }, [
+          _ctx.inlinePrompt ? (openBlock(), createElementBlock("div", {
+            key: 0,
+            class: normalizeClass(unref(ns).e("inner"))
+          }, [
+            _ctx.activeIcon || _ctx.inactiveIcon ? (openBlock(), createBlock(unref(ElIcon), {
+              key: 0,
+              class: normalizeClass(unref(ns).is("icon"))
+            }, {
+              default: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent(unref(checked) ? _ctx.activeIcon : _ctx.inactiveIcon)))
+              ]),
+              _: 1
+            }, 8, ["class"])) : _ctx.activeText || _ctx.inactiveText ? (openBlock(), createElementBlock("span", {
+              key: 1,
+              class: normalizeClass(unref(ns).is("text")),
+              "aria-hidden": !unref(checked)
+            }, toDisplayString(unref(checked) ? _ctx.activeText : _ctx.inactiveText), 11, _hoisted_4)) : createCommentVNode("v-if", true)
+          ], 2)) : createCommentVNode("v-if", true),
+          createElementVNode("div", {
+            class: normalizeClass(unref(ns).e("action"))
+          }, [
+            _ctx.loading ? (openBlock(), createBlock(unref(ElIcon), {
+              key: 0,
+              class: normalizeClass(unref(ns).is("loading"))
+            }, {
+              default: withCtx(() => [
+                createVNode(unref(loading_default))
+              ]),
+              _: 1
+            }, 8, ["class"])) : _ctx.activeActionIcon && unref(checked) ? (openBlock(), createBlock(unref(ElIcon), { key: 1 }, {
+              default: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent(_ctx.activeActionIcon)))
+              ]),
+              _: 1
+            })) : _ctx.inactiveActionIcon && !unref(checked) ? (openBlock(), createBlock(unref(ElIcon), { key: 2 }, {
+              default: withCtx(() => [
+                (openBlock(), createBlock(resolveDynamicComponent(_ctx.inactiveActionIcon)))
+              ]),
+              _: 1
+            })) : createCommentVNode("v-if", true)
+          ], 2)
+        ], 6),
+        !_ctx.inlinePrompt && (_ctx.activeIcon || _ctx.activeText) ? (openBlock(), createElementBlock("span", {
+          key: 1,
+          class: normalizeClass(unref(labelRightKls))
+        }, [
+          _ctx.activeIcon ? (openBlock(), createBlock(unref(ElIcon), { key: 0 }, {
+            default: withCtx(() => [
+              (openBlock(), createBlock(resolveDynamicComponent(_ctx.activeIcon)))
+            ]),
+            _: 1
+          })) : createCommentVNode("v-if", true),
+          !_ctx.activeIcon && _ctx.activeText ? (openBlock(), createElementBlock("span", {
+            key: 1,
+            "aria-hidden": !unref(checked)
+          }, toDisplayString(_ctx.activeText), 9, _hoisted_5)) : createCommentVNode("v-if", true)
+        ], 2)) : createCommentVNode("v-if", true)
+      ], 14, _hoisted_1);
+    };
+  }
+});
+var Switch = /* @__PURE__ */ _export_sfc$1(_sfc_main, [["__file", "/home/runner/work/element-plus/element-plus/packages/components/switch/src/switch.vue"]]);
+const ElSwitch = withInstall(Switch);
+const _export_sfc = (sfc, props) => {
+  const target2 = sfc.__vccOpts || sfc;
+  for (const [key, val] of props) {
+    target2[key] = val;
+  }
+  return target2;
 };
 var draggabilly = { exports: {} };
 var getSize = { exports: {} };
@@ -14136,13 +16645,13 @@ function requireUnidragger() {
       function noop2() {
       }
       let jQuery = window2.jQuery;
-      function Draggabilly2(element, options) {
+      function Draggabilly2(element, options2) {
         this.element = typeof element == "string" ? document.querySelector(element) : element;
         if (jQuery) {
           this.$element = jQuery(this.element);
         }
         this.options = {};
-        this.option(options);
+        this.option(options2);
         this._create();
       }
       let proto = Draggabilly2.prototype = Object.create(Unidragger.prototype);
@@ -14397,14 +16906,20 @@ export {
   ElAside as b,
   ElMain as c,
   ElInput as d,
-  ElSelect as e,
-  ElForm as f,
-  ElRow as g,
-  ElCol as h,
-  ElFormItem as i,
-  ElSubMenu as j,
-  ElIcon as k,
-  ElMenuItem as l,
-  ElMenu as m,
+  ElSlider as e,
+  ElRadioGroup as f,
+  ElRadio as g,
+  ElSwitch as h,
+  ElSelect as i,
+  ElForm as j,
+  ElRow as k,
+  ElCol as l,
+  ElFormItem as m,
+  ElSubMenu as n,
+  ElIcon as o,
+  ElMenuItem as p,
+  ElMenu as q,
+  useAutoAnimate as u,
+  vAutoAnimate as v,
   withInstall$1 as w
 };

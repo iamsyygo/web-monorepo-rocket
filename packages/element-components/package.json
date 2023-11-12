@@ -28,6 +28,7 @@
     "author": "aoe",
     "license": "ISC",
     "dependencies": {
+        "@formkit/auto-animate": "^0.8.1",
         "animate.css": "^4.1.1",
         "draggabilly": "^3.0.0",
         "element-plus": "^2.4.1",
