@@ -1,7 +1,7 @@
 import { withInstall } from '@aoe/utils';
-import Form from './index.vue';
+import Form from './src/form';
 
 export const AoeForm = withInstall(Form);
 export default AoeForm;
 
-// export * from './type.d';
+export * from './src/props';

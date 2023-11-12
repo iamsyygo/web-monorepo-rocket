@@ -4,6 +4,7 @@ import dts from 'vite-plugin-dts';
 import Unocss from 'unocss/vite';
 import { presetUno, presetAttributify, presetIcons } from 'unocss';
 import { resolve, normalize } from 'path';
+import vueJsx from '@vitejs/plugin-vue-jsx';
 
 const pakDir = normalize(resolve(__dirname, 'src'));
 export default defineConfig({
@@ -59,12 +60,14 @@ export default defineConfig({
         },
     },
     plugins: [
+        vueJsx(),
         vue({
-            exclude: ['node_modules/**'],
+            // exclude: ['node_modules/**'],
             include: [/\.vue$/],
             script: {
                 propsDestructure: true,
                 defineModel: true,
+                // globalTypeFiles: ['src/shims-vue.d.ts'],
             },
         }),
         Unocss({

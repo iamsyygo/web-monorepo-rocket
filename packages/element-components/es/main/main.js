@@ -1,4 +1,4 @@
-import { _ as _export_sfc, d as ElSubMenu, e as ElIcon, f as ElMenuItem, g as ElMenu, h as ElButton, w as withInstall } from "../vendor.js";
+import { _ as _export_sfc, j as ElSubMenu, k as ElIcon, l as ElMenuItem, m as ElMenu, w as withInstall } from "../vendor.js";
 import { openBlock, createElementBlock, defineComponent, useCssVars, ref, computed, shallowRef, watch, resolveComponent, createVNode, unref, createElementVNode, withCtx, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps } from "vue";
 import { A as AoeBaseArchitecture } from "../base-architecture/base-architecture.js";
 import { A as AoeTabPanel } from "../tab-panel/tab-panel.js";
@@ -191,33 +191,20 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   },
   emits: ["collapse"],
   setup(__props, { emit: __emit }) {
-    const emits = __emit;
-    const diffWidth = __props.asideWidth - miniMenuWidth;
+    __props.asideWidth - miniMenuWidth;
     const collapse = ref(false);
-    const onCollapse = () => {
-      collapse.value = !collapse.value;
-      const width = collapse.value ? miniMenuWidth : miniMenuWidth + diffWidth;
-      emits("collapse", width);
-    };
     return (_ctx, _cache) => {
-      return openBlock(), createElementBlock(Fragment, null, [
-        createVNode(_sfc_main$2, {
-          "aside-width": _ctx.asideWidth,
-          menus: _ctx.menus,
-          "default-menu-path-active": _ctx.activeMenuKey,
-          collapse: collapse.value
-        }, null, 8, ["aside-width", "menus", "default-menu-path-active", "collapse"]),
-        createVNode(unref(ElButton), {
-          type: "primary",
-          size: "small",
-          onClick: onCollapse
-        })
-      ], 64);
+      return openBlock(), createBlock(_sfc_main$2, {
+        "aside-width": _ctx.asideWidth,
+        menus: _ctx.menus,
+        "default-menu-path-active": _ctx.activeMenuKey,
+        collapse: collapse.value
+      }, null, 8, ["aside-width", "menus", "default-menu-path-active", "collapse"]);
     };
   }
 });
-const index_vue_vue_type_style_index_0_scoped_3577d2d5_lang = "";
-const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-3577d2d5"]]);
+const index_vue_vue_type_style_index_0_scoped_eea3286d_lang = "";
+const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-eea3286d"]]);
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "index",
   props: {

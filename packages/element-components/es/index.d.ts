@@ -5,5 +5,4 @@ export * from './base-architecture';
 export * from './main';
 export * from './tab-panel';
 export * from './illustration';
-
 export * from './hooks/defineModel.h';

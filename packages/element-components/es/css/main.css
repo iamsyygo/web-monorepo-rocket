@@ -52,16 +52,16 @@
 .horizontal-collapse-transition .el-sub-menu__title > span {
   opacity: 0;
   transition: all 0.3s;
-}.el-aside--custom.el-aside .el-menu.el-menu--vertical[data-v-3577d2d5] {
+}.el-aside--custom.el-aside .el-menu.el-menu--vertical[data-v-eea3286d] {
   border-right: none;
   user-select: none;
   height: 100%;
 }
-.base-menu--content .el-sub-menu__title > .el-icon > span[data-v-3577d2d5] {
+.base-menu--content .el-sub-menu__title > .el-icon > span[data-v-eea3286d] {
   font-style: normal;
 }
-.horizontal-collapse-transition .el-menu-item > span[data-v-3577d2d5]:nth-child(2),
-.horizontal-collapse-transition .el-sub-menu__title > span[data-v-3577d2d5] {
+.horizontal-collapse-transition .el-menu-item > span[data-v-eea3286d]:nth-child(2),
+.horizontal-collapse-transition .el-sub-menu__title > span[data-v-eea3286d] {
   opacity: 0;
   transition: all 0.3s;
 }

@@ -4,9 +4,9 @@
     "description": "a vue element components ui.",
     "main": "lib/index.js",
     "module": "es/index.js",
-    "types": "index.d.ts",
+    "types": "es/index.d.ts",
     "scripts": {
-        "build": "vite build && npm run ts:build",
+        "build": "vite build",
         "ts:build": "npx api-extractor run && rm -rf temp tsdoc-metadata.json",
         "dev": "vite build --watch"
     },
@@ -16,7 +16,7 @@
     ],
     "exports": {
         ".": {
-            "types": "./index.d.ts",
+            "types": "./es/index.d.ts",
             "import": "./es/index.js",
             "require": "./lib/index.js"
         },
@@ -41,6 +41,7 @@
         "@types/node": "^20.8.7",
         "@vitejs/plugin-vue": "^4.4.0",
         "@vitejs/plugin-vue-jsx": "^3.0.2",
+        "add": "^2.0.6",
         "fast-glob": "^3.3.1",
         "sass": "^1.69.4",
         "unocss": "^0.56.5",

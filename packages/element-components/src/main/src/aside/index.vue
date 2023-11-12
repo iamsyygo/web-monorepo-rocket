@@ -5,11 +5,9 @@
         :default-menu-path-active="activeMenuKey"
         :collapse="collapse"
     ></Menu>
-    <el-button type="primary" size="small" @click="onCollapse"></el-button>
 </template>
 
 <script setup lang="ts">
-import { ElButton } from 'element-plus';
 import { ref } from 'vue';
 import Menu from './Menu.vue';
 import { AsideProps } from './type';
