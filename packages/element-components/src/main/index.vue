@@ -38,7 +38,7 @@ import 'element-plus/theme-chalk/el-drawer.css';
 import { handleElementTheme } from '@aoe/utils';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 import { Tab } from '@/tab-panel/index.vue';
-import { computed, onBeforeMount, onMounted, ref, watch } from 'vue';
+import { computed, onBeforeMount, ref, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import AppArchitecture from '../base-architecture';
 import { ArchitectureOption } from '../base-architecture/index.vue';
@@ -63,8 +63,6 @@ const { menus, router } = defineProps<{
 
 const visibleDrawer = ref(false);
 const openPalette = () => {
-    console.log(111);
-
     visibleDrawer.value = true;
 };
 

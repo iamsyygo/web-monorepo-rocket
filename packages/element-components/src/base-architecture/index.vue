@@ -17,7 +17,7 @@
 <script lang="ts" setup>
 import { ElAside, ElContainer, ElHeader, ElMain } from 'element-plus';
 // import 'element-plus/theme-chalk/el-container.css';
-import { Transition, watch } from 'vue';
+import { Transition } from 'vue';
 export interface ArchitectureOption {
     headerHeight: number;
     asideWidth: number;
@@ -67,10 +67,20 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
     transition: all 0.3s;
 }
 
+.el-aside--custom.el-aside {
+    position: relative;
+    box-sizing: border-box;
+    padding: 6px;
+    border-right: 1px solid #ebeef5;
+}
+
+.el-aside--custom.el-aside:has(.el-menu--collapse) {
+    padding: 6px 0;
+}
+
 .el-aside--custom {
     z-index: 999;
     overflow-y: scroll;
-    transition: width 0.3;
 }
 
 .system-app-architecture--ham {

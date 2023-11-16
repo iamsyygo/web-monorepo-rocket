@@ -5,6 +5,10 @@
         :default-menu-path-active="activeMenuKey"
         :collapse="collapse"
     ></Menu>
+    <div :class="['toggle-collapse', collapse ? 'collapse' : '']" @click="onCollapse">
+        <div class="toggle-collapse--one"></div>
+        <div class="toggle-collapse--two"></div>
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -34,12 +38,10 @@ const onCollapse = () => {
 </script>
 
 <style scoped lang="scss">
-.el-aside--custom.el-aside {
-    .el-menu.el-menu--vertical {
-        border-right: none;
-        user-select: none;
-        height: 100%;
-    }
+.el-menu.el-menu--vertical {
+    border-right: none;
+    user-select: none;
+    height: 100%;
 }
 .base-menu--content {
     .el-sub-menu__title > .el-icon > span {
@@ -53,6 +55,54 @@ const onCollapse = () => {
     .el-sub-menu__title > span {
         opacity: 0;
         transition: all 0.3s;
+    }
+}
+
+@mixin toggle-m($w) {
+    width: 6px;
+    height: 20px;
+    border-radius: 2px;
+    background-color: var(--el-color-info-light-7);
+    transform: translateY($w);
+    transition: all 0.3s;
+}
+
+@mixin toggle-t($r, $w) {
+    background-color: var(--el-color-primary);
+    transform: rotate($r) translateY($w);
+}
+
+.toggle-collapse {
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    bottom: 5%;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-5px);
+
+    &:hover {
+        .toggle-collapse--one {
+            @include toggle-t(25deg, 3px);
+        }
+        .toggle-collapse--two {
+            @include toggle-t(-25deg, -3px);
+        }
+    }
+    &.collapse:hover {
+        .toggle-collapse--one {
+            @include toggle-t(-25deg, 3px);
+        }
+        .toggle-collapse--two {
+            @include toggle-t(25deg, -3px);
+        }
+    }
+
+    &--one {
+        @include toggle-m(5px);
+    }
+    &--two {
+        @include toggle-m(-5px);
     }
 }
 </style>

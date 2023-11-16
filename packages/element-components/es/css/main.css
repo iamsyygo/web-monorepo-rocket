@@ -72,17 +72,58 @@
 .horizontal-collapse-transition .el-sub-menu__title > span {
   opacity: 0;
   transition: all 0.3s;
-}.el-aside--custom.el-aside .el-menu.el-menu--vertical[data-v-eea3286d] {
+}.el-menu.el-menu--vertical[data-v-ffb8dad7] {
   border-right: none;
   user-select: none;
   height: 100%;
 }
-.base-menu--content .el-sub-menu__title > .el-icon > span[data-v-eea3286d] {
+.base-menu--content .el-sub-menu__title > .el-icon > span[data-v-ffb8dad7] {
   font-style: normal;
 }
-.horizontal-collapse-transition .el-menu-item > span[data-v-eea3286d]:nth-child(2),
-.horizontal-collapse-transition .el-sub-menu__title > span[data-v-eea3286d] {
+.horizontal-collapse-transition .el-menu-item > span[data-v-ffb8dad7]:nth-child(2),
+.horizontal-collapse-transition .el-sub-menu__title > span[data-v-ffb8dad7] {
   opacity: 0;
+  transition: all 0.3s;
+}
+.toggle-collapse[data-v-ffb8dad7] {
+  cursor: pointer;
+  position: absolute;
+  right: 0;
+  bottom: 5%;
+  display: flex;
+  flex-direction: column;
+  transform: translateX(-5px);
+}
+.toggle-collapse:hover .toggle-collapse--one[data-v-ffb8dad7] {
+  background-color: var(--el-color-primary);
+  transform: rotate(25deg) translateY(3px);
+}
+.toggle-collapse:hover .toggle-collapse--two[data-v-ffb8dad7] {
+  background-color: var(--el-color-primary);
+  transform: rotate(-25deg) translateY(-3px);
+}
+.toggle-collapse.collapse:hover .toggle-collapse--one[data-v-ffb8dad7] {
+  background-color: var(--el-color-primary);
+  transform: rotate(-25deg) translateY(3px);
+}
+.toggle-collapse.collapse:hover .toggle-collapse--two[data-v-ffb8dad7] {
+  background-color: var(--el-color-primary);
+  transform: rotate(25deg) translateY(-3px);
+}
+.toggle-collapse--one[data-v-ffb8dad7] {
+  width: 6px;
+  height: 20px;
+  border-radius: 2px;
+  background-color: var(--el-color-info-light-7);
+  transform: translateY(5px);
+  transition: all 0.3s;
+}
+.toggle-collapse--two[data-v-ffb8dad7] {
+  width: 6px;
+  height: 20px;
+  border-radius: 2px;
+  background-color: var(--el-color-info-light-7);
+  transform: translateY(-5px);
   transition: all 0.3s;
 }.app-layout-type--wrapper[data-v-55bc6da4] {
   cursor: pointer;
