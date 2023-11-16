@@ -564,7 +564,7 @@ export default defineComponent({
 
     box-sizing: border-box;
     padding-top: 5px;
-    background-color: #e6e8e9;
+    background-color: #eaebef;
     position: relative;
 
     .tabs-content {

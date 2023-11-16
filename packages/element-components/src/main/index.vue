@@ -1,8 +1,18 @@
 <template>
     <ElConfigProvider :locale="zhCn" size="default">
-        <BaseArchitecture :option="option">
+        <AppArchitecture :option="option">
             <template #header>
-                <Header></Header>
+                <Header @palette="openPalette">
+                    <template #left>
+                        <slot name="head-left"></slot>
+                    </template>
+                    <template #center>
+                        <slot name="head-center"></slot>
+                    </template>
+                    <template #right>
+                        <slot name="head-right"></slot>
+                    </template>
+                </Header>
             </template>
             <template #aside>
                 <Aside
@@ -15,28 +25,48 @@
             <template #main>
                 <Main :route="route" @click-tab="handleTabClick" @remove-tab="handleTabRemove"></Main>
             </template>
-        </BaseArchitecture>
+        </AppArchitecture>
+        <ElDrawer title="系统设置" v-model="visibleDrawer" direction="rtl" size="30%">
+            <ThemeSetting v-model:system-option="option" @close="visibleDrawer = false"></ThemeSetting>
+        </ElDrawer>
     </ElConfigProvider>
 </template>
 
 <script setup lang="ts">
-import { ElConfigProvider } from 'element-plus';
+import { ElConfigProvider, ElDrawer } from 'element-plus';
+import 'element-plus/theme-chalk/el-drawer.css';
+import { handleElementTheme } from '@aoe/utils';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 import { Tab } from '@/tab-panel/index.vue';
-import { computed, ref } from 'vue';
+import { computed, onBeforeMount, onMounted, ref, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';
-import BaseArchitecture from '../base-architecture';
+import AppArchitecture from '../base-architecture';
 import { ArchitectureOption } from '../base-architecture/index.vue';
-import Header from './src/Header.vue';
+import Header from './src/header/index.vue';
 import Main from './src/Main.vue';
 import Aside from './src/aside/index.vue';
 import { AsideProps } from './src/aside/type';
+import ThemeSetting from './src/ThemeSetting.vue';
 // import '../css/base-architecture.css';
+
+onBeforeMount(() => {
+    const appOptions = JSON.parse(localStorage.getItem('appOptions') || '{}');
+    if (appOptions) {
+        option.value = appOptions as ArchitectureOption;
+    }
+});
 
 const { menus, router } = defineProps<{
     menus: AsideProps['menus'];
     router: Router;
 }>();
+
+const visibleDrawer = ref(false);
+const openPalette = () => {
+    console.log(111);
+
+    visibleDrawer.value = true;
+};
 
 // 获取当前路由
 const route = computed<RouteLocationNormalizedLoaded>(() => {
@@ -56,6 +86,8 @@ const option = ref<ArchitectureOption>({
         backgroundColor: '#fff',
         boxShadow: '0 1px 4px rgba(0, 21, 41, .08)',
     },
+    primary: '#4482F1',
+    effect: 'dark',
 });
 
 // 侧边栏收缩，被 Aside 组件调用改变 option.asideWidth
@@ -70,4 +102,29 @@ const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
 const handleTabRemove = (lastKey: string, tab: Tab, index: number) => {
     router.push(lastKey);
 };
+
+watch(
+    () => option.value.primary,
+    (val) => {
+        const colors = handleElementTheme(val);
+        const varStyle = Object.entries(colors)
+            .map(([key, value]) => {
+                return `${key}: ${value};`;
+            })
+            .join('\n');
+
+        const innerStyle = `:root{
+${varStyle}
+}`;
+        const hasAppElementTheme = document.getElementById('app-element-theme');
+        if (hasAppElementTheme) {
+            hasAppElementTheme.innerHTML = innerStyle;
+            return;
+        }
+        const style = document.createElement('style');
+        style.id = `app-element-theme`;
+        style.innerHTML = innerStyle;
+        document.body.appendChild(style);
+    },
+);
 </script>

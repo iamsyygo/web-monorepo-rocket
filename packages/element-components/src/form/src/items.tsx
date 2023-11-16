@@ -12,10 +12,9 @@ import {
     ElSlider,
     ElSwitch,
 } from 'element-plus';
-import { PropType, defineComponent, onMounted, reactive } from 'vue';
-import { FormItemType, FormItemTypeProps } from './props';
+import { PropType, defineComponent, reactive } from 'vue';
 import { useDefineModel } from '../../hooks/defineModel.h';
-import { IDatePickerType } from 'element-plus/es/components/date-picker/src/date-picker.type.mjs';
+import { FormItemTypeProps } from './props';
 
 export default defineComponent({
     props: {
@@ -27,13 +26,9 @@ export default defineComponent({
             type: [String, Number, Boolean, Array, Object] as PropType<any>,
         },
     },
-    emits: {
-        'update:modelValue': (val: any) => true,
-    },
+    emits: { 'update:modelValue': (val: any) => true },
     setup(props, { emit, attrs, expose, slots }) {
-        // const formRef = ref(null);
-        // const { option } = props;
-
+        // 存储 select options
         const selectOptions = reactive<{
             state: boolean;
             list: any[];
@@ -68,7 +63,7 @@ export default defineComponent({
         const modelValueCopy = useDefineModel(props, 'modelValue', emit);
 
         return () => {
-            const itemAttrs = Object.assign({}, props.option, attrs);
+            const itemAttrs = Object.assign({}, props.option.props, attrs);
             const option = props.option;
 
             if (['date', 'datetime', 'daterange', 'datetimerange', 'year', 'month'].includes(option.type)) {
@@ -165,8 +160,11 @@ export default defineComponent({
                 // case ['date', 'datetime', 'daterange', 'datetimerange', 'year', 'month'].includes(option.type):
                 //     return <ElInput v-model={modelValueCopy.value} {...itemAttrs}></ElInput>;
 
+                case 'custom':
+                    return slots['custom']?.(itemAttrs) ?? null;
+
                 default:
-                    return <ElInput v-model={modelValueCopy.value} {...itemAttrs}></ElInput>;
+                    return (<ElInput v-model={modelValueCopy.value} {...itemAttrs}></ElInput>) as never;
             }
         };
     },

@@ -1,21 +1,23 @@
 <template>
-    <div :class="`system-base-architecture--${option.typography}`">
-        <el-header class="el-header--custom" :style="{ ...option.headerStyle, height: option.headerHeight }">
-            <slot name="header"> </slot>
-        </el-header>
-        <el-container>
-            <el-aside class="el-aside--custom" :style="{ ...option.asideStyle, width: option.asideWidth }">
-                <slot name="aside"></slot>
-            </el-aside>
-            <el-main class="el-main--custom"> <slot name="main"></slot> </el-main>
-        </el-container>
-    </div>
+    <Transition name="app" appear>
+        <div :class="`system-app-architecture--${option.typography}`">
+            <el-header class="el-header--custom" :style="{ ...option.headerStyle, height: option.headerHeight }">
+                <slot name="header"> </slot>
+            </el-header>
+            <el-container>
+                <el-aside class="el-aside--custom" :style="{ ...option.asideStyle, width: option.asideWidth }">
+                    <slot name="aside"></slot>
+                </el-aside>
+                <el-main class="el-main--custom"> <slot name="main"></slot> </el-main>
+            </el-container>
+        </div>
+    </Transition>
 </template>
 
 <script lang="ts" setup>
 import { ElAside, ElContainer, ElHeader, ElMain } from 'element-plus';
 // import 'element-plus/theme-chalk/el-container.css';
-import { watch } from 'vue';
+import { Transition, watch } from 'vue';
 export interface ArchitectureOption {
     headerHeight: number;
     asideWidth: number;
@@ -28,37 +30,32 @@ export interface ArchitectureOption {
     typography: 'ham' | 'ahm' | 'hm' | 'am';
     headerStyle?: Partial<CSSStyleDeclaration>;
     asideStyle?: Partial<CSSStyleDeclaration>;
+    primary: string;
+    effect?: 'light' | 'dark';
 }
 
 const { option = { headerHeight: 60, asideWidth: 200, typography: 'ham' } } = defineProps<{
     option: ArchitectureOption;
 }>();
-
-watch(
-    () => option,
-    (val) => {
-        localStorage.setItem('layout-option', JSON.stringify(val));
-    },
-);
 </script>
 <style scoped lang="scss">
 $--header-height: calc(v-bind('option.headerHeight') * 1px);
 $--aside-width: calc(v-bind('option.asideWidth') * 1px);
 
-.system-base-architecture--ham,
-.system-base-architecture--ahm,
-.system-base-architecture--hm,
-.system-base-architecture--am {
+.system-app-architecture--ham,
+.system-app-architecture--ahm,
+.system-app-architecture--hm,
+.system-app-architecture--am {
     position: relative;
     width: 100%;
     height: 100%;
 }
-.system-base-architecture--ham > .el-container,
-.system-base-architecture--ahm > .el-container,
-.system-base-architecture--hm > .el-container {
+.system-app-architecture--ham > .el-container,
+.system-app-architecture--ahm > .el-container,
+.system-app-architecture--hm > .el-container {
     height: calc(100% - #{$--header-height});
 }
-.system-base-architecture--am > .el-container {
+.system-app-architecture--am > .el-container {
     height: 100%;
 }
 
@@ -76,7 +73,7 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
     transition: width 0.3;
 }
 
-.system-base-architecture--ham {
+.system-app-architecture--ham {
     .el-header--custom {
         width: 100%;
         height: $--header-height;
@@ -93,7 +90,7 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
     }
 }
 
-.system-base-architecture--ahm {
+.system-app-architecture--ahm {
     .el-header--custom {
         transform: translateX($--aside-width);
         width: calc(100% - #{$--aside-width});
@@ -112,7 +109,7 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
     }
 }
 
-.system-base-architecture--hm {
+.system-app-architecture--hm {
     .el-header--custom {
         width: 100%;
         height: $--header-height;
@@ -129,7 +126,7 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
     }
 }
 
-.system-base-architecture--am {
+.system-app-architecture--am {
     .el-aside--custom {
         width: $--aside-width;
         height: 100%;
@@ -145,5 +142,22 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
         height: 0;
         overflow: hidden;
     }
+}
+
+.app-enter-active,
+.app-leave-active {
+    transition: all 0.5s;
+}
+
+.app-enter-from,
+.app-leave-to {
+    opacity: 0;
+    transform: translateX(100px);
+}
+
+.app-enter-to,
+.app-leave-from {
+    opacity: 1;
+    transform: translateX(0);
 }
 </style>

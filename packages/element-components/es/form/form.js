@@ -1,5 +1,5 @@
 import { d as ElDatePicker, e as ElInput, f as ElColorPicker, g as ElCheckboxGroup, h as ElCheckboxButton, i as ElCheckbox, j as ElSlider, k as ElRadioGroup, l as ElRadio, m as ElSwitch, n as ElSelect, o as ElInputNumber, v as vAutoAnimate, p as ElForm, q as ElRow, r as ElCol, s as ElFormItem, t as ElTooltip, u as ElIcon, w as withInstall } from "../vendor.js";
-import { defineComponent, reactive, createVNode, mergeProps, toRefs, onMounted, withDirectives, resolveDirective, isVNode } from "vue";
+import { defineComponent, reactive, createVNode, mergeProps, toRefs, onMounted, withDirectives, resolveDirective, isVNode, Fragment } from "vue";
 import { u as useDefineModel } from "../hooks/hooks.js";
 const FormContent = /* @__PURE__ */ defineComponent({
   props: {
@@ -39,7 +39,8 @@ const FormContent = /* @__PURE__ */ defineComponent({
     }
     const modelValueCopy = useDefineModel(props, "modelValue", emit);
     return () => {
-      const itemAttrs = Object.assign({}, props.option, attrs);
+      var _a;
+      const itemAttrs = Object.assign({}, props.option.props, attrs);
       const option = props.option;
       if (["date", "datetime", "daterange", "datetimerange", "year", "month"].includes(option.type)) {
         return createVNode(ElDatePicker, mergeProps({
@@ -71,8 +72,8 @@ const FormContent = /* @__PURE__ */ defineComponent({
             "loading": selectOptions.state
           }), {
             default: () => {
-              var _a;
-              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
+              var _a2;
+              return [(_a2 = selectOptions.list) == null ? void 0 : _a2.map((item) => {
                 const {
                   label = "label",
                   value = "value",
@@ -102,8 +103,8 @@ const FormContent = /* @__PURE__ */ defineComponent({
             "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), {
             default: () => {
-              var _a;
-              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
+              var _a2;
+              return [(_a2 = selectOptions.list) == null ? void 0 : _a2.map((item) => {
                 const {
                   label = "label",
                   value = "value",
@@ -129,8 +130,8 @@ const FormContent = /* @__PURE__ */ defineComponent({
             "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), {
             default: () => {
-              var _a;
-              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
+              var _a2;
+              return [(_a2 = selectOptions.list) == null ? void 0 : _a2.map((item) => {
                 const {
                   label = "label",
                   value = "value",
@@ -151,8 +152,8 @@ const FormContent = /* @__PURE__ */ defineComponent({
             "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), {
             default: () => {
-              var _a;
-              return [(_a = selectOptions.list) == null ? void 0 : _a.map((item) => {
+              var _a2;
+              return [(_a2 = selectOptions.list) == null ? void 0 : _a2.map((item) => {
                 const {
                   label = "label",
                   value = "value",
@@ -172,6 +173,8 @@ const FormContent = /* @__PURE__ */ defineComponent({
             "modelValue": modelValueCopy.value,
             "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
           }, itemAttrs), null);
+        case "custom":
+          return ((_a = slots["custom"]) == null ? void 0 : _a.call(slots, itemAttrs)) ?? null;
         default:
           return createVNode(ElInput, mergeProps({
             "modelValue": modelValueCopy.value,
@@ -197,7 +200,7 @@ function _isSlot(s) {
 const Form = /* @__PURE__ */ defineComponent({
   props: formProps,
   emits: {
-    "update:modelValue": (val) => true
+    "update:modelValue": (_val) => true
   },
   slots: Object,
   directives: {
@@ -223,22 +226,73 @@ const Form = /* @__PURE__ */ defineComponent({
       model.value = Object.assign({}, defaultModelValues, modelValue.value);
     });
     const isInlined = formProps2.value.inline || attrs.inline;
+    const autoAnimateOption = {
+      easing: "ease-out",
+      duration: 300,
+      disrespectUserMotionPreference: true
+    };
+    const formAttrs = Object.assign({}, formProps2.value, attrs);
+    const {
+      "insert-before": insertBeforeVnode,
+      "insert-after": insertAfterVnode,
+      "form-items-label": formItemslabel
+    } = slots;
+    const defaultItemVnode = (item, prop) => {
+      if (slots[prop])
+        return slots[prop]({
+          ...item
+        });
+      return createVNode(FormContent, {
+        "modelValue": model.value[prop],
+        "onUpdate:modelValue": ($event) => model.value[prop] = $event,
+        "option": item
+      }, null);
+    };
+    const itemLabelVnode = (item) => {
+      if (slots[item.prop + "-label"])
+        return slots[item.prop + "-label"]({
+          ...item
+        });
+      if (formItemslabel)
+        return formItemslabel({
+          ...item
+        });
+      return createVNode(Fragment, null, [createVNode("span", null, [item.label]), createVNode("span", {
+        "style": {
+          width: "11px",
+          display: "inline-block"
+        }
+      }, [item.tooltip ? createVNode(ElTooltip, {
+        "effect": "dark",
+        "content": item.tooltip,
+        "placement": "left"
+      }, {
+        default: () => [createVNode(ElIcon, null, {
+          default: () => [createVNode("svg", {
+            "viewBox": "0 0 1024 1024",
+            "xmlns": "http://www.w3.org/2000/svg"
+          }, [createVNode("path", {
+            "d": "M512 64a448 448 0 1 1 0 896.064A448 448 0 0 1 512 64zm67.2 275.072c33.28 0 60.288-23.104 60.288-57.344s-27.072-57.344-60.288-57.344c-33.28 0-60.16 23.104-60.16 57.344s26.88 57.344 60.16 57.344zM590.912 699.2c0-6.848 2.368-24.64 1.024-34.752l-52.608 60.544c-10.88 11.456-24.512 19.392-30.912 17.28a12.992 12.992 0 0 1-8.256-14.72l87.68-276.992c7.168-35.136-12.544-67.2-54.336-71.296-44.096 0-108.992 44.736-148.48 101.504 0 6.784-1.28 23.68.064 33.792l52.544-60.608c10.88-11.328 23.552-19.328 29.952-17.152a12.8 12.8 0 0 1 7.808 16.128L388.48 728.576c-10.048 32.256 8.96 63.872 55.04 71.04 67.84 0 107.904-43.648 147.456-100.416z"
+          }, null)])]
+        })]
+      }) : null])]);
+    };
     return () => {
-      let _slot, _slot2;
+      let _slot;
       return createVNode(ElForm, mergeProps({
         "ref": "formRef",
         "model": model.value
-      }, formProps2.value, attrs), {
+      }, formAttrs), {
         default: () => [withDirectives(createVNode(ElRow, {
           "gutter": 10
         }, {
-          default: () => [slots["insert-before"] ? createVNode(ElCol, mergeProps({
+          default: () => [!!insertBeforeVnode && createVNode(ElCol, mergeProps({
             "key": "insert-before"
-          }, getSpan(24)), _isSlot(_slot = slots["insert-before"]({
-            value: props.modelValue
-          })) ? _slot : {
-            default: () => [_slot]
-          }) : null, formProps2.value.formItems.reduce((acc, item) => {
+          }, getSpan(24)), {
+            default: () => [" ", insertBeforeVnode({
+              value: props.modelValue
+            }), " "]
+          }), formProps2.value.formItems.reduce((acc, item) => {
             const {
               props: props2,
               type,
@@ -249,67 +303,28 @@ const Form = /* @__PURE__ */ defineComponent({
             if (item.controller && !item.controller({
               value: modelValue.value,
               option: item
-            }))
+            })) {
               return acc;
+            }
             acc.push(createVNode(ElCol, mergeProps({
               "key": item.prop
             }, getSpan(isInlined ? 24 : span || formProps2.value.spans)), {
               default: () => [createVNode(ElFormItem, mergeProps(rest, {
                 "rules": mergeRules(rules, item.required, item.label)
               }), {
-                default: () => {
-                  var _a;
-                  return ((_a = slots[rest.prop]) == null ? void 0 : _a.call(slots, {
-                    ...item
-                  })) || createVNode(FormContent, {
-                    "modelValue": model.value[rest.prop],
-                    "onUpdate:modelValue": ($event) => model.value[rest.prop] = $event,
-                    "option": item
-                  }, null);
-                },
-                label: () => {
-                  var _a, _b;
-                  return ((_a = slots[rest.prop + "-label"]) == null ? void 0 : _a.call(slots, {
-                    ...item
-                  })) || ((_b = slots["form-items-label"]) == null ? void 0 : _b.call(slots, {
-                    ...item
-                  })) || createVNode("div", null, [item.label, createVNode("div", {
-                    "style": {
-                      width: "11px",
-                      display: "inline-block"
-                    }
-                  }, [item.tooltip ? createVNode(ElTooltip, {
-                    "effect": "dark",
-                    "content": item.tooltip,
-                    "placement": "right"
-                  }, {
-                    default: () => [createVNode(ElIcon, null, {
-                      default: () => [createVNode("svg", {
-                        "viewBox": "0 0 1024 1024",
-                        "xmlns": "http://www.w3.org/2000/svg",
-                        "data-v-ea893728": ""
-                      }, [createVNode("path", {
-                        "fill": "currentColor",
-                        "d": "M512 64a448 448 0 1 1 0 896.064A448 448 0 0 1 512 64zm67.2 275.072c33.28 0 60.288-23.104 60.288-57.344s-27.072-57.344-60.288-57.344c-33.28 0-60.16 23.104-60.16 57.344s26.88 57.344 60.16 57.344zM590.912 699.2c0-6.848 2.368-24.64 1.024-34.752l-52.608 60.544c-10.88 11.456-24.512 19.392-30.912 17.28a12.992 12.992 0 0 1-8.256-14.72l87.68-276.992c7.168-35.136-12.544-67.2-54.336-71.296-44.096 0-108.992 44.736-148.48 101.504 0 6.784-1.28 23.68.064 33.792l52.544-60.608c10.88-11.328 23.552-19.328 29.952-17.152a12.8 12.8 0 0 1 7.808 16.128L388.48 728.576c-10.048 32.256 8.96 63.872 55.04 71.04 67.84 0 107.904-43.648 147.456-100.416z"
-                      }, null)])]
-                    })]
-                  }) : null])]);
-                }
+                default: () => defaultItemVnode(item, rest.prop),
+                label: () => itemLabelVnode(item)
               })]
             }));
             return acc;
-          }, []), slots["insert-after"] ? createVNode(ElCol, mergeProps({
+          }, []), !!insertAfterVnode && createVNode(ElCol, mergeProps({
             "key": "insert-after"
-          }, getSpan(isInlined ? formProps2.value.spans : 24)), _isSlot(_slot2 = slots["insert-after"]({
+          }, getSpan(isInlined ? formProps2.value.spans : 24)), _isSlot(_slot = slots["insert-after"]({
             value: props.modelValue
-          })) ? _slot2 : {
-            default: () => [_slot2]
-          }) : null]
-        }), [[resolveDirective("auto-animate"), {
-          easing: "linear",
-          duration: 300,
-          disrespectUserMotionPreference: true
-        }]])]
+          })) ? _slot : {
+            default: () => [_slot]
+          })]
+        }), [[resolveDirective("auto-animate"), autoAnimateOption]])]
       });
     };
   }

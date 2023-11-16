@@ -1,5 +1,5 @@
 <template>
-    <div class="base-main--wrapper">
+    <div class="app-main--wrapper">
         <TabPanel
             ref="tabPanelRef"
             class="main-tabs--box"
@@ -12,7 +12,7 @@
         </TabPanel>
         <div class="main-content--box">
             <router-view v-slot="{ Component, route }">
-                <Transition mode="out-in" name="base-view--transition">
+                <Transition mode="out-in" name="app-view--transition">
                     <!-- TODO 不是缓存10个，是缓存tab栏10个 -->
                     <keep-alive :max="10" :include="include">
                         <component :is="Component" :key="route.fullPath"></component>
@@ -76,7 +76,7 @@ watch(
 </script>
 
 <style lang="scss" scoped>
-.base-main--wrapper {
+.app-main--wrapper {
     display: flex;
     flex-direction: column;
     height: 100%;
@@ -91,19 +91,19 @@ watch(
     background-color: v-bind(backgroundColor);
 }
 
-.base-view--transition-enter-active,
-.base-view--transition-leave-active {
+.app-view--transition-enter-active,
+.app-view--transition-leave-active {
     transition: all 0.3s;
 }
 
-.base-view--transition-enter-from,
-.base-view--transition-leave-to {
+.app-view--transition-enter-from,
+.app-view--transition-leave-to {
     opacity: 0;
     transform: translateX(10px);
 }
 
-.base-view--transition-enter-to,
-.base-view--transition-leave-from {
+.app-view--transition-enter-to,
+.app-view--transition-leave-from {
     opacity: 1;
     transform: translateX(0);
 }

@@ -1,4 +1,4 @@
-import { ColProps, ElForm, ElRadio, ElSelect, FormItemProps, checkboxProps, colorPickerProps, inputProps, sliderProps, switchProps, datePickerProps } from 'element-plus';
+import { ColProps, ElForm, ElRadio, ElSelect, FormItemProps, checkboxProps, colorPickerProps, inputProps, sliderProps, switchProps, datePickerProps, inputNumberProps } from 'element-plus';
 import { IDatePickerType } from 'element-plus/es/components/date-picker/src/date-picker.type.mjs';
 import { ExtractPropTypes, PropType } from 'vue';
 /**
@@ -16,7 +16,7 @@ import { ExtractPropTypes, PropType } from 'vue';
  * @example
  * InstanceType<typeof ElSelect>['$props']
  */
-export type FormItemType = 'input' | 'inputNumber' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'switch' | 'rate' | 'color-picker' | 'slider' | 'checkboxButton' | IDatePickerType;
+export type FormItemType = 'input' | 'inputNumber' | 'textarea' | 'select' | 'radio' | 'checkbox' | 'switch' | 'rate' | 'color-picker' | 'slider' | 'checkboxButton' | 'custom' | IDatePickerType;
 export type Span = Omit<ColProps, 'tag' | 'push' | 'span' | 'offset' | 'pull'>;
 export type CommonFormItemProp = PartialProp<FormItemProps, 'inlineMessage' | 'labelWidth' | 'showMessage'>;
 /**
@@ -76,7 +76,8 @@ type Controller = (data: {
  */
 export type ObjectPropType<T extends any[], K extends keyof T[number]> = T[number][K];
 /** 获取数组对象中的某个属性的值组成的组合类型 */
-type InputProp = FormItemTypeProp<'input' | 'textarea' | 'inputNumber', PartialOmitElementProp<typeof inputProps, 'modelValue' | 'placeholder' | 'size'>>;
+type InputProp = FormItemTypeProp<'input' | 'textarea', PartialOmitElementProp<typeof inputProps, 'modelValue' | 'placeholder' | 'size'>>;
+type InputNumberProp = FormItemTypeProp<'inputNumber', PartialOmitElementProp<typeof inputNumberProps, 'modelValue' | 'placeholder' | 'size'>>;
 type SwitchProp = FormItemTypeProp<'switch', PartialOmitElementProp<typeof switchProps, 'modelValue' | 'size'>>;
 type SlidermProp = FormItemTypeProp<'slider', PartialOmitElementProp<typeof sliderProps, 'modelValue' | 'size'>>;
 type SelectProp = FormItemTypeProp<'select', OmitElementProp<InstanceType<typeof ElSelect>['$props'], 'modelValue' | 'placeholder' | 'size'>> & {
@@ -108,7 +109,8 @@ type CheckboxProp = FormItemTypeProp<'checkbox' | 'checkboxButton', OmitElementP
 };
 type ColorPickerProp = FormItemTypeProp<'color-picker', OmitElementProp<typeof colorPickerProps, 'modelValue' | 'size'>>;
 type DatePickerProp = FormItemTypeProp<IDatePickerType, OmitElementProp<typeof datePickerProps, 'modelValue' | 'size'>>;
-export type FormItemTypeProps = InputProp | SelectProp | RadioProp | SwitchProp | SlidermProp | CheckboxProp | ColorPickerProp | DatePickerProp;
+type CustomProp = FormItemTypeProp<'custom', {}>;
+export type FormItemTypeProps = InputProp | SelectProp | RadioProp | SwitchProp | SlidermProp | CheckboxProp | ColorPickerProp | DatePickerProp | CustomProp | InputNumberProp;
 export type FormProps = OmitElementProp<InstanceType<typeof ElForm>['$props'], 'model'> & {
     spans?: Span | number;
     formItems: FormItemTypeProps[];

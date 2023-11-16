@@ -10,6 +10,7 @@ import {
     sliderProps,
     switchProps,
     datePickerProps,
+    inputNumberProps,
 } from 'element-plus';
 import { IDatePickerType } from 'element-plus/es/components/date-picker/src/date-picker.type.mjs';
 import { ExtractPropTypes, PropType } from 'vue';
@@ -47,6 +48,7 @@ export type FormItemType =
     // | 'autocomplete'
     | 'checkboxButton'
     // | 'radioButton'
+    | 'custom'
     | IDatePickerType;
 
 // 表单响应式布局
@@ -115,8 +117,12 @@ export type ObjectPropType<T extends any[], K extends keyof T[number]> = T[numbe
 /** 获取数组对象中的某个属性的值组成的组合类型 */
 
 type InputProp = FormItemTypeProp<
-    'input' | 'textarea' | 'inputNumber',
+    'input' | 'textarea',
     PartialOmitElementProp<typeof inputProps, 'modelValue' | 'placeholder' | 'size'>
+>;
+type InputNumberProp = FormItemTypeProp<
+    'inputNumber',
+    PartialOmitElementProp<typeof inputNumberProps, 'modelValue' | 'placeholder' | 'size'>
 >;
 type SwitchProp = FormItemTypeProp<'switch', PartialOmitElementProp<typeof switchProps, 'modelValue' | 'size'>>;
 type SlidermProp = FormItemTypeProp<'slider', PartialOmitElementProp<typeof sliderProps, 'modelValue' | 'size'>>;
@@ -172,6 +178,8 @@ type ColorPickerProp = FormItemTypeProp<
 
 type DatePickerProp = FormItemTypeProp<IDatePickerType, OmitElementProp<typeof datePickerProps, 'modelValue' | 'size'>>;
 
+type CustomProp = FormItemTypeProp<'custom', {}>;
+
 export type FormItemTypeProps =
     | InputProp
     | SelectProp
@@ -180,7 +188,9 @@ export type FormItemTypeProps =
     | SlidermProp
     | CheckboxProp
     | ColorPickerProp
-    | DatePickerProp;
+    | DatePickerProp
+    | CustomProp
+    | InputNumberProp;
 
 export type FormProps = OmitElementProp<InstanceType<typeof ElForm>['$props'], 'model'> & {
     spans?: Span | number;

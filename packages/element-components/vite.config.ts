@@ -5,6 +5,7 @@ import Unocss from 'unocss/vite';
 import { presetUno, presetAttributify, presetIcons } from 'unocss';
 import { resolve, normalize } from 'path';
 import vueJsx from '@vitejs/plugin-vue-jsx';
+import visualizer from 'rollup-plugin-visualizer';
 
 const pakDir = normalize(resolve(__dirname, 'src'));
 export default defineConfig({
@@ -16,7 +17,10 @@ export default defineConfig({
         cssCodeSplit: true,
         chunkSizeWarningLimit: 8 * 1024,
         rollupOptions: {
-            plugins: [],
+            plugins: [
+                // @ts-expect-error
+                visualizer(),
+            ],
             external: ['vue', /^ant-design-vue\/es\/.*/, 'vue-router'],
             input: ['src/index.ts'],
             output: [

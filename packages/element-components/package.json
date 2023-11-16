@@ -44,6 +44,7 @@
         "@vitejs/plugin-vue-jsx": "^3.0.2",
         "add": "^2.0.6",
         "fast-glob": "^3.3.1",
+        "rollup-plugin-visualizer": "^5.9.2",
         "sass": "^1.69.4",
         "unocss": "^0.56.5",
         "vite": "^4.5.0",

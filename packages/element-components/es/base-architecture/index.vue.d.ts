@@ -10,6 +10,8 @@ export interface ArchitectureOption {
     typography: 'ham' | 'ahm' | 'hm' | 'am';
     headerStyle?: Partial<CSSStyleDeclaration>;
     asideStyle?: Partial<CSSStyleDeclaration>;
+    primary: string;
+    effect?: 'light' | 'dark';
 }
 declare const _default: __VLS_WithTemplateSlots<import("vue").DefineComponent<{
     option: {

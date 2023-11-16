@@ -10,7 +10,7 @@ declare const _default: import("vue").DefineComponent<{
         default: () => {};
     };
 }, () => JSX.Element, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
-    'update:modelValue': (val: any) => true;
+    'update:modelValue': (_val: any) => true;
 }, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     modelValue: {
         type: ObjectConstructor;
@@ -21,7 +21,7 @@ declare const _default: import("vue").DefineComponent<{
         default: () => {};
     };
 }>> & {
-    "onUpdate:modelValue"?: ((val: any) => any) | undefined;
+    "onUpdate:modelValue"?: ((_val: any) => any) | undefined;
 }, {
     modelValue: Record<string, any>;
     formProps: import("./props").FormProps;

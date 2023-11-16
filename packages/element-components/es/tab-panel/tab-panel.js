@@ -1,4 +1,4 @@
-import { u as ElIcon, D as Draggabilly, _ as _export_sfc, w as withInstall } from "../vendor.js";
+import { u as ElIcon, H as Draggabilly, _ as _export_sfc, w as withInstall } from "../vendor.js";
 import { defineComponent, reactive, ref, onMounted, onUnmounted, nextTick, resolveComponent, openBlock, createElementBlock, createElementVNode, Fragment, renderList, normalizeClass, normalizeStyle, withDirectives, withModifiers, vShow, renderSlot, createVNode, withCtx, createCommentVNode, createTextVNode, toDisplayString, createStaticVNode } from "vue";
 import { A as AoeSymbolIcon } from "../symbol-icon/symbol-icon.js";
 const _sfc_main = defineComponent({
