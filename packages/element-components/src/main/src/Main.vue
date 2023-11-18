@@ -77,6 +77,7 @@ watch(
 
 <style lang="scss" scoped>
 .app-main--wrapper {
+    position: relative;
     display: flex;
     flex-direction: column;
     height: 100%;

@@ -16,7 +16,6 @@
 
 <script lang="ts" setup>
 import { ElAside, ElContainer, ElHeader, ElMain } from 'element-plus';
-// import 'element-plus/theme-chalk/el-container.css';
 import { Transition } from 'vue';
 export interface ArchitectureOption {
     headerHeight: number;
@@ -68,14 +67,11 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
 }
 
 .el-aside--custom.el-aside {
+    --el-menu-base-level-padding: 10px;
     position: relative;
     box-sizing: border-box;
     padding: 6px;
     border-right: 1px solid #ebeef5;
-}
-
-.el-aside--custom.el-aside:has(.el-menu--collapse) {
-    padding: 6px 0;
 }
 
 .el-aside--custom {
@@ -132,6 +128,7 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
 
     .el-aside--custom {
         width: 0;
+        padding: 6px 0;
         overflow: hidden;
     }
 }

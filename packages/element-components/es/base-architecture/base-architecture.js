@@ -1,5 +1,6 @@
-import { E as ElHeader, a as ElContainer, b as ElAside, c as ElMain, _ as _export_sfc, w as withInstall } from "../vendor.js";
+import { _ as _export_sfc, w as withInstall } from "../vendor.js";
 import { defineComponent, useCssVars, openBlock, createBlock, Transition, withCtx, createElementVNode, normalizeClass, createVNode, unref, normalizeStyle, renderSlot } from "vue";
+import { ElHeader, ElContainer, ElAside, ElMain } from "element-plus";
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "index",
   props: {
@@ -7,8 +8,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
   },
   setup(__props) {
     useCssVars((_ctx) => ({
-      "2d245c9b": _ctx.option.headerHeight,
-      "4518cbb5": _ctx.option.asideWidth
+      "55001838": _ctx.option.headerHeight,
+      "1e58bd84": _ctx.option.asideWidth
     }));
     return (_ctx, _cache) => {
       return openBlock(), createBlock(Transition, {
@@ -55,8 +56,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const index_vue_vue_type_style_index_0_scoped_8ecc4c33_lang = "";
-const BaseArchitecture = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-8ecc4c33"]]);
+const index_vue_vue_type_style_index_0_scoped_0e8cd766_lang = "";
+const BaseArchitecture = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-0e8cd766"]]);
 const AoeBaseArchitecture = withInstall(BaseArchitecture);
 export {
   AoeBaseArchitecture as A

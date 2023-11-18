@@ -63,7 +63,7 @@ export default defineComponent({
         const modelValueCopy = useDefineModel(props, 'modelValue', emit);
 
         return () => {
-            const itemAttrs = Object.assign({}, props.option.props, attrs);
+            const itemAttrs = Object.assign({}, props.option.props, attrs) as FormItemTypeProps;
             const option = props.option;
 
             if (['date', 'datetime', 'daterange', 'datetimerange', 'year', 'month'].includes(option.type)) {
@@ -123,7 +123,15 @@ export default defineComponent({
                         </ElRadioGroup>
                     );
                 case 'slider':
-                    return <ElSlider v-model={modelValueCopy.value} {...itemAttrs}></ElSlider>;
+                    return (
+                        <ElSlider
+                            // v-model={modelValueCopy.value}
+                            // 优化：使用 change 事件，不使用 v-model
+                            modelValue={modelValueCopy.value}
+                            {...itemAttrs}
+                            onChange={(val) => (modelValueCopy.value = val)}
+                        ></ElSlider>
+                    );
 
                 case 'checkbox':
                     return (

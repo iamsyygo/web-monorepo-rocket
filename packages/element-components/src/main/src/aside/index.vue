@@ -5,10 +5,10 @@
         :default-menu-path-active="activeMenuKey"
         :collapse="collapse"
     ></Menu>
-    <div :class="['toggle-collapse', collapse ? 'collapse' : '']" @click="onCollapse">
+    <!-- <div :class="['toggle-collapse', collapse ? 'collapse' : '']" @click="onCollapse">
         <div class="toggle-collapse--one"></div>
         <div class="toggle-collapse--two"></div>
-    </div>
+    </div> -->
 </template>
 
 <script setup lang="ts">
@@ -23,18 +23,26 @@ const emits = defineEmits<{
 }>();
 
 // 侧边栏收缩的宽度
-const miniMenuWidth = 64;
+const miniMenuWidth = 58;
 
 // 侧边栏收缩，被 Aside 组件调用改变 option.asideWidth
-const diffWidth = asideWidth - miniMenuWidth;
+let diffWidth = asideWidth - miniMenuWidth;
 const collapse = ref(false);
 
 // 侧边栏收缩
 const onCollapse = () => {
     collapse.value = !collapse.value;
+    if (collapse.value) {
+        diffWidth = asideWidth - miniMenuWidth;
+    }
     const width = collapse.value ? miniMenuWidth : miniMenuWidth + diffWidth;
     emits('collapse', width);
 };
+
+defineExpose({
+    collapse,
+    onCollapse,
+});
 </script>
 
 <style scoped lang="scss">
@@ -43,6 +51,7 @@ const onCollapse = () => {
     user-select: none;
     height: 100%;
 }
+
 .base-menu--content {
     .el-sub-menu__title > .el-icon > span {
         font-style: normal;
@@ -57,7 +66,7 @@ const onCollapse = () => {
         transition: all 0.3s;
     }
 }
-
+/* 
 @mixin toggle-m($w) {
     width: 6px;
     height: 20px;
@@ -104,5 +113,5 @@ const onCollapse = () => {
     &--two {
         @include toggle-m(-5px);
     }
-}
+} */
 </style>

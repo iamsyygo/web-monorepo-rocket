@@ -40,7 +40,7 @@
 </template>
 
 <script setup lang="ts">
-import { reactive, ref } from 'vue';
+import { reactive } from 'vue';
 import { ElRow, ElCol, ElButton } from 'element-plus';
 import AppForm from '../../form';
 import { FormProps } from '../../form';
@@ -91,8 +91,6 @@ const option = reactive<FormProps>({
             prop: 'asideWidth',
             label: '侧边栏宽度',
             props: {
-                min: 120,
-                max: 380,
                 controlsPosition: 'right',
             },
         },
@@ -124,7 +122,7 @@ const handleChangeLayout = (item: any) => {
 };
 
 const handleApplication = () => {
-    localStorage.setItem('appOptions', JSON.stringify(props.systemOption));
+    localStorage.setItem('AppOptions', JSON.stringify(props.systemOption));
     emits('close');
 };
 </script>

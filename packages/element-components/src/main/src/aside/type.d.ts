@@ -11,6 +11,7 @@ export type AsideProps = {
     asideWidth?: number;
     menus: Menu[];
     activeMenuKey: string;
+    // collapse: false;
 };
 
 export type MenuProps = {

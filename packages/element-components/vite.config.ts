@@ -21,7 +21,15 @@ export default defineConfig({
                 // @ts-expect-error
                 visualizer(),
             ],
-            external: ['vue', /^ant-design-vue\/es\/.*/, 'vue-router'],
+            external: [
+                'vue',
+                /^ant-design-vue\/es\/.*/,
+                /^element-plus[\/\w]*$/,
+                'vue-router',
+                /^@formkit\/auto\-animate.*/,
+                'draggabilly',
+                'animate.css',
+            ],
             input: ['src/index.ts'],
             output: [
                 {

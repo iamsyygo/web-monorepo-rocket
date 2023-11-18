@@ -1,5 +1,7 @@
-import { d as ElDatePicker, e as ElInput, f as ElColorPicker, g as ElCheckboxGroup, h as ElCheckboxButton, i as ElCheckbox, j as ElSlider, k as ElRadioGroup, l as ElRadio, m as ElSwitch, n as ElSelect, o as ElInputNumber, v as vAutoAnimate, p as ElForm, q as ElRow, r as ElCol, s as ElFormItem, t as ElTooltip, u as ElIcon, w as withInstall } from "../vendor.js";
+import { w as withInstall } from "../vendor.js";
 import { defineComponent, reactive, createVNode, mergeProps, toRefs, onMounted, withDirectives, resolveDirective, isVNode, Fragment } from "vue";
+import { vAutoAnimate } from "@formkit/auto-animate/vue";
+import { ElDatePicker, ElInput, ElColorPicker, ElCheckboxGroup, ElCheckboxButton, ElCheckbox, ElSlider, ElRadioGroup, ElRadio, ElSwitch, ElSelect, ElInputNumber, ElForm, ElRow, ElCol, ElFormItem, ElTooltip, ElIcon } from "element-plus";
 import { u as useDefineModel } from "../hooks/hooks.js";
 const FormContent = /* @__PURE__ */ defineComponent({
   props: {
@@ -121,9 +123,10 @@ const FormContent = /* @__PURE__ */ defineComponent({
           });
         case "slider":
           return createVNode(ElSlider, mergeProps({
-            "modelValue": modelValueCopy.value,
-            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
-          }, itemAttrs), null);
+            "modelValue": modelValueCopy.value
+          }, itemAttrs, {
+            "onChange": (val) => modelValueCopy.value = val
+          }), null);
         case "checkbox":
           return createVNode(ElCheckboxGroup, mergeProps({
             "modelValue": modelValueCopy.value,

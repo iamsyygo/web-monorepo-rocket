@@ -29,9 +29,6 @@ $--menu-radius: 4px;
         border-right: none;
         user-select: none;
     }
-    .el-menu.el-menu--collapse {
-        /* padding: 5px 0; */
-    }
 
     .el-menu-item.is-active {
         background-color: var(--el-color-primary-light-7);
@@ -55,6 +52,16 @@ $--menu-radius: 4px;
     .el-sub-menu__title > span {
         opacity: 0;
         transition: all 0.3s;
+    }
+}
+
+.el-popper:has(.el-menu--popup) {
+    border: 0;
+    .el-menu-item {
+        margin: 0 6px;
+        height: 40px;
+        border-radius: $--menu-radius;
+        background-color: var(--el-color-primary-light-7);
     }
 }
 </style>

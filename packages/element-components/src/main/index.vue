@@ -16,6 +16,7 @@
             </template>
             <template #aside>
                 <Aside
+                    ref="aside"
                     :aside-width="option.asideWidth"
                     :menus="menus"
                     :activeMenuKey="route.path"
@@ -24,6 +25,10 @@
             </template>
             <template #main>
                 <Main :route="route" @click-tab="handleTabClick" @remove-tab="handleTabRemove"></Main>
+                <div :class="['toggle-collapse', aside?.collapse ? 'collapse' : '']" @click="onCollapse">
+                    <div class="toggle-collapse--one"></div>
+                    <div class="toggle-collapse--two"></div>
+                </div>
             </template>
         </AppArchitecture>
         <ElDrawer title="系统设置" v-model="visibleDrawer" direction="rtl" size="30%">
@@ -49,10 +54,13 @@ import { AsideProps } from './src/aside/type';
 import ThemeSetting from './src/ThemeSetting.vue';
 // import '../css/base-architecture.css';
 
+const aside = ref<InstanceType<typeof Aside>>();
+
 onBeforeMount(() => {
-    const appOptions = JSON.parse(localStorage.getItem('appOptions') || '{}');
-    if (appOptions) {
-        option.value = appOptions as ArchitectureOption;
+    const AppOptions = JSON.parse(localStorage.getItem('AppOptions') || '{}');
+    if (AppOptions) {
+        // option.value = AppOptions as ArchitectureOption;
+        Object.assign(option.value, AppOptions);
     }
 });
 
@@ -63,7 +71,14 @@ const { menus, router } = defineProps<{
 
 const visibleDrawer = ref(false);
 const openPalette = () => {
+    // 菜单需要展开
+    if (aside.value?.collapse) {
+        aside.value.onCollapse();
+    }
     visibleDrawer.value = true;
+};
+const onCollapse = () => {
+    aside.value?.onCollapse();
 };
 
 // 获取当前路由
@@ -94,10 +109,10 @@ const handleMenuCollapse = (width: number) => {
 };
 
 // 点击 tab 页签，被 Main 组件调用
-const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
+const handleTabClick = (_e: MouseEvent, tab: Tab, _index: number) => {
     router.push(tab.key);
 };
-const handleTabRemove = (lastKey: string, tab: Tab, index: number) => {
+const handleTabRemove = (lastKey: string, _tab: Tab, _index: number) => {
     router.push(lastKey);
 };
 
@@ -126,3 +141,53 @@ ${varStyle}
     },
 );
 </script>
+<style lang="scss" scoped>
+@mixin toggle-m($w) {
+    width: 5px;
+    height: 16px;
+    border-radius: 2px;
+    background-color: var(--el-color-info-light-7);
+    transform: translateY($w);
+    transition: all 0.3s;
+}
+
+@mixin toggle-t($r, $w) {
+    background-color: var(--el-color-primary-light-5);
+    transform: rotate($r) translateY($w);
+}
+
+.toggle-collapse {
+    cursor: pointer;
+    position: absolute;
+    z-index: 999;
+    left: 5px;
+    bottom: 5px;
+    display: flex;
+    flex-direction: column;
+    transform: translateX(-2px);
+
+    &:hover {
+        .toggle-collapse--one {
+            @include toggle-t(25deg, 2px);
+        }
+        .toggle-collapse--two {
+            @include toggle-t(-25deg, -2px);
+        }
+    }
+    &.collapse:hover {
+        .toggle-collapse--one {
+            @include toggle-t(-25deg, 2px);
+        }
+        .toggle-collapse--two {
+            @include toggle-t(25deg, -2px);
+        }
+    }
+
+    &--one {
+        @include toggle-m(5px);
+    }
+    &--two {
+        @include toggle-m(-5px);
+    }
+}
+</style>
