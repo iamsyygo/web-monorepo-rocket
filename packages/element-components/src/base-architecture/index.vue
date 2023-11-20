@@ -76,7 +76,8 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
 
 .el-aside--custom {
     z-index: 999;
-    overflow-y: scroll;
+    overflow: visible;
+    /* overflow-y: scroll; */
 }
 
 .system-app-architecture--ham {

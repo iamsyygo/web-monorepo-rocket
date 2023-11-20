@@ -10,10 +10,6 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<string>;
         required: true;
     };
-    collapse: {
-        type: import("vue").PropType<false>;
-        required: true;
-    };
 }, {
     collapse: import("vue").Ref<boolean>;
     onCollapse: () => void;
@@ -29,10 +25,6 @@ declare const _default: import("vue").DefineComponent<{
     };
     activeMenuKey: {
         type: import("vue").PropType<string>;
-        required: true;
-    };
-    collapse: {
-        type: import("vue").PropType<false>;
         required: true;
     };
 }>> & {

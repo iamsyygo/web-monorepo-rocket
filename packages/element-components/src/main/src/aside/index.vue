@@ -5,10 +5,10 @@
         :default-menu-path-active="activeMenuKey"
         :collapse="collapse"
     ></Menu>
-    <!-- <div :class="['toggle-collapse', collapse ? 'collapse' : '']" @click="onCollapse">
+    <div :class="['toggle-collapse', collapse ? 'collapse' : '']" @click="onCollapse">
         <div class="toggle-collapse--one"></div>
         <div class="toggle-collapse--two"></div>
-    </div> -->
+    </div>
 </template>
 
 <script setup lang="ts">
@@ -52,7 +52,8 @@ defineExpose({
     height: 100%;
 }
 
-.base-menu--content {
+.app-menu--content {
+    overflow-y: scroll;
     .el-sub-menu__title > .el-icon > span {
         font-style: normal;
     }
@@ -66,10 +67,10 @@ defineExpose({
         transition: all 0.3s;
     }
 }
-/* 
+
 @mixin toggle-m($w) {
-    width: 6px;
-    height: 20px;
+    width: 5px;
+    height: 25px;
     border-radius: 2px;
     background-color: var(--el-color-info-light-7);
     transform: translateY($w);
@@ -84,34 +85,35 @@ defineExpose({
 .toggle-collapse {
     cursor: pointer;
     position: absolute;
-    right: 0;
-    bottom: 5%;
+    right: -15px;
+    bottom: 50%;
     display: flex;
     flex-direction: column;
-    transform: translateX(-5px);
+    transform: translate(-5px, -50%);
 
     &:hover {
         .toggle-collapse--one {
-            @include toggle-t(25deg, 3px);
+            @include toggle-t(18deg, 3px);
         }
         .toggle-collapse--two {
-            @include toggle-t(-25deg, -3px);
+            @include toggle-t(-18deg, -3px);
         }
     }
-    &.collapse:hover {
-        .toggle-collapse--one {
-            @include toggle-t(-25deg, 3px);
-        }
-        .toggle-collapse--two {
-            @include toggle-t(25deg, -3px);
-        }
-    }
+}
 
-    &--one {
-        @include toggle-m(5px);
+.toggle-collapse.collapse:hover {
+    .toggle-collapse--one {
+        @include toggle-t(-18deg, 3px);
     }
-    &--two {
-        @include toggle-m(-5px);
+    .toggle-collapse--two {
+        @include toggle-t(18deg, -3px);
     }
-} */
+}
+
+.toggle-collapse--one {
+    @include toggle-m(5px);
+}
+.toggle-collapse--two {
+    @include toggle-m(-5px);
+}
 </style>

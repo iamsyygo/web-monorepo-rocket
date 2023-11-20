@@ -1,5 +1,5 @@
 import { _ as _export_sfc, h as handleElementTheme, z as zhCn, w as withInstall } from "../vendor.js";
-import { openBlock, createElementBlock, createElementVNode, defineComponent, renderSlot, createVNode, unref, withCtx, useCssVars, ref, computed, shallowRef, watch, resolveComponent, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps, reactive, isRef, normalizeClass, createCommentVNode, createTextVNode, pushScopeId, popScopeId, onBeforeMount } from "vue";
+import { openBlock, createElementBlock, createElementVNode, defineComponent, renderSlot, createVNode, unref, withCtx, useCssVars, ref, computed, shallowRef, watch, resolveComponent, Transition, createBlock, KeepAlive, resolveDynamicComponent, Fragment, renderList, toDisplayString, mergeProps, normalizeClass, pushScopeId, popScopeId, reactive, isRef, createCommentVNode, createTextVNode, onBeforeMount } from "vue";
 import { ElIcon, ElSubMenu, ElMenuItem, ElMenu, ElRow, ElCol, ElButton, ElConfigProvider, ElDrawer } from "element-plus";
 import { A as AoeBaseArchitecture } from "../base-architecture/base-architecture.js";
 import { A as AoeTabPanel } from "../tab-panel/tab-panel.js";
@@ -331,7 +331,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
   }
 });
 const Main_vue_vue_type_style_index_0_scoped_76fbc6e8_lang = "";
-const Main$1 = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-76fbc6e8"]]);
+const Main = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-76fbc6e8"]]);
 const iconSize = 18;
 const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   ...{
@@ -407,7 +407,7 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
       return openBlock(), createBlock(unref(ElMenu), mergeProps({
         "default-active": _ctx.defaultMenuPathActive,
         collapse: _ctx.collapse,
-        class: "base-menu--content",
+        class: "app-menu--content",
         router: ""
       }, _ctx.$attrs), {
         default: withCtx(() => [
@@ -419,6 +419,13 @@ const _sfc_main$3 = /* @__PURE__ */ defineComponent({
   }
 });
 const Menu_vue_vue_type_style_index_0_lang = "";
+const _withScopeId$1 = (n) => (pushScopeId("data-v-6200c05e"), n = n(), popScopeId(), n);
+const _hoisted_1$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createElementVNode("div", { class: "toggle-collapse--one" }, null, -1));
+const _hoisted_2$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createElementVNode("div", { class: "toggle-collapse--two" }, null, -1));
+const _hoisted_3$1 = [
+  _hoisted_1$1,
+  _hoisted_2$1
+];
 const miniMenuWidth = 58;
 const _sfc_main$2 = /* @__PURE__ */ defineComponent({
   __name: "index",
@@ -445,20 +452,26 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
       onCollapse
     });
     return (_ctx, _cache) => {
-      return openBlock(), createBlock(_sfc_main$3, {
-        "aside-width": _ctx.asideWidth,
-        menus: _ctx.menus,
-        "default-menu-path-active": _ctx.activeMenuKey,
-        collapse: collapse.value
-      }, null, 8, ["aside-width", "menus", "default-menu-path-active", "collapse"]);
+      return openBlock(), createElementBlock(Fragment, null, [
+        createVNode(_sfc_main$3, {
+          "aside-width": _ctx.asideWidth,
+          menus: _ctx.menus,
+          "default-menu-path-active": _ctx.activeMenuKey,
+          collapse: collapse.value
+        }, null, 8, ["aside-width", "menus", "default-menu-path-active", "collapse"]),
+        createElementVNode("div", {
+          class: normalizeClass(["toggle-collapse", collapse.value ? "collapse" : ""]),
+          onClick: onCollapse
+        }, _hoisted_3$1, 2)
+      ], 64);
     };
   }
 });
-const index_vue_vue_type_style_index_0_scoped_b4259144_lang = "";
-const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-b4259144"]]);
-const _withScopeId$1 = (n) => (pushScopeId("data-v-0f816e63"), n = n(), popScopeId(), n);
-const _hoisted_1$1 = { class: "app-layout-type--wrapper" };
-const _hoisted_2$1 = {
+const index_vue_vue_type_style_index_0_scoped_6200c05e_lang = "";
+const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-6200c05e"]]);
+const _withScopeId = (n) => (pushScopeId("data-v-0f816e63"), n = n(), popScopeId(), n);
+const _hoisted_1 = { class: "app-layout-type--wrapper" };
+const _hoisted_2 = {
   key: 0,
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 24 24",
@@ -469,7 +482,7 @@ const _hoisted_2$1 = {
   "stroke-width": "2",
   class: "layout-type--active"
 };
-const _hoisted_3$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ createElementVNode("path", {
+const _hoisted_3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("path", {
   d: "M5 12L9 16 19 6",
   fill: "none",
   stroke: "black",
@@ -478,7 +491,7 @@ const _hoisted_3$1 = /* @__PURE__ */ _withScopeId$1(() => /* @__PURE__ */ create
   "stroke-linejoin": "round"
 }, null, -1));
 const _hoisted_4 = [
-  _hoisted_3$1
+  _hoisted_3
 ];
 const _hoisted_5 = ["effect"];
 const _hoisted_6 = ["effect"];
@@ -573,11 +586,11 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
                     onClick: ($event) => handleChangeLayout(item)
                   }, {
                     default: withCtx(() => [
-                      createElementVNode("div", _hoisted_1$1, [
+                      createElementVNode("div", _hoisted_1, [
                         createElementVNode("div", {
                           class: normalizeClass(["layout-type--content", `${item.value}`])
                         }, [
-                          _ctx.systemOption.typography === item.value && _ctx.systemOption.effect === item.effect ? (openBlock(), createElementBlock("svg", _hoisted_2$1, _hoisted_4)) : createCommentVNode("", true),
+                          _ctx.systemOption.typography === item.value && _ctx.systemOption.effect === item.effect ? (openBlock(), createElementBlock("svg", _hoisted_2, _hoisted_4)) : createCommentVNode("", true),
                           createElementVNode("div", {
                             class: "layout-type--head",
                             effect: `[${item.effect}]`
@@ -624,13 +637,6 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
 });
 const ThemeSetting_vue_vue_type_style_index_0_scoped_0f816e63_lang = "";
 const ThemeSetting = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-0f816e63"]]);
-const _withScopeId = (n) => (pushScopeId("data-v-c99e1086"), n = n(), popScopeId(), n);
-const _hoisted_1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("div", { class: "toggle-collapse--one" }, null, -1));
-const _hoisted_2 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("div", { class: "toggle-collapse--two" }, null, -1));
-const _hoisted_3 = [
-  _hoisted_1,
-  _hoisted_2
-];
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "index",
   props: {
@@ -652,10 +658,6 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
         aside.value.onCollapse();
       }
       visibleDrawer.value = true;
-    };
-    const onCollapse = () => {
-      var _a;
-      (_a = aside.value) == null ? void 0 : _a.onCollapse();
     };
     const route = computed(() => {
       return __props.router.currentRoute.value;
@@ -715,13 +717,13 @@ ${varStyle}
             header: withCtx(() => [
               createVNode(Header, { onPalette: openPalette }, {
                 left: withCtx(() => [
-                  renderSlot(_ctx.$slots, "head-left", {}, void 0, true)
+                  renderSlot(_ctx.$slots, "head-left")
                 ]),
                 center: withCtx(() => [
-                  renderSlot(_ctx.$slots, "head-center", {}, void 0, true)
+                  renderSlot(_ctx.$slots, "head-center")
                 ]),
                 right: withCtx(() => [
-                  renderSlot(_ctx.$slots, "head-right", {}, void 0, true)
+                  renderSlot(_ctx.$slots, "head-right")
                 ]),
                 _: 3
               })
@@ -736,20 +738,13 @@ ${varStyle}
                 onCollapse: handleMenuCollapse
               }, null, 8, ["aside-width", "menus", "activeMenuKey"])
             ]),
-            main: withCtx(() => {
-              var _a;
-              return [
-                createVNode(Main$1, {
-                  route: route.value,
-                  onClickTab: handleTabClick,
-                  onRemoveTab: handleTabRemove
-                }, null, 8, ["route"]),
-                createElementVNode("div", {
-                  class: normalizeClass(["toggle-collapse", ((_a = aside.value) == null ? void 0 : _a.collapse) ? "collapse" : ""]),
-                  onClick: onCollapse
-                }, _hoisted_3, 2)
-              ];
-            }),
+            main: withCtx(() => [
+              createVNode(Main, {
+                route: route.value,
+                onClickTab: handleTabClick,
+                onRemoveTab: handleTabRemove
+              }, null, 8, ["route"])
+            ]),
             _: 3
           }, 8, ["option"]),
           createVNode(unref(ElDrawer), {
@@ -774,9 +769,7 @@ ${varStyle}
     };
   }
 });
-const index_vue_vue_type_style_index_0_scoped_c99e1086_lang = "";
-const Main = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-c99e1086"]]);
-const AoeMain = withInstall(Main);
+const AoeMain = withInstall(_sfc_main);
 export {
   AoeMain as A
 };

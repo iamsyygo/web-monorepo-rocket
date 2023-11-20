@@ -2,7 +2,7 @@
     <el-menu
         :default-active="defaultMenuPathActive"
         :collapse="collapse"
-        class="base-menu--content"
+        class="app-menu--content"
         router
         v-bind="$attrs"
     >
@@ -40,7 +40,7 @@ $--menu-radius: 4px;
         border-radius: $--menu-radius;
     }
 }
-.base-menu--content .el-sub-menu__title > .el-icon {
+.app-menu--content .el-sub-menu__title > .el-icon {
     & > span {
         font-style: normal;
     }
