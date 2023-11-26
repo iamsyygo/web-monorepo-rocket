@@ -1,7 +1,9 @@
 .tabs-wrapper {
   box-sizing: border-box;
   padding-top: 5px;
-  background-color: #eaebef;
+  background-color: var(--el-color-primary-light-8);
+  /* background-color: #ebf1fd; */
+  /* background-color: #d2dffc; */
   position: relative;
   /* divider */
 }
@@ -65,17 +67,17 @@
   color: var(--el-color-primary, #409eff);
 }
 .tabs-wrapper .tabs-item.active .tabs-close {
-  background-color: #fff;
+  background-color: #f9f9f9;
 }
 .tabs-wrapper .tabs-item.active .tabs-background-divider {
   display: none;
 }
 .tabs-wrapper .tabs-item.active .tabs-background-content {
-  background-color: #fff;
+  background-color: #f9f9f9;
 }
 .tabs-wrapper .tabs-item.active .tabs-background-before,
 .tabs-wrapper .tabs-item.active .tabs-background-after {
-  fill: #fff;
+  fill: #f9f9f9;
 }
 .tabs-wrapper .tabs-item:first-of-type .tabs-background-divider::before {
   display: none;

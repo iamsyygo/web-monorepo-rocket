@@ -21,11 +21,14 @@ const { menus = [], defaultMenuPathActive, collapse } = defineProps<MenuProps>()
 <style lang="scss">
 $--menu-radius: 4px;
 .el-aside--custom.el-aside {
+    & .el-sub-menu,
+    & .el-menu-item {
+        margin-bottom: 3px;
+    }
     .el-menu.el-menu--vertical,
     .el-sub-menu .el-menu-item {
         --el-menu-item-height: 40px;
         --el-menu-sub-item-height: 40px;
-        /* padding: 5px 10px; */
         border-right: none;
         user-select: none;
     }
@@ -56,11 +59,14 @@ $--menu-radius: 4px;
 }
 
 .el-popper:has(.el-menu--popup) {
-    border: 0;
+    border: 0 !important;
     .el-menu-item {
         margin: 0 6px;
         height: 40px;
         border-radius: $--menu-radius;
+        margin-bottom: 3px;
+    }
+    .el-menu-item.is-active {
         background-color: var(--el-color-primary-light-7);
     }
 }

@@ -564,7 +564,9 @@ export default defineComponent({
 
     box-sizing: border-box;
     padding-top: 5px;
-    background-color: #eaebef;
+    background-color: var(--el-color-primary-light-8);
+    /* background-color: #ebf1fd; */
+    /* background-color: #d2dffc; */
     position: relative;
 
     .tabs-content {
@@ -641,7 +643,7 @@ export default defineComponent({
             }
 
             .tabs-close {
-                background-color: #fff;
+                background-color: #f9f9f9;
             }
 
             .tabs-background-divider {
@@ -649,12 +651,12 @@ export default defineComponent({
             }
 
             .tabs-background-content {
-                background-color: #fff;
+                background-color: #f9f9f9;
             }
 
             .tabs-background-before,
             .tabs-background-after {
-                fill: #fff;
+                fill: #f9f9f9;
             }
         }
 

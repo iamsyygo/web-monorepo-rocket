@@ -1,6 +1,14 @@
 
-.illustration--not-found[data-v-09631c44] {
+.illustration--not-found[data-v-d45d916c] {
+    box-sizing: border-box;
     width: 100%;
-    height: 70vh;
+    height: calc(100% - 10px);
+    margin: 0 auto;
+}
+
+.illustration--not-found[data-v-e41452f8] {
+    box-sizing: border-box;
+    width: 100%;
+    height: calc(100% - 10px);
     margin: 0 auto;
 }

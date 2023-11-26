@@ -5,14 +5,20 @@
         :default-menu-path-active="activeMenuKey"
         :collapse="collapse"
     ></Menu>
-    <div :class="['toggle-collapse', collapse ? 'collapse' : '']" @click="onCollapse">
+    <!-- <div :class="['toggle-collapse', collapse ? 'collapse' : '']" @click="onCollapse">
         <div class="toggle-collapse--one"></div>
         <div class="toggle-collapse--two"></div>
-    </div>
+    </div> -->
+    <el-icon class="toggle-collapse--icon" :size="12" @click="onCollapse">
+        <ArrowRightBold v-if="collapse" />
+        <ArrowLeftBold v-else />
+    </el-icon>
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue';
+import { ElIcon } from 'element-plus';
+import { ArrowLeftBold, ArrowRightBold } from '@element-plus/icons-vue';
 import Menu from './Menu.vue';
 import { AsideProps } from './type';
 
@@ -67,7 +73,7 @@ defineExpose({
         transition: all 0.3s;
     }
 }
-
+/* 
 @mixin toggle-m($w) {
     width: 5px;
     height: 25px;
@@ -78,7 +84,7 @@ defineExpose({
 }
 
 @mixin toggle-t($r, $w) {
-    background-color: var(--el-color-primary);
+    background-color: var(--el-color-info);
     transform: rotate($r) translateY($w);
 }
 
@@ -93,20 +99,20 @@ defineExpose({
 
     &:hover {
         .toggle-collapse--one {
-            @include toggle-t(18deg, 3px);
+            @include toggle-t(13deg, 3px);
         }
         .toggle-collapse--two {
-            @include toggle-t(-18deg, -3px);
+            @include toggle-t(-13deg, -3px);
         }
     }
 }
 
 .toggle-collapse.collapse:hover {
     .toggle-collapse--one {
-        @include toggle-t(-18deg, 3px);
+        @include toggle-t(-13deg, 3px);
     }
     .toggle-collapse--two {
-        @include toggle-t(18deg, -3px);
+        @include toggle-t(13deg, -3px);
     }
 }
 
@@ -115,5 +121,22 @@ defineExpose({
 }
 .toggle-collapse--two {
     @include toggle-m(-5px);
+} */
+
+.toggle-collapse--icon {
+    cursor: pointer;
+    position: absolute;
+    right: -8px;
+    bottom: 10%;
+    width: 18px;
+    height: 18px;
+    color: #fff;
+    background-color: var(--el-color-primary-light-5);
+    border-radius: 50%;
+    transition: all 0.3s ease-in-out;
+    &:hover {
+        background-color: var(--el-color-primary-light-3);
+        transform: scale(1.1);
+    }
 }
 </style>

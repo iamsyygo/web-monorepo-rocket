@@ -29,6 +29,7 @@ export default defineConfig({
                 /^@formkit\/auto\-animate.*/,
                 'draggabilly',
                 'animate.css',
+                '@element-plus/icons-vue',
             ],
             input: ['src/index.ts'],
             output: [

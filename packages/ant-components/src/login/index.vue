@@ -41,6 +41,10 @@ const formModel = ref({
     remember: false,
 });
 
+const emit = defineEmits<{
+    signin: [model: typeof formModel.value];
+}>();
+
 onMounted(() => {
     const cacheSignin = localStorage.getItem('cacheSignin');
     if (cacheSignin) {
@@ -55,10 +59,11 @@ const onSignin = () => {
     const { username, password, remember } = formModel.value;
 
     if (remember) {
-        localStorage.setItem('cacheSignin', JSON.stringify({ username, password }));
+        localStorage.setItem('CacheSignin', JSON.stringify({ username, password }));
     } else {
-        localStorage.removeItem('cacheSignin');
+        localStorage.removeItem('CacheSignin');
     }
+    emit('signin', formModel.value);
 };
 </script>
 

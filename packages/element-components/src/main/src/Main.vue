@@ -30,8 +30,7 @@ import { Tab } from '../../tab-panel/index.vue';
 
 export type Tabs = Tab[];
 
-const { backgroundColor = '#fff', route } = defineProps<{
-    // tabs: Tab[];
+const { backgroundColor = '#f9f9f9', route } = defineProps<{
     route: RouteLocationNormalizedLoaded;
     backgroundColor?: string;
 }>();
@@ -47,14 +46,13 @@ const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
 const tabs = ref<Tab[]>([]);
 const activeTabIndex = ref<string>('');
 
-// const include = ref<string[]>([]);
 const include = computed(() => {
     return tabs.value.map((tab) => tab.name);
 });
 
 activeTabIndex.value = route.path;
 tabs.value.push({
-    label: (route.meta.title || '') as string,
+    label: (route.meta.name || route.meta.title || '') as string,
     key: route.path,
     icon: (route.meta.icon || '') as string,
     name: route.name as string,
@@ -65,7 +63,7 @@ watch(
     () => route.path,
     (path) => {
         tabPanelRef.value?.addTab({
-            label: (route.meta.title || '') as string,
+            label: (route.meta.name || route.meta.title || '') as string,
             key: path,
             icon: (route.meta.icon || '') as string,
             name: route.name as string,
@@ -87,6 +85,8 @@ watch(
     width: 100%;
 }
 .main-content--box {
+    box-sizing: border-box;
+    height: calc(100% - 35px);
     flex: 1;
     padding: 10px 10px 0;
     background-color: v-bind(backgroundColor);

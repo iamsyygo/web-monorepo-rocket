@@ -9,7 +9,19 @@ import { VNodeProps } from 'vue';
 
 export declare const AoeForm: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>>, {}, {}>> & Record<string, any>;
 
-export declare const AoeLogin: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>>, {}, {}>> & Record<string, any>;
+export declare const AoeLogin: SFCWithInstall<DefineComponent<    {}, {}, {}, {}, {}, ComponentOptionsMixin, ComponentOptionsMixin, {
+signin: (model: {
+username: string;
+password: string;
+remember: boolean;
+}) => void;
+}, string, VNodeProps & AllowedComponentProps & ComponentCustomProps, Readonly<ExtractPropTypes<    {}>> & {
+onSignin?: ((model: {
+username: string;
+password: string;
+remember: boolean;
+}) => any) | undefined;
+}, {}, {}>> & Record<string, any>;
 
 export declare const AoeSymbolIcon: SFCWithInstall<DefineComponent<    {
 name: {

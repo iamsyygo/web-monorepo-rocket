@@ -47,7 +47,7 @@ export declare const AoeTabPanel: import("@aoe/utils").SFCWithInstall<import("vu
     init: () => void;
     addTab: (tab: import("./index.vue").Tab) => void;
     removeTab: (tabKey: string | number) => void;
-}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, ("click" | "update:modelValue" | "remove" | "dragstart" | "dragging" | "dragend" | "swap" | "contextmenu")[], "click" | "update:modelValue" | "remove" | "dragstart" | "dragging" | "dragend" | "swap" | "contextmenu", import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
+}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, ("update:modelValue" | "click" | "contextmenu" | "remove" | "dragstart" | "dragging" | "dragend" | "swap")[], "update:modelValue" | "click" | "contextmenu" | "remove" | "dragstart" | "dragging" | "dragend" | "swap", import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     modelValue: {
         type: (StringConstructor | NumberConstructor)[];
         default: string;

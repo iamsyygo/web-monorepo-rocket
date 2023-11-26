@@ -15,7 +15,9 @@
     "license": "ISC",
     "dependencies": {
         "@aoe/utils": "workspace:^",
+        "@element-plus/icons-vue": "^2.1.0",
         "@formkit/auto-animate": "^0.8.1",
+        "@vueuse/core": "^10.6.1",
         "animate.css": "^4.1.1",
         "ant-design-vue": "^4.0.6",
         "color": "^4.2.3",

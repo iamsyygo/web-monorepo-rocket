@@ -3,14 +3,14 @@
         <el-sub-menu v-if="menu.children?.length" :index="menu.path">
             <template #title>
                 <el-icon :size="iconSize"><symbol-icon :name="menu.icon"></symbol-icon></el-icon>
-                <span>{{ menu.name }}</span>
+                <span class="menu-text--wrapper">{{ menu.name }}</span>
             </template>
             <MenuContent :menus="menu.children"></MenuContent>
         </el-sub-menu>
         <el-menu-item v-else :index="menu.path" :disabled="menu.disabled">
             <el-icon :size="iconSize"><symbol-icon :name="menu.icon"></symbol-icon></el-icon>
             <template #title>
-                <span>{{ menu.name }}</span>
+                <span class="menu-text--wrapper">{{ menu.name }}</span>
             </template>
         </el-menu-item>
     </template>
@@ -31,3 +31,16 @@ const { menus } = defineProps<{
 
 const iconSize = 18;
 </script>
+<style lang="scss" scoped>
+.menu-text--wrapper {
+    display: inline-block;
+    width: 100%;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+.el-popper .menu-text--wrapper {
+    display: block;
+}
+</style>

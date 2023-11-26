@@ -1363,8 +1363,9 @@
 
 <style scoped>
 .illustration--not-found {
+    box-sizing: border-box;
     width: 100%;
-    height: 70vh;
+    height: calc(100% - 10px);
     margin: 0 auto;
 }
 </style>
