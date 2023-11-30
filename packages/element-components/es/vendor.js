@@ -1572,7 +1572,6 @@ const _export_sfc = (sfc, props) => {
   }
   return target;
 };
-const elDrawer = "";
 /*! Element Plus v2.4.1 */
 var zhCn = {
   name: "zh-cn",
@@ -1701,6 +1700,8 @@ var zhCn = {
     }
   }
 };
+const elDrawer = "";
+const elDropdownMenu = "";
 export {
   _export_sfc as _,
   handleElementTheme as h,

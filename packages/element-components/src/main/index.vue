@@ -24,7 +24,7 @@
                 ></Aside>
             </template>
             <template #main>
-                <Main :route="route" @click-tab="handleTabClick" @remove-tab="handleTabRemove"></Main>
+                <Main :route="route" @click-tab="handleTabClick"></Main>
             </template>
         </AppArchitecture>
         <ElDrawer title="系统设置" v-model="visibleDrawer" direction="rtl" size="30%">
@@ -35,26 +35,26 @@
 
 <script setup lang="ts">
 import { ElConfigProvider, ElDrawer } from 'element-plus';
-import 'element-plus/theme-chalk/el-drawer.css';
-import { handleElementTheme } from '@aoe/utils';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
-import { Tab } from '@/tab-panel/index.vue';
-import { computed, onBeforeMount, ref, watch } from 'vue';
+import 'element-plus/theme-chalk/el-drawer.css';
 import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';
+import { computed, onBeforeMount, ref, watch } from 'vue';
+
+import { Tab } from '@/tab-panel/index.vue';
+import { handleElementTheme } from '@aoe/utils';
 import AppArchitecture from '../base-architecture';
 import { ArchitectureOption } from '../base-architecture/index.vue';
-import Header from './src/header/index.vue';
 import Main from './src/Main.vue';
+import ThemeSetting from './src/ThemeSetting.vue';
 import Aside from './src/aside/index.vue';
 import { AsideProps } from './src/aside/type';
-import ThemeSetting from './src/ThemeSetting.vue';
+import Header from './src/header/index.vue';
 
 const aside = ref<InstanceType<typeof Aside>>();
 
 onBeforeMount(() => {
     const AppOptions = JSON.parse(localStorage.getItem('AppOptions') || '{}');
     if (AppOptions) {
-        // option.value = AppOptions as ArchitectureOption;
         Object.assign(option.value, AppOptions);
     }
 });
@@ -84,7 +84,7 @@ const option = ref<ArchitectureOption>({
     headerHeight: 60,
     typography: 'ham',
     headerStyle: {
-        background: 'linear-gradient(90deg, #102EFF 0%, #53A8FF 100%)',
+        background: 'linear-gradient(90deg, var(--el-color-primary) 0%, var(--el-color-primary-light-7) 100%)',
         boxShadow: '0 1px 4px rgba(0, 21, 41, .08)',
     },
     asideStyle: {
@@ -101,11 +101,8 @@ const handleMenuCollapse = (width: number) => {
 };
 
 // 点击 tab 页签，被 Main 组件调用
-const handleTabClick = (_e: MouseEvent, tab: Tab, _index: number) => {
+const handleTabClick = (_e: MouseEvent, tab: Tab) => {
     router.push(tab.key);
-};
-const handleTabRemove = (lastKey: string, _tab: Tab, _index: number) => {
-    router.push(lastKey);
 };
 
 watch(

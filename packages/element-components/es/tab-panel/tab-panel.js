@@ -1,8 +1,321 @@
 import { _ as _export_sfc, w as withInstall } from "../vendor.js";
 import Draggabilly from "draggabilly";
-import { defineComponent, reactive, ref, onMounted, onUnmounted, nextTick, resolveComponent, openBlock, createElementBlock, createElementVNode, Fragment, renderList, normalizeClass, normalizeStyle, withDirectives, withModifiers, vShow, renderSlot, createVNode, withCtx, createCommentVNode, createTextVNode, toDisplayString, createStaticVNode } from "vue";
-import { ElIcon } from "element-plus";
+import { defineComponent, ref, withDirectives, openBlock, createElementBlock, createVNode, unref, withCtx, renderSlot, mergeModels, useCssVars, useModel, onMounted, Fragment, renderList, withModifiers, normalizeClass, createCommentVNode, createElementVNode, toDisplayString, pushScopeId, popScopeId, reactive, onUnmounted, nextTick, resolveComponent, normalizeStyle, vShow, createTextVNode, createStaticVNode } from "vue";
+import { ElTooltip, ClickOutside, ElIcon } from "element-plus";
 import { A as AoeSymbolIcon } from "../symbol-icon/symbol-icon.js";
+import { vAutoAnimate } from "@formkit/auto-animate/vue";
+const dropdownItems = [
+  {
+    icon: "aoe-fire",
+    label: "关闭",
+    value: "close"
+  },
+  {
+    icon: "aoe-fire",
+    label: "重新加载",
+    value: "reload"
+  },
+  {
+    icon: "aoe-disc",
+    label: "关闭其他",
+    value: "close-rest"
+  },
+  {
+    icon: "aoe-chicago-bulls-style-uniform",
+    label: "关闭右侧",
+    value: "close-right"
+  },
+  {
+    icon: "aoe-chicago-bulls-style-uniform",
+    label: "关闭左侧",
+    value: "close-left"
+  }
+];
+const _sfc_main$2 = /* @__PURE__ */ defineComponent({
+  __name: "popover-menu",
+  setup(__props, { expose: __expose }) {
+    const visible = ref(false);
+    const triggerRef = ref({
+      getBoundingClientRect() {
+        return domRect.value;
+      }
+    });
+    let trigger = null;
+    const onClickOutside = () => {
+      if (trigger) {
+        trigger = null;
+        return;
+      }
+      visible.value = false;
+    };
+    const domRect = ref();
+    const show = (el) => {
+      trigger = el;
+      domRect.value = el.getBoundingClientRect();
+      visible.value = true;
+    };
+    __expose({ show });
+    return (_ctx, _cache) => {
+      return withDirectives((openBlock(), createElementBlock("div", null, [
+        createVNode(unref(ElTooltip), {
+          visible: visible.value,
+          "onUpdate:visible": _cache[0] || (_cache[0] = ($event) => visible.value = $event),
+          placement: "bottom",
+          effect: "light",
+          trigger: "click",
+          transition: "popper-meun-fade",
+          "virtual-triggering": "",
+          "virtual-ref": triggerRef.value,
+          "popper-class": "popper-meun"
+        }, {
+          content: withCtx(() => [
+            renderSlot(_ctx.$slots, "default", {}, void 0, true)
+          ]),
+          _: 3
+        }, 8, ["visible", "virtual-ref"])
+      ])), [
+        [unref(ClickOutside), onClickOutside]
+      ]);
+    };
+  }
+});
+const popoverMenu_vue_vue_type_style_index_0_scoped_dc766a5d_lang = "";
+const PopoverMenu = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-dc766a5d"]]);
+const _withScopeId = (n) => (pushScopeId("data-v-47a0d498"), n = n(), popScopeId(), n);
+const _hoisted_1$1 = { class: "tab-wrapper" };
+const _hoisted_2$1 = ["onClick", "onContextmenu"];
+const _hoisted_3$1 = { class: "tab-icon" };
+const _hoisted_4$1 = { class: "tab-label" };
+const _hoisted_5$1 = ["onClick"];
+const _hoisted_6$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("svg", {
+  xmlns: "http://www.w3.org/2000/svg",
+  width: "8",
+  height: "8",
+  viewBox: "0 0 8 8"
+}, [
+  /* @__PURE__ */ createElementVNode("line", {
+    x1: "0",
+    y1: "0",
+    x2: "8",
+    y2: "8",
+    stroke: "black",
+    "stroke-width": "1"
+  }),
+  /* @__PURE__ */ createElementVNode("line", {
+    x1: "0",
+    y1: "8",
+    x2: "8",
+    y2: "0",
+    stroke: "black",
+    "stroke-width": "1"
+  })
+], -1));
+const _hoisted_7$1 = [
+  _hoisted_6$1
+];
+const _hoisted_8$1 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("svg", {
+  class: "tab-radius-before",
+  width: "7",
+  height: "7"
+}, [
+  /* @__PURE__ */ createElementVNode("path", { d: "M 0 7 A 7 7 0 0 0 7 0 L 7 7 Z" })
+], -1));
+const _hoisted_9 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("svg", {
+  class: "tab-radius-after",
+  width: "7",
+  height: "7"
+}, [
+  /* @__PURE__ */ createElementVNode("path", { d: "M 0 0 A 7 7 0 0 0 7 7 L 0 7 Z" })
+], -1));
+const _hoisted_10 = [
+  _hoisted_8$1,
+  _hoisted_9
+];
+const _hoisted_11 = { class: "tab-popover-menu" };
+const _hoisted_12 = ["onClick"];
+const _sfc_main$1 = /* @__PURE__ */ defineComponent({
+  __name: "tab-panel-pro",
+  props: mergeModels({
+    width: { default: 180 },
+    height: { default: 30 },
+    backgroundColor: { default: "var(--el-color-primary-light-7)" },
+    highlightBgColor: { default: "#fff" },
+    highlightFontColor: {},
+    fontSize: { default: 14 },
+    radius: { default: 8 },
+    hoverBg: { default: "var(--el-color-primary-light-3)" },
+    append: {},
+    tabs: {},
+    props: {},
+    modelValue: {}
+  }, {
+    "modelValue": {
+      required: true
+      // local: false,
+    },
+    "tabs": {
+      local: false
+    }
+  }),
+  emits: mergeModels(["contextmenu", "click"], ["update:modelValue", "update:tabs"]),
+  setup(__props, { emit: __emit }) {
+    useCssVars((_ctx) => ({
+      "3f94e151": props.width,
+      "abe3ab32": props.radius,
+      "27493342": props.highlightBgColor,
+      "99900ec0": props.backgroundColor,
+      "cd8f6208": props.height,
+      "76d23d85": props.fontSize,
+      "c0cf2128": props.hoverBg
+    }));
+    const props = __props;
+    const modelValue = useModel(__props, "modelValue");
+    const modelTabs = useModel(__props, "tabs", { local: false });
+    const emits = __emit;
+    const autoAnimateOption = {
+      easing: "ease-in-out",
+      duration: 300,
+      disrespectUserMotionPreference: true
+    };
+    const handleClick = (e, tab) => {
+      e.stopPropagation();
+      modelValue.value = tab[props.props["key"]];
+      emits("click", e, tab);
+    };
+    const popoverMenu = ref();
+    let currentIndex = 0;
+    const handleContextMenu = (e, tab, i) => {
+      currentIndex = i;
+      popoverMenu.value.show(e.currentTarget);
+      emits("contextmenu", e, tab);
+    };
+    const handleMenuClick = (cmd) => {
+      var _a, _b, _c, _d, _e, _f, _g, _h;
+      if (((_a = modelTabs.value) == null ? void 0 : _a.length) === 1)
+        return;
+      switch (cmd) {
+        case "close":
+          onClosed(currentIndex);
+          break;
+        case "close-rest":
+          (_b = modelTabs.value) == null ? void 0 : _b.splice(currentIndex + 1);
+          (_c = modelTabs.value) == null ? void 0 : _c.splice(0, currentIndex);
+          modelValue.value = (_d = modelTabs.value) == null ? void 0 : _d[0][props.props["key"]];
+          break;
+        case "close-left":
+          if (currentIndex == 0)
+            break;
+          (_e = modelTabs.value) == null ? void 0 : _e.splice(0, currentIndex);
+          modelValue.value = (_f = modelTabs.value) == null ? void 0 : _f[0][props.props["key"]];
+          break;
+        case "close-right":
+          (_g = modelTabs.value) == null ? void 0 : _g.splice(currentIndex + 1);
+          modelValue.value = (_h = modelTabs.value) == null ? void 0 : _h[currentIndex][props.props["key"]];
+          break;
+      }
+    };
+    const onClosed = (i) => {
+      var _a, _b, _c, _d;
+      if (((_a = modelTabs.value) == null ? void 0 : _a.length) === 1)
+        return;
+      const closeKey = (_b = modelTabs.value) == null ? void 0 : _b[i][props.props["key"]];
+      (_c = modelTabs.value) == null ? void 0 : _c.splice(i, 1);
+      if (closeKey !== modelValue.value) {
+        return;
+      }
+      const acKey = (_d = modelTabs.value) == null ? void 0 : _d[i - 1][props.props["key"]];
+      modelValue.value = acKey;
+    };
+    const tabRef = ref();
+    const itemRef = (bool, i, _e) => {
+      if (bool && i < modelTabs.value.length) {
+        console.log(modelValue.value, i, modelTabs.value);
+        let offsetX = 7;
+        const gap = 5;
+        if (tabRef.value) {
+          offsetX = offsetX + (gap + props.width) * i;
+          tabRef.value.style.left = offsetX + "px";
+        }
+      }
+    };
+    onMounted(() => {
+    });
+    return (_ctx, _cache) => {
+      return openBlock(), createElementBlock(Fragment, null, [
+        withDirectives((openBlock(), createElementBlock("div", _hoisted_1$1, [
+          (openBlock(true), createElementBlock(Fragment, null, renderList(modelTabs.value, (tab, idx) => {
+            var _a;
+            return openBlock(), createElementBlock("div", {
+              key: modelTabs.value[props.props["key"]],
+              onClick: (e) => handleClick(e, tab),
+              onContextmenu: withModifiers((e) => handleContextMenu(e, tab, idx), ["prevent", "stop"]),
+              class: normalizeClass({
+                "tab-item-ctn": true,
+                active: tab[props.props["key"]] === props.modelValue
+              }),
+              ref_for: true,
+              ref: (e) => itemRef(tab[props.props["key"]] === props.modelValue, idx)
+            }, [
+              tab[props.props["key"]] === props.modelValue ? (openBlock(), createElementBlock(Fragment, { key: 0 }, [], 64)) : createCommentVNode("", true),
+              createElementVNode("div", _hoisted_3$1, [
+                createVNode(unref(ElIcon), { size: 14 }, {
+                  default: withCtx(() => [
+                    createVNode(unref(AoeSymbolIcon), { name: "aoe-npm" })
+                  ]),
+                  _: 1
+                })
+              ]),
+              createElementVNode("div", _hoisted_4$1, toDisplayString(tab[props.props.label]), 1),
+              ((_a = modelTabs.value) == null ? void 0 : _a.length) !== 1 ? (openBlock(), createElementBlock("div", {
+                key: 1,
+                class: "tab-close",
+                onClick: withModifiers(($event) => onClosed(idx), ["stop", "prevent"])
+              }, _hoisted_7$1, 8, _hoisted_5$1)) : createCommentVNode("", true)
+            ], 42, _hoisted_2$1);
+          }), 128)),
+          createElementVNode("div", {
+            class: "tab-item-ctn-active",
+            ref_key: "tabRef",
+            ref: tabRef
+          }, _hoisted_10, 512)
+        ])), [
+          [unref(vAutoAnimate), autoAnimateOption]
+        ]),
+        createVNode(PopoverMenu, {
+          ref_key: "popoverMenu",
+          ref: popoverMenu
+        }, {
+          default: withCtx(() => [
+            createElementVNode("ul", _hoisted_11, [
+              (openBlock(true), createElementBlock(Fragment, null, renderList(unref(dropdownItems), (item) => {
+                var _a;
+                return openBlock(), createElementBlock("li", {
+                  key: item.value,
+                  class: normalizeClass({ "el-dropdown-menu__item": true, "is-disabled": ((_a = modelTabs.value) == null ? void 0 : _a.length) === 1 }),
+                  onClick: ($event) => handleMenuClick(item.value)
+                }, [
+                  createVNode(unref(ElIcon), { size: 14 }, {
+                    default: withCtx(() => [
+                      createVNode(unref(AoeSymbolIcon), {
+                        name: item.icon
+                      }, null, 8, ["name"])
+                    ]),
+                    _: 2
+                  }, 1024),
+                  createElementVNode("span", null, toDisplayString(item.label), 1)
+                ], 10, _hoisted_12);
+              }), 128))
+            ])
+          ]),
+          _: 1
+        }, 512)
+      ], 64);
+    };
+  }
+});
+const tabPanelPro_vue_vue_type_style_index_0_scoped_47a0d498_lang = "";
+const tabPanelPro_vue_vue_type_style_index_1_lang = "";
+const TabPanelPro = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-47a0d498"]]);
 const _sfc_main = defineComponent({
   name: "tab-panel",
   components: { ElIcon, SymbolIcon: AoeSymbolIcon },
@@ -420,6 +733,9 @@ function _sfc_render(_ctx, _cache, $props, $setup, $data, $options) {
 }
 const TabPanel = /* @__PURE__ */ _export_sfc(_sfc_main, [["render", _sfc_render]]);
 const AoeTabPanel = withInstall(TabPanel);
+const AoeTabPanelPro = withInstall(TabPanelPro);
 export {
-  AoeTabPanel as A
+  AoeTabPanel as A,
+  TabPanelPro as T,
+  AoeTabPanelPro as a
 };

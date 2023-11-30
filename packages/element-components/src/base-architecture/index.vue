@@ -77,7 +77,6 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
 .el-aside--custom {
     z-index: 999;
     overflow: visible;
-    /* overflow-y: scroll; */
 }
 
 .system-app-architecture--ham {
@@ -85,12 +84,10 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
         width: 100%;
         height: $--header-height;
     }
-
     .el-aside--custom {
         width: $--aside-width;
         height: 100%;
     }
-
     .el-main--custom {
         width: calc(100% - #{$--aside-width});
         height: 100%;
@@ -103,13 +100,11 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
         width: calc(100% - #{$--aside-width});
         height: $--header-height;
     }
-
     .el-aside--custom {
         transform: translateY(calc(v-bind('option.headerHeight') * -1px));
         width: $--aside-width;
         height: calc(100% + #{$--header-height});
     }
-
     .el-main--custom {
         width: calc(100% - #{$--aside-width});
         height: 100%;
@@ -121,31 +116,26 @@ $--aside-width: calc(v-bind('option.asideWidth') * 1px);
         width: 100%;
         height: $--header-height;
     }
-
     .el-main--custom {
         width: 100%;
         height: 100%;
     }
-
     .el-aside--custom {
         width: 0;
         padding: 6px 0;
         overflow: hidden;
     }
 }
-
 .system-app-architecture--am {
     .el-aside--custom {
         width: $--aside-width;
         height: 100%;
     }
-
     .el-main--custom {
         width: 100%;
 
         height: 100%;
     }
-
     .el-header--custom {
         height: 0;
         overflow: hidden;

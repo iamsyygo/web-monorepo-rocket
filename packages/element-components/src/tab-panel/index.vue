@@ -579,7 +579,7 @@ export default defineComponent({
     .tabs-divider {
         left: 0;
         top: 50%;
-        width: 1px;
+        width: 10px;
         height: 20px;
         background-color: $--divider;
         position: absolute;

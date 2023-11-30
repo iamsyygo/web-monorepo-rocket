@@ -21,7 +21,6 @@
         </ElIcon>
     </div>
 </template>
-` `
 <script setup lang="ts">
 import { ElIcon } from 'element-plus';
 import PaletteSvg from './palette.vue';
@@ -40,7 +39,7 @@ const iconSize = 18;
     justify-content: space-between;
     align-items: center;
     height: 100%;
-    background: linear-gradient(90deg, #102eff 0%, #53a8ff 100%);
+    /* background: linear-gradient(90deg, #102eff 0%, #53a8ff 100%); */
 }
 
 .system-header--btn {
@@ -69,10 +68,9 @@ const iconSize = 18;
     align-items: center;
     padding-left: 5px;
     background-image: linear-gradient(45deg, var(--el-color-primary-light-5) 60%, #f3f3f3 100%);
-    transition: all 0.3s ease-in-out;
+    transition: all 0.3s;
     &:hover {
         transform: translateX(-15px);
-        /* background-image: linear-gradient(45deg, var(--el-color-primary-light-3) 60%, #f3f3f3 100%); */
     }
 }
 </style>

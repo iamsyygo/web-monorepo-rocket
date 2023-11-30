@@ -1,15 +1,14 @@
 <template>
     <div class="app-main--wrapper">
-        <TabPanel
-            ref="tabPanelRef"
-            class="main-tabs--box"
+        <TabPanelPro
             :tabs="tabs"
+            v-model="activeTabValue"
+            :props="tabProps"
+            :height="25"
+            background-color="var(--el-color-primary-light-7)"
+            :highlight-bg-color="backgroundColor"
             @click="handleTabClick"
-            @remove="emits('remove-tab', activeTabIndex, $event.tab, $event.index)"
-            v-model="activeTabIndex"
-            insert-to-after
-        >
-        </TabPanel>
+        ></TabPanelPro>
         <div class="main-content--box">
             <router-view v-slot="{ Component, route }">
                 <Transition mode="out-in" name="app-view--transition">
@@ -23,9 +22,9 @@
     </div>
 </template>
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch } from 'vue';
+import { computed, ref, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
-import TabPanel from '../../tab-panel';
+import TabPanelPro from '../../tab-panel/tab-panel-pro.vue';
 import { Tab } from '../../tab-panel/index.vue';
 
 export type Tabs = Tab[];
@@ -36,39 +35,41 @@ const { backgroundColor = '#f9f9f9', route } = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    'click-tab': [e: MouseEvent, tab: Tab, index: number];
-    'remove-tab': [lastKey: string, tab: Tab, index: number];
+    'click-tab': [e: MouseEvent, tab: Tab];
 }>();
-const handleTabClick = (e: MouseEvent, tab: Tab, index: number) => {
-    emits('click-tab', e, tab, index);
-};
 
 const tabs = ref<Tab[]>([]);
-const activeTabIndex = ref<string>('');
+const tabProps = {
+    label: 'label',
+    key: 'key',
+};
+const activeTabValue = ref<string>('');
 
 const include = computed(() => {
     return tabs.value.map((tab) => tab.name);
 });
 
-activeTabIndex.value = route.path;
-tabs.value.push({
-    label: (route.meta.name || route.meta.title || '') as string,
-    key: route.path,
-    icon: (route.meta.icon || '') as string,
-    name: route.name as string,
-});
+const handleTabClick = (e: MouseEvent, tab: any) => {
+    emits('click-tab', e, tab);
+};
 
-const tabPanelRef = shallowRef<InstanceType<typeof TabPanel> | null>();
 watch(
     () => route.path,
     (path) => {
-        tabPanelRef.value?.addTab({
+        activeTabValue.value = path;
+
+        const hasRoute = tabs.value.some((tab) => tab.key === path);
+        if (hasRoute) return;
+
+        tabs.value.push({
             label: (route.meta.name || route.meta.title || '') as string,
             key: path,
             icon: (route.meta.icon || '') as string,
             name: route.name as string,
         });
-        activeTabIndex.value = path;
+    },
+    {
+        immediate: true,
     },
 );
 </script>
@@ -79,10 +80,6 @@ watch(
     display: flex;
     flex-direction: column;
     height: 100%;
-}
-.main-tabs--box {
-    height: 35px;
-    width: 100%;
 }
 .main-content--box {
     box-sizing: border-box;

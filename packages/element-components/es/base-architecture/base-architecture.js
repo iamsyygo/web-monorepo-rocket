@@ -8,8 +8,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
   },
   setup(__props) {
     useCssVars((_ctx) => ({
-      "044b92ea": _ctx.option.headerHeight,
-      "15e749c4": _ctx.option.asideWidth
+      "69e1c6e3": _ctx.option.headerHeight,
+      "0587b006": _ctx.option.asideWidth
     }));
     return (_ctx, _cache) => {
       return openBlock(), createBlock(Transition, {
@@ -56,8 +56,8 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const index_vue_vue_type_style_index_0_scoped_cc763d96_lang = "";
-const BaseArchitecture = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-cc763d96"]]);
+const index_vue_vue_type_style_index_0_scoped_1f90c182_lang = "";
+const BaseArchitecture = /* @__PURE__ */ _export_sfc(_sfc_main, [["__scopeId", "data-v-1f90c182"]]);
 const AoeBaseArchitecture = withInstall(BaseArchitecture);
 export {
   AoeBaseArchitecture as A

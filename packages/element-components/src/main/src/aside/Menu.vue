@@ -1,13 +1,13 @@
 <template>
-    <el-menu
+    <ElMenu
         :default-active="defaultMenuPathActive"
-        :collapse="collapse"
         class="app-menu--content"
-        router
+        :collapse="collapse"
         v-bind="$attrs"
+        router
     >
         <MenuContent :menus="menus"></MenuContent>
-    </el-menu>
+    </ElMenu>
 </template>
 
 <script setup lang="ts">
