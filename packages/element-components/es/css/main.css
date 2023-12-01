@@ -1,27 +1,27 @@
-.app-main--wrapper[data-v-eeb40494] {
+.app-main--wrapper[data-v-06dbcfe5] {
   position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
 }
-.main-content--box[data-v-eeb40494] {
+.main-content--box[data-v-06dbcfe5] {
   box-sizing: border-box;
   height: calc(100% - 35px);
   flex: 1;
   padding: 10px 10px 0;
-  background-color: var(--552db62e);
+  background-color: var(--1ad5d228);
 }
-.app-view--transition-enter-active[data-v-eeb40494],
-.app-view--transition-leave-active[data-v-eeb40494] {
+.app-view--transition-enter-active[data-v-06dbcfe5],
+.app-view--transition-leave-active[data-v-06dbcfe5] {
   transition: all 0.3s;
 }
-.app-view--transition-enter-from[data-v-eeb40494],
-.app-view--transition-leave-to[data-v-eeb40494] {
+.app-view--transition-enter-from[data-v-06dbcfe5],
+.app-view--transition-leave-to[data-v-06dbcfe5] {
   opacity: 0;
   transform: translateX(10px);
 }
-.app-view--transition-enter-to[data-v-eeb40494],
-.app-view--transition-leave-from[data-v-eeb40494] {
+.app-view--transition-enter-to[data-v-06dbcfe5],
+.app-view--transition-leave-from[data-v-06dbcfe5] {
   opacity: 1;
   transform: translateX(0);
 }.app-layout-type--wrapper[data-v-0f816e63] {
@@ -165,26 +165,29 @@
   background-color: var(--el-color-primary-light-3);
   transform: scale(1.1);
 }
-.app-header--wrapper[data-v-d266026a] {
+.app-header--wrapper[data-v-82b90d36] {
     display: flex;
     justify-content: space-between;
     align-items: center;
     height: 100%;
     /* background: linear-gradient(90deg, #102eff 0%, #53a8ff 100%); */
 }
-.system-header--btn[data-v-d266026a] {
+.system-header--btn[data-v-82b90d36] {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-right: 10px;
     padding: 0 10px;
-.el-icon[data-v-d266026a] {
+.el-icon[data-v-82b90d36] {
         margin-left: 10px;
         cursor: pointer;
         transition: all 0.3s ease-in-out;
 }
-.el-icon[data-v-d266026a]:hover {
+.el-icon[data-v-82b90d36]:hover {
         transform: scale(1.2);
 }
 }
-.system-app-setup[data-v-d266026a] {
+.system-app-setup[data-v-82b90d36] {
     cursor: pointer;
     position: fixed;
     right: -20px;
@@ -198,7 +201,11 @@
     padding-left: 5px;
     background-image: linear-gradient(45deg, var(--el-color-primary-light-5) 60%, #f3f3f3 100%);
     transition: all 0.3s;
-&[data-v-d266026a]:hover {
+&[data-v-82b90d36]:hover {
         transform: translateX(-15px);
 }
+}
+.app-header--right[data-v-82b90d36] {
+    display: flex;
+    align-items: center;
 }

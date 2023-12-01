@@ -7,7 +7,14 @@
             <slot name="center"></slot>
         </div>
         <div class="app-header--right">
-            <slot name="right"></slot>
+            <slot name="right">
+                <ElButton type="default" text>
+                    <ElIcon :size="22" style="margin-right: 8px">
+                        <User></User>
+                    </ElIcon>
+                    {{ appConfig.user.username || '未命名' }}
+                </ElButton>
+            </slot>
             <div class="system-header--btn">
                 <ElIcon :size="iconSize">
                     <ShezhiSvg></ShezhiSvg>
@@ -22,15 +29,20 @@
     </div>
 </template>
 <script setup lang="ts">
-import { ElIcon } from 'element-plus';
+import { ElIcon, ElButton } from 'element-plus';
 import PaletteSvg from './palette.vue';
 import ShezhiSvg from './shezhi.vue';
+import User from './user.vue';
+import { reactive } from 'vue';
 
 const emits = defineEmits<{
     palette: [];
 }>();
 
 const iconSize = 18;
+
+const appConfig = reactive(JSON.parse(localStorage.getItem('SystemAppConfig') || '{}'));
+console.log(appConfig);
 </script>
 
 <style scoped>
@@ -43,6 +55,9 @@ const iconSize = 18;
 }
 
 .system-header--btn {
+    display: flex;
+    justify-content: center;
+    align-items: center;
     margin-right: 10px;
     padding: 0 10px;
     .el-icon {
@@ -72,5 +87,9 @@ const iconSize = 18;
     &:hover {
         transform: translateX(-15px);
     }
+}
+.app-header--right {
+    display: flex;
+    align-items: center;
 }
 </style>

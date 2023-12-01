@@ -1,30 +1,39 @@
 <template>
-    <div class="tab-wrapper" v-auto-animate="autoAnimateOption">
-        <div
-            v-for="(tab, idx) in modelTabs"
-            :key="modelTabs![props.props['key']]"
-            @click="(e) => handleClick(e, tab)"
-            @contextmenu.prevent.stop="(e) => handleContextMenu(e, tab, idx)"
-            :class="{
-                'tab-item-ctn': true,
-                active: tab[props.props['key']] === props.modelValue,
-            }"
-            :ref="(e) => itemRef(tab[props.props['key']] === props.modelValue, idx, e)"
+    <div class="tab-wrapper">
+        <VueDraggable
+            v-model="modelTabs"
+            @start="onDraggedStart"
+            @end="onDraggedEnd"
+            class="tab-draggable"
+            :item-key="(props.props['key'] as string)"
+            :animation="200"
         >
-            <template v-if="tab[props.props['key']] === props.modelValue"> </template>
-            <div class="tab-icon">
-                <el-icon :size="14"><symbol-icon name="aoe-npm"></symbol-icon></el-icon>
-            </div>
-            <div class="tab-label">
-                {{ tab[props.props.label!] }}
-            </div>
-            <div class="tab-close" @click.stop.prevent="onClosed(idx)" v-if="modelTabs?.length !== 1">
-                <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8">
-                    <line x1="0" y1="0" x2="8" y2="8" stroke="black" stroke-width="1" />
-                    <line x1="0" y1="8" x2="8" y2="0" stroke="black" stroke-width="1" />
-                </svg>
-            </div>
-        </div>
+            <template #item="{ element, index }">
+                <div
+                    @click="(e) => handleClick(e, element)"
+                    @contextmenu.prevent.stop="(e) => handleContextMenu(e, element, index)"
+                    :class="{
+                        'tab-item-ctn': true,
+                        active: element[props.props['key']] === props.modelValue,
+                    }"
+                    :ref="(e) => itemRef(element[props.props['key']] === props.modelValue, index, e)"
+                >
+                    <template v-if="element[props.props['key']] === props.modelValue"> </template>
+                    <div class="tab-icon">
+                        <el-icon :size="14"><symbol-icon name="aoe-npm"></symbol-icon></el-icon>
+                    </div>
+                    <div class="tab-label">
+                        {{ element[props.props.label!] }}
+                    </div>
+                    <div class="tab-close" @click.stop.prevent="onClosed(index)" v-if="modelTabs?.length !== 1">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="8" height="8" viewBox="0 0 8 8">
+                            <line x1="0" y1="0" x2="8" y2="8" stroke="black" stroke-width="1" />
+                            <line x1="0" y1="8" x2="8" y2="0" stroke="black" stroke-width="1" />
+                        </svg>
+                    </div>
+                </div>
+            </template>
+        </VueDraggable>
 
         <div class="tab-item-ctn-active" ref="tabRef">
             <svg class="tab-radius-before" width="7" height="7">
@@ -52,7 +61,8 @@
 <script setup lang="ts">
 import { ElIcon } from 'element-plus';
 import 'element-plus/theme-chalk/el-dropdown-menu.css';
-import { vAutoAnimate } from '@formkit/auto-animate/vue';
+// import { vAutoAnimate } from '@formkit/auto-animate/vue';
+import VueDraggable from 'vuedraggable/src/vuedraggable';
 
 import { dropdownItems } from './config';
 import SymbolIcon from '../symbol-icon';
@@ -80,11 +90,11 @@ const emits = defineEmits<{
     click: [MouseEvent, Record<string, unknown>];
 }>();
 
-const autoAnimateOption = {
-    easing: 'ease-in-out',
-    duration: 300,
-    disrespectUserMotionPreference: true,
-};
+// const autoAnimateOption = {
+//     easing: 'ease-in-out',
+//     duration: 300,
+//     disrespectUserMotionPreference: true,
+// };
 
 const handleClick = (e: MouseEvent, tab: Record<string, unknown>) => {
     e.stopPropagation();
@@ -169,6 +179,16 @@ onMounted(() => {
     // window.onresize = () => {
     // };
 });
+
+const onDraggedStart = () => {
+    // 使用 dragged 就无法使用 autoAnimate
+    // autoAnimateOption.duration = 0;
+    tabRef.value!.style.opacity = '0';
+};
+const onDraggedEnd = () => {
+    // autoAnimateOption.duration = 300;
+    tabRef.value!.style.opacity = '1';
+};
 </script>
 <style scoped lang="scss">
 $--tab-width: calc(v-bind('props.width') * 1px);
@@ -185,6 +205,14 @@ $--tabs-bg: v-bind('props.backgroundColor');
     align-items: center;
     gap: 5px;
     background-color: $--tabs-bg;
+}
+.tab-draggable {
+    position: relative;
+    width: 100%;
+    height: calc(v-bind('props.height') * 1px);
+    display: flex;
+    align-items: center;
+    gap: 5px;
 }
 
 .tab-item-ctn {
@@ -229,7 +257,7 @@ $--tabs-bg: v-bind('props.backgroundColor');
 }
 
 .tab-item-ctn-active {
-    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.175);
     width: $--tab-width;
     min-width: $--tab-width;
     height: calc(v-bind('props.height') * 1px);

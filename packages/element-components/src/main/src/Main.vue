@@ -1,7 +1,7 @@
 <template>
     <div class="app-main--wrapper">
         <TabPanelPro
-            :tabs="tabs"
+            v-model:tabs="tabs"
             v-model="activeTabValue"
             :props="tabProps"
             :height="25"

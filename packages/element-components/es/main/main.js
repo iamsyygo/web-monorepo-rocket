@@ -7,9 +7,9 @@ import { A as AoeForm } from "../form/form.js";
 import { u as useDefineModel } from "../hooks/hooks.js";
 import { ArrowRightBold, ArrowLeftBold } from "@element-plus/icons-vue";
 import { A as AoeSymbolIcon } from "../symbol-icon/symbol-icon.js";
-const _hoisted_1$4 = { class: "app-main--wrapper" };
-const _hoisted_2$4 = { class: "main-content--box" };
-const _sfc_main$8 = /* @__PURE__ */ defineComponent({
+const _hoisted_1$5 = { class: "app-main--wrapper" };
+const _hoisted_2$5 = { class: "main-content--box" };
+const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   __name: "Main",
   props: {
     route: {},
@@ -18,7 +18,7 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
   emits: ["click-tab"],
   setup(__props, { emit: __emit }) {
     useCssVars((_ctx) => ({
-      "552db62e": _ctx.backgroundColor
+      "1ad5d228": _ctx.backgroundColor
     }));
     const emits = __emit;
     const tabs = ref([]);
@@ -53,18 +53,19 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     );
     return (_ctx, _cache) => {
       const _component_router_view = resolveComponent("router-view");
-      return openBlock(), createElementBlock("div", _hoisted_1$4, [
+      return openBlock(), createElementBlock("div", _hoisted_1$5, [
         createVNode(TabPanelPro, {
           tabs: tabs.value,
+          "onUpdate:tabs": _cache[0] || (_cache[0] = ($event) => tabs.value = $event),
           modelValue: activeTabValue.value,
-          "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => activeTabValue.value = $event),
+          "onUpdate:modelValue": _cache[1] || (_cache[1] = ($event) => activeTabValue.value = $event),
           props: tabProps,
           height: 25,
           "background-color": "var(--el-color-primary-light-7)",
           "highlight-bg-color": _ctx.backgroundColor,
           onClick: handleTabClick
         }, null, 8, ["tabs", "modelValue", "highlight-bg-color"]),
-        createElementVNode("div", _hoisted_2$4, [
+        createElementVNode("div", _hoisted_2$5, [
           createVNode(_component_router_view, null, {
             default: withCtx(({ Component, route }) => [
               createVNode(Transition, {
@@ -91,11 +92,11 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const Main_vue_vue_type_style_index_0_scoped_eeb40494_lang = "";
-const Main = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-eeb40494"]]);
+const Main_vue_vue_type_style_index_0_scoped_06dbcfe5_lang = "";
+const Main = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-06dbcfe5"]]);
 const _withScopeId = (n) => (pushScopeId("data-v-0f816e63"), n = n(), popScopeId(), n);
-const _hoisted_1$3 = { class: "app-layout-type--wrapper" };
-const _hoisted_2$3 = {
+const _hoisted_1$4 = { class: "app-layout-type--wrapper" };
+const _hoisted_2$4 = {
   key: 0,
   xmlns: "http://www.w3.org/2000/svg",
   viewBox: "0 0 24 24",
@@ -106,7 +107,7 @@ const _hoisted_2$3 = {
   "stroke-width": "2",
   class: "layout-type--active"
 };
-const _hoisted_3$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("path", {
+const _hoisted_3$4 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createElementVNode("path", {
   d: "M5 12L9 16 19 6",
   fill: "none",
   stroke: "black",
@@ -114,13 +115,13 @@ const _hoisted_3$3 = /* @__PURE__ */ _withScopeId(() => /* @__PURE__ */ createEl
   "stroke-linecap": "round",
   "stroke-linejoin": "round"
 }, null, -1));
-const _hoisted_4$2 = [
-  _hoisted_3$3
+const _hoisted_4$3 = [
+  _hoisted_3$4
 ];
 const _hoisted_5$2 = ["effect"];
 const _hoisted_6$1 = ["effect"];
 const _hoisted_7$1 = { class: "handle-btns" };
-const _sfc_main$7 = /* @__PURE__ */ defineComponent({
+const _sfc_main$8 = /* @__PURE__ */ defineComponent({
   __name: "ThemeSetting",
   props: {
     systemOption: {}
@@ -210,11 +211,11 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
                     onClick: ($event) => handleChangeLayout(item)
                   }, {
                     default: withCtx(() => [
-                      createElementVNode("div", _hoisted_1$3, [
+                      createElementVNode("div", _hoisted_1$4, [
                         createElementVNode("div", {
                           class: normalizeClass(["layout-type--content", `${item.value}`])
                         }, [
-                          _ctx.systemOption.typography === item.value && _ctx.systemOption.effect === item.effect ? (openBlock(), createElementBlock("svg", _hoisted_2$3, _hoisted_4$2)) : createCommentVNode("", true),
+                          _ctx.systemOption.typography === item.value && _ctx.systemOption.effect === item.effect ? (openBlock(), createElementBlock("svg", _hoisted_2$4, _hoisted_4$3)) : createCommentVNode("", true),
                           createElementVNode("div", {
                             class: "layout-type--head",
                             effect: `[${item.effect}]`
@@ -260,9 +261,9 @@ const _sfc_main$7 = /* @__PURE__ */ defineComponent({
   }
 });
 const ThemeSetting_vue_vue_type_style_index_0_scoped_0f816e63_lang = "";
-const ThemeSetting = /* @__PURE__ */ _export_sfc(_sfc_main$7, [["__scopeId", "data-v-0f816e63"]]);
+const ThemeSetting = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-0f816e63"]]);
 const iconSize$1 = 18;
-const _sfc_main$6 = /* @__PURE__ */ defineComponent({
+const _sfc_main$7 = /* @__PURE__ */ defineComponent({
   ...{
     name: "MenuContent"
   },
@@ -324,7 +325,7 @@ const _sfc_main$6 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const _sfc_main$5 = /* @__PURE__ */ defineComponent({
+const _sfc_main$6 = /* @__PURE__ */ defineComponent({
   __name: "Menu",
   props: {
     menus: { default: () => [] },
@@ -339,7 +340,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
         collapse: _ctx.collapse
       }, _ctx.$attrs, { router: "" }), {
         default: withCtx(() => [
-          createVNode(_sfc_main$6, { menus: _ctx.menus }, null, 8, ["menus"])
+          createVNode(_sfc_main$7, { menus: _ctx.menus }, null, 8, ["menus"])
         ]),
         _: 1
       }, 16, ["default-active", "collapse"]);
@@ -348,7 +349,7 @@ const _sfc_main$5 = /* @__PURE__ */ defineComponent({
 });
 const Menu_vue_vue_type_style_index_0_lang = "";
 const miniMenuWidth = 58;
-const _sfc_main$4 = /* @__PURE__ */ defineComponent({
+const _sfc_main$5 = /* @__PURE__ */ defineComponent({
   __name: "index",
   props: {
     asideWidth: { default: 200 },
@@ -374,7 +375,7 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
     });
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
-        createVNode(_sfc_main$5, {
+        createVNode(_sfc_main$6, {
           "aside-width": _ctx.asideWidth,
           menus: _ctx.menus,
           "default-menu-path-active": _ctx.activeMenuKey,
@@ -395,9 +396,9 @@ const _sfc_main$4 = /* @__PURE__ */ defineComponent({
   }
 });
 const index_vue_vue_type_style_index_0_scoped_9186e9a3_lang = "";
-const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["__scopeId", "data-v-9186e9a3"]]);
-const _sfc_main$3 = {};
-const _hoisted_1$2 = {
+const Aside = /* @__PURE__ */ _export_sfc(_sfc_main$5, [["__scopeId", "data-v-9186e9a3"]]);
+const _sfc_main$4 = {};
+const _hoisted_1$3 = {
   t: "1699968030909",
   class: "icon",
   viewBox: "0 0 1024 1024",
@@ -408,17 +409,17 @@ const _hoisted_1$2 = {
   width: "200",
   height: "200"
 };
-const _hoisted_2$2 = /* @__PURE__ */ createElementVNode("path", {
+const _hoisted_2$3 = /* @__PURE__ */ createElementVNode("path", {
   d: "M595.09 756.894h206.636c120.692 0 220.294-96.292 222.21-216.968 0.044-2.778 0.066-5.56 0.066-8.348-0.04-282.352-231.044-512.68-513.394-511.928C228.478 20.4 0 249.342 0 531.648c0 198.418 112.872 370.456 277.91 455.438 103.272 53.178 226.166-23.018 226.166-139.178 0-50.266 40.748-91.014 91.014-91.014z",
   fill: "#FFC751",
   "p-id": "37543"
 }, null, -1);
-const _hoisted_3$2 = /* @__PURE__ */ createElementVNode("path", {
+const _hoisted_3$3 = /* @__PURE__ */ createElementVNode("path", {
   d: "M77.136 681.726c24.634-7.606 38.964-32.892 33.224-58.026A413.286 413.286 0 0 1 100 531.64c0-109.84 42.72-213.18 120.3-290.96 60.142-60.282 135.67-99.654 217.748-114.44 23.864-4.298 41.286-24.958 41.286-49.206 0-31.27-28.364-54.718-59.132-49.148C181.246 71.148 0 280.214 0 531.64c0 39.524 4.486 77.998 12.966 114.946 6.376 27.774 34.996 44.172 62.218 35.742l1.952-0.602z",
   fill: "#FFE059",
   "p-id": "37544"
 }, null, -1);
-const _hoisted_4$1 = /* @__PURE__ */ createElementVNode("path", {
+const _hoisted_4$2 = /* @__PURE__ */ createElementVNode("path", {
   d: "M96.398 352.788c21.844 6.064 45.134-3.302 56.268-23.05 18.162-32.216 40.812-62.166 67.634-89.056 37.532-37.62 81.062-67.088 128.432-87.524 24.892-10.738 36.658-39.372 26.272-64.412l-0.384-0.928c-10.604-25.56-40.072-37.334-65.476-26.36-103.226 44.59-188.86 122.17-243.62 219.454-15.66 27.82-0.898 63.08 29.868 71.6 0.336 0.09 0.672 0.182 1.006 0.276z",
   fill: "#FFF370",
   "p-id": "37545"
@@ -539,9 +540,9 @@ const _hoisted_27 = /* @__PURE__ */ createElementVNode("path", {
   "p-id": "37568"
 }, null, -1);
 const _hoisted_28 = [
-  _hoisted_2$2,
-  _hoisted_3$2,
-  _hoisted_4$1,
+  _hoisted_2$3,
+  _hoisted_3$3,
+  _hoisted_4$2,
   _hoisted_5$1,
   _hoisted_6,
   _hoisted_7,
@@ -566,12 +567,12 @@ const _hoisted_28 = [
   _hoisted_26,
   _hoisted_27
 ];
-function _sfc_render$1(_ctx, _cache) {
-  return openBlock(), createElementBlock("svg", _hoisted_1$2, _hoisted_28);
+function _sfc_render$2(_ctx, _cache) {
+  return openBlock(), createElementBlock("svg", _hoisted_1$3, _hoisted_28);
 }
-const PaletteSvg = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$1]]);
-const _sfc_main$2 = {};
-const _hoisted_1$1 = {
+const PaletteSvg = /* @__PURE__ */ _export_sfc(_sfc_main$4, [["render", _sfc_render$2]]);
+const _sfc_main$3 = {};
+const _hoisted_1$2 = {
   viewBox: "0 0 1024 1024",
   version: "1.1",
   xmlns: "http://www.w3.org/2000/svg",
@@ -579,18 +580,49 @@ const _hoisted_1$1 = {
   width: "200",
   height: "200"
 };
-const _hoisted_2$1 = /* @__PURE__ */ createElementVNode("path", {
+const _hoisted_2$2 = /* @__PURE__ */ createElementVNode("path", {
   d: "M511.332 64c43.538 0 66.958 10.25 77.23 16.54 4.564 2.796 7.59 7.336 9.614 12.36 6.982 17.32 24.132 61.41 34.266 100.756 32.334 12.782 62.24 30.53 88.81 52.326 10.39-2.898 21.33-5.516 32.128-7.846l2.696-0.576c28.264-5.99 55.138-9.976 68.04-11.746 5.28-0.724 10.652-0.324 15.312 2.306 10.48 5.92 30.904 21.46 52.672 59.88 21.77 38.418 24.766 64.206 24.556 76.42-0.092 5.426-2.44 10.366-5.694 14.66-11.236 14.832-40.156 52.034-68.542 80.656A350.486 350.486 0 0 1 846.32 512c0 17.77-1.332 35.224-3.9 52.262 28.386 28.62 57.306 65.824 68.54 80.656 3.256 4.296 5.604 9.234 5.696 14.66 0.21 12.212-2.786 38.002-24.556 76.422-21.768 38.418-42.19 53.96-52.672 59.88-4.66 2.628-10.032 3.028-15.31 2.304-13.724-1.884-43.246-6.27-73.44-12.91l-2.704-0.6c-9.02-2.02-18.06-4.244-26.72-6.658-26.57 21.796-56.476 39.546-88.812 52.328-10.134 39.346-27.284 83.436-34.266 100.758-2.024 5.02-5.05 9.56-9.614 12.36-10.272 6.288-33.692 16.538-77.23 16.538-43.536 0-66.956-10.25-77.228-16.54-4.566-2.796-7.592-7.336-9.616-12.36-5.412-13.428-16.938-42.946-26.566-73.87l-0.832-2.692a553.944 553.944 0 0 1-6.866-24.194c-32.338-12.782-62.242-30.532-88.814-52.328-3.462 0.966-6.986 1.9-10.546 2.804l-2.676 0.672c-35.312 8.768-73.46 14.472-89.64 16.692-5.28 0.724-10.65 0.324-15.312-2.306-10.48-5.92-30.902-21.46-52.672-59.878-20.86-36.82-24.482-62.038-24.562-74.824v-0.816c0-0.266 0.004-0.526 0.008-0.78 0.092-5.428 2.44-10.366 5.694-14.662 11.236-14.832 40.156-52.034 68.54-80.656A350.458 350.458 0 0 1 176.346 512c0-17.77 1.334-35.226 3.9-52.264-28.384-28.62-57.304-65.824-68.54-80.656-3.256-4.294-5.602-9.234-5.694-14.66a66.43 66.43 0 0 1-0.008-0.782v-0.816c0.08-12.786 3.7-38.006 24.562-74.822 21.77-38.42 42.192-53.96 52.672-59.88 4.662-2.63 10.034-3.03 15.312-2.306 18.228 2.5 64.336 9.424 102.864 20.168 26.572-21.796 56.474-39.544 88.812-52.326a553.944 553.944 0 0 1 6.866-24.194l0.832-2.692c9.628-30.924 21.154-60.442 26.566-73.872 2.024-5.02 5.05-9.56 9.616-12.36C444.376 74.252 467.796 64 511.332 64z m0 277.334c-94.256 0-170.666 76.408-170.666 170.666s76.41 170.666 170.666 170.666C605.59 682.666 682 606.26 682 512s-76.41-170.666-170.668-170.666z",
   fill: "#515151",
   "p-id": "37962"
 }, null, -1);
-const _hoisted_3$1 = [
-  _hoisted_2$1
+const _hoisted_3$2 = [
+  _hoisted_2$2
+];
+function _sfc_render$1(_ctx, _cache) {
+  return openBlock(), createElementBlock("svg", _hoisted_1$2, _hoisted_3$2);
+}
+const ShezhiSvg = /* @__PURE__ */ _export_sfc(_sfc_main$3, [["render", _sfc_render$1]]);
+const _sfc_main$2 = {};
+const _hoisted_1$1 = {
+  t: "1701440503506",
+  class: "icon",
+  viewBox: "0 0 1024 1024",
+  version: "1.1",
+  xmlns: "http://www.w3.org/2000/svg",
+  "p-id": "5481",
+  width: "200",
+  height: "200"
+};
+const _hoisted_2$1 = /* @__PURE__ */ createElementVNode("path", {
+  d: "M512 170.666667a128 128 0 1 1 0 256 128 128 0 0 1 0-256z m0-85.333334c-117.824 0-213.333333 95.509333-213.333333 213.333334s95.509333 213.333333 213.333333 213.333333 213.333333-95.509333 213.333333-213.333333S629.824 85.333333 512 85.333333z",
+  class: "primary-fill",
+  "p-id": "5482",
+  "stroke-width": "5"
+}, null, -1);
+const _hoisted_3$1 = /* @__PURE__ */ createElementVNode("path", {
+  d: "M813.696 638.528A425.322667 425.322667 0 0 1 938.666667 940.245333h-85.333334a340.266667 340.266667 0 0 0-99.968-241.365333A340.266667 340.266667 0 0 0 512 598.912a340.266667 340.266667 0 0 0-241.365333 99.968A340.266667 340.266667 0 0 0 170.666667 940.245333H85.333333A425.322667 425.322667 0 0 1 210.304 638.506667 425.344 425.344 0 0 1 512 513.557333a425.322667 425.322667 0 0 1 301.696 124.970667z",
+  class: "primary-fill-light-5",
+  "p-id": "5483",
+  "stroke-width": "5"
+}, null, -1);
+const _hoisted_4$1 = [
+  _hoisted_2$1,
+  _hoisted_3$1
 ];
 function _sfc_render(_ctx, _cache) {
-  return openBlock(), createElementBlock("svg", _hoisted_1$1, _hoisted_3$1);
+  return openBlock(), createElementBlock("svg", _hoisted_1$1, _hoisted_4$1);
 }
-const ShezhiSvg = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render]]);
+const User = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["render", _sfc_render]]);
 const _hoisted_1 = { class: "app-header--wrapper" };
 const _hoisted_2 = { class: "app-header--left" };
 const _hoisted_3 = { class: "app-header--center" };
@@ -602,6 +634,8 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
   emits: ["palette"],
   setup(__props, { emit: __emit }) {
     const emits = __emit;
+    const appConfig = reactive(JSON.parse(localStorage.getItem("SystemAppConfig") || "{}"));
+    console.log(appConfig);
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
         createElementVNode("div", _hoisted_1, [
@@ -612,7 +646,26 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
             renderSlot(_ctx.$slots, "center", {}, void 0, true)
           ]),
           createElementVNode("div", _hoisted_4, [
-            renderSlot(_ctx.$slots, "right", {}, void 0, true),
+            renderSlot(_ctx.$slots, "right", {}, () => [
+              createVNode(unref(ElButton), {
+                type: "default",
+                text: ""
+              }, {
+                default: withCtx(() => [
+                  createVNode(unref(ElIcon), {
+                    size: 22,
+                    style: { "margin-right": "8px" }
+                  }, {
+                    default: withCtx(() => [
+                      createVNode(User)
+                    ]),
+                    _: 1
+                  }),
+                  createTextVNode(" " + toDisplayString(appConfig.user.username || "未命名"), 1)
+                ]),
+                _: 1
+              })
+            ], true),
             createElementVNode("div", _hoisted_5, [
               createVNode(unref(ElIcon), { size: iconSize }, {
                 default: withCtx(() => [
@@ -638,8 +691,8 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const index_vue_vue_type_style_index_0_scoped_d266026a_lang = "";
-const Header = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-d266026a"]]);
+const index_vue_vue_type_style_index_0_scoped_82b90d36_lang = "";
+const Header = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-82b90d36"]]);
 const _sfc_main = /* @__PURE__ */ defineComponent({
   __name: "index",
   props: {
