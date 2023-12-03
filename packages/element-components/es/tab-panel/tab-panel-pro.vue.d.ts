@@ -50,6 +50,7 @@ declare const _default: import("vue").DefineComponent<{
 }, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     contextmenu: (args_0: MouseEvent, args_1: Record<string, unknown>) => void;
     click: (args_0: MouseEvent, args_1: Record<string, unknown>) => void;
+    "tab-change": (k: string, tab: Record<string, unknown>) => void;
 }, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     modelValue: {
         required: true;
@@ -102,6 +103,7 @@ declare const _default: import("vue").DefineComponent<{
 }>> & {
     onContextmenu?: ((args_0: MouseEvent, args_1: Record<string, unknown>) => any) | undefined;
     onClick?: ((args_0: MouseEvent, args_1: Record<string, unknown>) => any) | undefined;
+    "onTab-change"?: ((k: string, tab: Record<string, unknown>) => any) | undefined;
 }, {
     width: number;
     height: number;

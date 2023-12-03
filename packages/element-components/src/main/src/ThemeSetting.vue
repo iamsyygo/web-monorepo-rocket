@@ -42,10 +42,10 @@
 <script setup lang="ts">
 import { reactive } from 'vue';
 import { ElRow, ElCol, ElButton } from 'element-plus';
-import AppForm from '../../form';
-import { FormProps } from '../../form';
-import { ArchitectureOption } from '../../base-architecture/index.vue';
-import { useDefineModel } from '../../hooks/defineModel.h';
+import AppForm from '@/form';
+import { FormProps } from '@/form';
+import { ArchitectureOption } from '@/base-architecture/index.vue';
+import { useDefineModel } from '@/hooks/defineModel.h';
 
 const emits = defineEmits<{
     'update:systemOption': [val: ArchitectureOption];

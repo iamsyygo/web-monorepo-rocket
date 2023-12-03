@@ -154,6 +154,7 @@ export declare const AoeTabPanelPro: import("@aoe/utils").SFCWithInstall<import(
 }, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     click: (args_0: MouseEvent, args_1: Record<string, unknown>) => void;
     contextmenu: (args_0: MouseEvent, args_1: Record<string, unknown>) => void;
+    "tab-change": (k: string, tab: Record<string, unknown>) => void;
 }, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     modelValue: {
         required: true;
@@ -206,6 +207,7 @@ export declare const AoeTabPanelPro: import("@aoe/utils").SFCWithInstall<import(
 }>> & {
     onClick?: ((args_0: MouseEvent, args_1: Record<string, unknown>) => any) | undefined;
     onContextmenu?: ((args_0: MouseEvent, args_1: Record<string, unknown>) => any) | undefined;
+    "onTab-change"?: ((k: string, tab: Record<string, unknown>) => any) | undefined;
 }, {
     width: number;
     height: number;

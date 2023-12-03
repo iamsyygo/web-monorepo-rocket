@@ -13,7 +13,7 @@ import {
     ElSwitch,
 } from 'element-plus';
 import { PropType, defineComponent, reactive } from 'vue';
-import { useDefineModel } from '../../hooks/defineModel.h';
+import { useDefineModel } from '@/hooks/defineModel.h';
 import { FormItemTypeProps } from './props';
 
 export default defineComponent({

@@ -8,6 +8,7 @@
             background-color="var(--el-color-primary-light-7)"
             :highlight-bg-color="backgroundColor"
             @click="handleTabClick"
+            @tab-change="handlTabChange"
         ></TabPanelPro>
         <div class="main-content--box">
             <router-view v-slot="{ Component, route }">
@@ -24,24 +25,26 @@
 <script setup lang="ts">
 import { computed, ref, watch } from 'vue';
 import type { RouteLocationNormalizedLoaded } from 'vue-router';
-import TabPanelPro from '../../tab-panel/tab-panel-pro.vue';
-import { Tab } from '../../tab-panel/index.vue';
+import TabPanelPro from '@/tab-panel/tab-panel-pro.vue';
+import { Tab } from '@/tab-panel/index.vue';
 
 export type Tabs = Tab[];
 
-const { backgroundColor = '#f9f9f9', route } = defineProps<{
+const { backgroundColor = '#F5F7FA', route } = defineProps<{
     route: RouteLocationNormalizedLoaded;
     backgroundColor?: string;
 }>();
 
 const emits = defineEmits<{
     'click-tab': [e: MouseEvent, tab: Tab];
+    'tab-change': [key: string, tab: Tab];
 }>();
 
 const tabs = ref<Tab[]>([]);
 const tabProps = {
     label: 'label',
     key: 'key',
+    icon: 'icon',
 };
 const activeTabValue = ref<string>('');
 
@@ -51,6 +54,11 @@ const include = computed(() => {
 
 const handleTabClick = (e: MouseEvent, tab: any) => {
     emits('click-tab', e, tab);
+};
+
+const handlTabChange = (key: string, tab: any) => {
+    // console.log(key, tab, 111);
+    emits('tab-change', key, tab);
 };
 
 watch(

@@ -12,6 +12,7 @@ import "vue";
 import "element-plus";
 import "@element-plus/icons-vue";
 import "draggabilly";
+import "vuedraggable/src/vuedraggable";
 export {
   A4 as AoeBaseArchitecture,
   A as AoeForm,

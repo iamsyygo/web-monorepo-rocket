@@ -55,6 +55,8 @@
 
 <script lang="ts">
 import Draggabilly from 'draggabilly';
+import { ElIcon } from 'element-plus';
+import SymbolIcon from '@/symbol-icon';
 import {
     defineComponent,
     ref,
@@ -65,8 +67,6 @@ import {
     onUnmounted,
     ComponentPublicInstance,
 } from 'vue';
-import { ElIcon } from 'element-plus';
-import SymbolIcon from '../symbol-icon';
 
 export interface Tab {
     label: string;

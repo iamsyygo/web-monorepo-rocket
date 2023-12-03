@@ -1,7 +1,7 @@
 import { vAutoAnimate } from '@formkit/auto-animate/vue';
 import { ElCol, ElForm, ElFormItem, ElIcon, ElRow, ElTooltip, FormItemRule } from 'element-plus';
 import { SlotsType, VNode, defineComponent, onMounted, toRefs } from 'vue';
-import { useDefineModel } from '../../hooks/defineModel.h';
+import { useDefineModel } from '@/hooks/defineModel.h';
 import FormContent from './items';
 import { FormItemTypeProps, Span, formProps as props } from './props';
 

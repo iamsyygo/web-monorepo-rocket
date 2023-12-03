@@ -24,7 +24,7 @@
                 ></Aside>
             </template>
             <template #main>
-                <Main :route="route" @click-tab="handleTabClick"></Main>
+                <Main :route="route" @click-tab="handleTabClick" @tab-change="handleTabChange"></Main>
             </template>
         </AppArchitecture>
         <ElDrawer title="系统设置" v-model="visibleDrawer" direction="rtl" size="30%">
@@ -34,16 +34,17 @@
 </template>
 
 <script setup lang="ts">
+// import '@aoe/element-components/es/css/base-architecture.css';
+// import '@aoe/element-components/es/css/tab-panel.css';
+import AppArchitecture from '@/base-architecture';
+import { ArchitectureOption } from '@/base-architecture/index.vue';
+import { Tab } from '@/tab-panel/index.vue';
+import { handleElementTheme } from '@aoe/utils';
 import { ElConfigProvider, ElDrawer } from 'element-plus';
 import zhCn from 'element-plus/dist/locale/zh-cn.mjs';
 import 'element-plus/theme-chalk/el-drawer.css';
-import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import { computed, onBeforeMount, ref, watch } from 'vue';
-
-import { Tab } from '@/tab-panel/index.vue';
-import { handleElementTheme } from '@aoe/utils';
-import AppArchitecture from '../base-architecture';
-import { ArchitectureOption } from '../base-architecture/index.vue';
+import type { RouteLocationNormalizedLoaded, Router } from 'vue-router';
 import Main from './src/Main.vue';
 import ThemeSetting from './src/ThemeSetting.vue';
 import Aside from './src/aside/index.vue';
@@ -103,6 +104,9 @@ const handleMenuCollapse = (width: number) => {
 // 点击 tab 页签，被 Main 组件调用
 const handleTabClick = (_e: MouseEvent, tab: Tab) => {
     router.push(tab.key);
+};
+const handleTabChange = (key: string, _tab: Tab) => {
+    router.push(key);
 };
 
 watch(

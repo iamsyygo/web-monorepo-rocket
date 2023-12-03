@@ -9,6 +9,11 @@ import visualizer from 'rollup-plugin-visualizer';
 
 const pakDir = normalize(resolve(__dirname, 'src'));
 export default defineConfig({
+    resolve: {
+        alias: {
+            '@': resolve(__dirname, 'src'),
+        },
+    },
     build: {
         // watch: { include: 'src/**' },
         target: 'modules',
@@ -23,13 +28,15 @@ export default defineConfig({
             ],
             external: [
                 'vue',
+                /^@aoe\/element-components[\/\w]*$/,
                 /^ant-design-vue\/es\/.*/,
                 /^element-plus[\/\w]*$/,
-                'vue-router',
                 /^@formkit\/auto\-animate.*/,
+                'vue-router',
                 'draggabilly',
                 'animate.css',
                 '@element-plus/icons-vue',
+                'vuedraggable/src/vuedraggable',
             ],
             input: ['src/index.ts'],
             output: [
@@ -48,11 +55,6 @@ export default defineConfig({
                         } else {
                             return 'vendor';
                         }
-
-                        // if (id.includes('node_modules')) {
-                        //     return 'vendor';
-                        // }
-                        // 其他包根据目录名称
                     },
                     // sourcemap: true,
                 },
@@ -65,6 +67,9 @@ export default defineConfig({
                 //     dir: 'lib',
                 //     preserveModulesRoot: 'src',
                 // },
+
+                // 单独打包 ts 类型文件的
+                // {},
             ],
         },
         lib: {
@@ -75,11 +80,12 @@ export default defineConfig({
     plugins: [
         vueJsx(),
         vue({
-            // exclude: ['node_modules/**'],
+            exclude: ['node_modules/**'],
             include: [/\.vue$/],
             script: {
                 propsDestructure: true,
                 defineModel: true,
+                // 全局类型声明，用于 vue3 新的类型推断(props等)
                 // globalTypeFiles: ['src/shims-vue.d.ts'],
             },
         }),

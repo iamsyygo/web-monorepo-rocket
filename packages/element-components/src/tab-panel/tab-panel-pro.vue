@@ -1,5 +1,11 @@
 <template>
-    <div class="tab-wrapper">
+    <div class="tab-wrapper" ref="tabwrapRef">
+        <!-- <div class="tab-left--btn">
+            <ElIcon><DArrowLeft /></ElIcon>
+        </div>
+        <div class="tab-right--btn">
+            <ElIcon><DArrowRight /></ElIcon>
+        </div> -->
         <VueDraggable
             v-model="modelTabs"
             @start="onDraggedStart"
@@ -16,11 +22,13 @@
                         'tab-item-ctn': true,
                         active: element[props.props['key']] === props.modelValue,
                     }"
-                    :ref="(e) => itemRef(element[props.props['key']] === props.modelValue, index, e)"
+                    :ref="(e:any) => itemRef(element[props.props['key']] === props.modelValue, index, e)"
                 >
                     <template v-if="element[props.props['key']] === props.modelValue"> </template>
                     <div class="tab-icon">
-                        <el-icon :size="14"><symbol-icon name="aoe-npm"></symbol-icon></el-icon>
+                        <el-icon :size="14">
+                            <symbol-icon :name="element[props.props.icon || 'icon']"></symbol-icon>
+                        </el-icon>
                     </div>
                     <div class="tab-label">
                         {{ element[props.props.label!] }}
@@ -60,15 +68,14 @@
 </template>
 <script setup lang="ts">
 import { ElIcon } from 'element-plus';
+import { DArrowLeft, DArrowRight } from '@element-plus/icons-vue';
 import 'element-plus/theme-chalk/el-dropdown-menu.css';
-// import { vAutoAnimate } from '@formkit/auto-animate/vue';
+import { onMounted, ref, watch } from 'vue';
 import VueDraggable from 'vuedraggable/src/vuedraggable';
-
 import { dropdownItems } from './config';
-import SymbolIcon from '../symbol-icon';
 import PopoverMenu from './popover-menu.vue';
 import { TabProps } from './type';
-import { onMounted, ref } from 'vue';
+import SymbolIcon from '@/symbol-icon';
 const props = withDefaults(defineProps<TabProps>(), {
     height: 30,
     width: 180,
@@ -88,13 +95,8 @@ const modelTabs = defineModel<Record<string, unknown>[]>('tabs', {
 const emits = defineEmits<{
     contextmenu: [MouseEvent, Record<string, unknown>];
     click: [MouseEvent, Record<string, unknown>];
+    'tab-change': [k: string, tab: Record<string, unknown>];
 }>();
-
-// const autoAnimateOption = {
-//     easing: 'ease-in-out',
-//     duration: 300,
-//     disrespectUserMotionPreference: true,
-// };
 
 const handleClick = (e: MouseEvent, tab: Record<string, unknown>) => {
     e.stopPropagation();
@@ -128,17 +130,23 @@ const handleMenuClick = (cmd: (typeof dropdownItems)[number]['value']) => {
             // modelTabs.value = [item!]; // ? 为什么不行
             modelTabs.value?.splice(currentIndex + 1);
             modelTabs.value?.splice(0, currentIndex);
-            modelValue.value = modelTabs.value?.[0][props.props['key']] as string | number;
+            const acRestTab = modelTabs.value?.[0];
+            modelValue.value = acRestTab?.[props.props['key']] as string | number;
+            emits('tab-change', acRestTab?.[props.props['key']] as string, acRestTab!);
 
             break;
         case 'close-left':
             if (currentIndex == 0) break;
             modelTabs.value?.splice(0, currentIndex);
-            modelValue.value = modelTabs.value?.[0][props.props['key']] as string | number;
+            const acLeftTab = modelTabs.value?.[0];
+            modelValue.value = acLeftTab?.[props.props['key']] as string | number;
+            emits('tab-change', acLeftTab?.[props.props['key']] as string, acLeftTab!);
             break;
         case 'close-right':
             modelTabs.value?.splice(currentIndex + 1);
-            modelValue.value = modelTabs.value?.[currentIndex][props.props['key']] as string | number;
+            const acRightTab = modelTabs.value?.[currentIndex];
+            modelValue.value = acRightTab?.[props.props['key']] as string | number;
+            emits('tab-change', acRightTab?.[props.props['key']] as string, acRightTab!);
             break;
     }
 };
@@ -152,26 +160,24 @@ const onClosed = (i: number) => {
         return;
     }
 
-    const acKey = modelTabs.value?.[i - 1][props.props['key']] as string | number;
+    const acTab = modelTabs.value?.[i - 1];
+    const acKey = acTab?.[props.props['key']] as string;
     modelValue.value = acKey;
+    emits('tab-change', acKey, acTab!);
 };
 
 const tabRef = ref<HTMLDivElement | null>();
 const itemRef = (bool: boolean, i: number, _e: HTMLDivElement) => {
     if (bool && i < modelTabs.value!.length) {
-        console.log(modelValue.value, i, modelTabs.value);
-        // 10px 左内边距
+        // 7px 左内边距
         let offsetX = 7;
         const gap = 5;
-        // const rect = e.getBoundingClientRect();
+
         if (tabRef.value) {
             offsetX = offsetX + (gap + props.width) * i;
             tabRef.value.style.left = offsetX + 'px';
         }
     }
-    // if (modelTabs.value) {
-    //     modelTabs.value[i].HTMLElement = e;
-    // }
 };
 
 onMounted(() => {
@@ -189,6 +195,31 @@ const onDraggedEnd = () => {
     // autoAnimateOption.duration = 300;
     tabRef.value!.style.opacity = '1';
 };
+
+// const tabwrapRef = ref<HTMLDivElement | null>();
+// watch(
+//     modelTabs,
+//     (newVal) => {
+//         console.log(newVal, 'newVal');
+//         if (newVal?.length === 0 || !tabwrapRef.value) return;
+//         showPostionScroll();
+//     },
+//     {
+//         deep: true,
+//         immediate: true,
+//     },
+// );
+// const showPostionScroll = () => {
+//     const tabwrapWidth = tabwrapRef.value!.clientWidth;
+//     const tabWidth = props.width + 5;
+//     const count = modelTabs.value?.length || 0;
+//     const totalWidth = tabWidth * count + 7 * 2;
+//     if (totalWidth > tabwrapWidth) {
+//         console.log(111);
+
+//         tabwrapRef.value!.scrollLeft = totalWidth - tabwrapWidth;
+//     }
+// };
 </script>
 <style scoped lang="scss">
 $--tab-width: calc(v-bind('props.width') * 1px);
@@ -197,6 +228,7 @@ $--tab-active-bg: v-bind('props.highlightBgColor');
 $--tabs-bg: v-bind('props.backgroundColor');
 
 .tab-wrapper {
+    overflow-x: hidden;
     position: relative;
     width: 100%;
     height: calc(v-bind('props.height') * 1px);
@@ -327,6 +359,32 @@ $--tabs-bg: v-bind('props.backgroundColor');
         color: var(--el-color-primary);
     }
 }
+
+/* .tab-left--btn,
+.tab-right--btn {
+    position: absolute;
+    z-index: 999;
+    top: 0;
+    width: 20px;
+    height: 100%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s;
+    &:hover {
+        background-color: #dbdbdb;
+    }
+}
+.tab-left--btn {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    left: 0;
+}
+.tab-right--btn {
+    box-shadow: 0 0 3px rgba(0, 0, 0, 0.1);
+    right: 14px;
+} */
 </style>
 <style>
 .popper-meun {

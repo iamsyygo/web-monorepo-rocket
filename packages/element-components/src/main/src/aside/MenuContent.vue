@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import { ElMenuItem, ElSubMenu, ElIcon } from 'element-plus';
 import { Menu } from './type';
-import SymbolIcon from '../../../symbol-icon';
+import SymbolIcon from '@/symbol-icon';
 
 defineOptions({
     name: 'MenuContent',

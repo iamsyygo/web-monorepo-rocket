@@ -4,12 +4,12 @@
 
 <script setup lang="tsx">
 import { VNode, computed, onMounted, useAttrs, watch } from 'vue';
-import { vAutoAnimate } from '@formkit/auto-animate/vue';
+// import { vAutoAnimate } from '@formkit/auto-animate/vue';
 // import { useVModel } from '@vueuse/core';
 import FormItemContent from './items';
 import { FormItemTypeProps, FormProps, Span } from './props';
 import { ElCol, ElForm, ElFormItem, ElIcon, ElRow, ElTooltip, FormItemRule } from 'element-plus';
-import { useDefineModel } from '../../hooks/defineModel.h';
+import { useDefineModel } from '@/hooks/defineModel.h';
 
 /**
  * 将一个数字转换为span对象

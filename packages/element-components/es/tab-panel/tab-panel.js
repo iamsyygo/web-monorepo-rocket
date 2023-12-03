@@ -1,8 +1,9 @@
-import { _ as _export_sfc, d as draggableComponent, w as withInstall } from "../vendor.js";
+import { _ as _export_sfc, w as withInstall } from "../vendor.js";
 import Draggabilly from "draggabilly";
-import { defineComponent, ref, withDirectives, openBlock, createElementBlock, createVNode, unref, withCtx, renderSlot, mergeModels, useCssVars, useModel, onMounted, Fragment, createElementVNode, withModifiers, normalizeClass, createCommentVNode, toDisplayString, renderList, pushScopeId, popScopeId, reactive, onUnmounted, nextTick, resolveComponent, normalizeStyle, vShow, createTextVNode, createStaticVNode } from "vue";
 import { ElTooltip, ClickOutside, ElIcon } from "element-plus";
 import { A as AoeSymbolIcon } from "../symbol-icon/symbol-icon.js";
+import { defineComponent, ref, withDirectives, openBlock, createElementBlock, createVNode, unref, withCtx, renderSlot, mergeModels, useCssVars, useModel, onMounted, Fragment, createElementVNode, withModifiers, normalizeClass, createCommentVNode, toDisplayString, renderList, pushScopeId, popScopeId, reactive, onUnmounted, nextTick, resolveComponent, normalizeStyle, vShow, createTextVNode, createStaticVNode } from "vue";
+import VueDraggable from "vuedraggable/src/vuedraggable";
 const dropdownItems = [
   {
     icon: "aoe-fire",
@@ -80,8 +81,11 @@ const _sfc_main$2 = /* @__PURE__ */ defineComponent({
 });
 const popoverMenu_vue_vue_type_style_index_0_scoped_dc766a5d_lang = "";
 const PopoverMenu = /* @__PURE__ */ _export_sfc(_sfc_main$2, [["__scopeId", "data-v-dc766a5d"]]);
-const _withScopeId = (n) => (pushScopeId("data-v-59f95348"), n = n(), popScopeId(), n);
-const _hoisted_1$1 = { class: "tab-wrapper" };
+const _withScopeId = (n) => (pushScopeId("data-v-052b0d66"), n = n(), popScopeId(), n);
+const _hoisted_1$1 = {
+  class: "tab-wrapper",
+  ref: "tabwrapRef"
+};
 const _hoisted_2$1 = ["onClick", "onContextmenu"];
 const _hoisted_3$1 = { class: "tab-icon" };
 const _hoisted_4$1 = { class: "tab-label" };
@@ -156,16 +160,16 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       local: false
     }
   }),
-  emits: mergeModels(["contextmenu", "click"], ["update:modelValue", "update:tabs"]),
+  emits: mergeModels(["contextmenu", "click", "tab-change"], ["update:modelValue", "update:tabs"]),
   setup(__props, { emit: __emit }) {
     useCssVars((_ctx) => ({
-      "0e1fbe19": props.width,
-      "a64232c2": props.radius,
-      "30783c97": props.highlightBgColor,
-      "398b7b68": props.backgroundColor,
-      "c7ede998": props.height,
-      "0864cbbd": props.fontSize,
-      "12418b98": props.hoverBg
+      "05a5f86e": props.width,
+      "c10b5222": props.radius,
+      "72ff88e7": props.highlightBgColor,
+      "7dc16518": props.backgroundColor,
+      "e2b708f8": props.height,
+      "7c352fe6": props.fontSize,
+      "57b1d3e4": props.hoverBg
     }));
     const props = __props;
     const modelValue = useModel(__props, "modelValue");
@@ -194,17 +198,23 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
         case "close-rest":
           (_b = modelTabs.value) == null ? void 0 : _b.splice(currentIndex + 1);
           (_c = modelTabs.value) == null ? void 0 : _c.splice(0, currentIndex);
-          modelValue.value = (_d = modelTabs.value) == null ? void 0 : _d[0][props.props["key"]];
+          const acRestTab = (_d = modelTabs.value) == null ? void 0 : _d[0];
+          modelValue.value = acRestTab == null ? void 0 : acRestTab[props.props["key"]];
+          emits("tab-change", acRestTab == null ? void 0 : acRestTab[props.props["key"]], acRestTab);
           break;
         case "close-left":
           if (currentIndex == 0)
             break;
           (_e = modelTabs.value) == null ? void 0 : _e.splice(0, currentIndex);
-          modelValue.value = (_f = modelTabs.value) == null ? void 0 : _f[0][props.props["key"]];
+          const acLeftTab = (_f = modelTabs.value) == null ? void 0 : _f[0];
+          modelValue.value = acLeftTab == null ? void 0 : acLeftTab[props.props["key"]];
+          emits("tab-change", acLeftTab == null ? void 0 : acLeftTab[props.props["key"]], acLeftTab);
           break;
         case "close-right":
           (_g = modelTabs.value) == null ? void 0 : _g.splice(currentIndex + 1);
-          modelValue.value = (_h = modelTabs.value) == null ? void 0 : _h[currentIndex][props.props["key"]];
+          const acRightTab = (_h = modelTabs.value) == null ? void 0 : _h[currentIndex];
+          modelValue.value = acRightTab == null ? void 0 : acRightTab[props.props["key"]];
+          emits("tab-change", acRightTab == null ? void 0 : acRightTab[props.props["key"]], acRightTab);
           break;
       }
     };
@@ -217,13 +227,14 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
       if (closeKey !== modelValue.value) {
         return;
       }
-      const acKey = (_d = modelTabs.value) == null ? void 0 : _d[i - 1][props.props["key"]];
+      const acTab = (_d = modelTabs.value) == null ? void 0 : _d[i - 1];
+      const acKey = acTab == null ? void 0 : acTab[props.props["key"]];
       modelValue.value = acKey;
+      emits("tab-change", acKey, acTab);
     };
     const tabRef = ref();
     const itemRef = (bool, i, _e) => {
       if (bool && i < modelTabs.value.length) {
-        console.log(modelValue.value, i, modelTabs.value);
         let offsetX = 7;
         const gap = 5;
         if (tabRef.value) {
@@ -243,7 +254,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
     return (_ctx, _cache) => {
       return openBlock(), createElementBlock(Fragment, null, [
         createElementVNode("div", _hoisted_1$1, [
-          createVNode(unref(draggableComponent), {
+          createVNode(unref(VueDraggable), {
             modelValue: modelTabs.value,
             "onUpdate:modelValue": _cache[0] || (_cache[0] = ($event) => modelTabs.value = $event),
             onStart: onDraggedStart,
@@ -268,10 +279,12 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
                   createElementVNode("div", _hoisted_3$1, [
                     createVNode(unref(ElIcon), { size: 14 }, {
                       default: withCtx(() => [
-                        createVNode(unref(AoeSymbolIcon), { name: "aoe-npm" })
+                        createVNode(unref(AoeSymbolIcon), {
+                          name: element[props.props.icon || "icon"]
+                        }, null, 8, ["name"])
                       ]),
-                      _: 1
-                    })
+                      _: 2
+                    }, 1024)
                   ]),
                   createElementVNode("div", _hoisted_4$1, toDisplayString(element[props.props.label]), 1),
                   ((_a = modelTabs.value) == null ? void 0 : _a.length) !== 1 ? (openBlock(), createElementBlock("div", {
@@ -289,7 +302,7 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
             ref_key: "tabRef",
             ref: tabRef
           }, _hoisted_10, 512)
-        ]),
+        ], 512),
         createVNode(PopoverMenu, {
           ref_key: "popoverMenu",
           ref: popoverMenu
@@ -322,9 +335,9 @@ const _sfc_main$1 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const tabPanelPro_vue_vue_type_style_index_0_scoped_59f95348_lang = "";
+const tabPanelPro_vue_vue_type_style_index_0_scoped_052b0d66_lang = "";
 const tabPanelPro_vue_vue_type_style_index_1_lang = "";
-const TabPanelPro = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-59f95348"]]);
+const TabPanelPro = /* @__PURE__ */ _export_sfc(_sfc_main$1, [["__scopeId", "data-v-052b0d66"]]);
 const _sfc_main = defineComponent({
   name: "tab-panel",
   components: { ElIcon, SymbolIcon: AoeSymbolIcon },

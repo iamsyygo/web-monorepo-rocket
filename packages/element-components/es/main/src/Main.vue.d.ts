@@ -11,6 +11,7 @@ declare const _default: import("vue").DefineComponent<{
     };
 }, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
     "click-tab": (e: MouseEvent, tab: Tab) => void;
+    "tab-change": (key: string, tab: Tab) => void;
 }, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     route: {
         type: import("vue").PropType<RouteLocationNormalizedLoaded>;
@@ -21,5 +22,6 @@ declare const _default: import("vue").DefineComponent<{
     };
 }>> & {
     "onClick-tab"?: ((e: MouseEvent, tab: Tab) => any) | undefined;
+    "onTab-change"?: ((key: string, tab: Tab) => any) | undefined;
 }, {}, {}>;
 export default _default;

@@ -1,7 +1,7 @@
 import { _ as _export_sfc, h as handleElementTheme, z as zhCn, w as withInstall } from "../vendor.js";
 import { defineComponent, useCssVars, ref, computed, watch, resolveComponent, openBlock, createElementBlock, createVNode, createElementVNode, withCtx, Transition, createBlock, KeepAlive, resolveDynamicComponent, reactive, Fragment, unref, isRef, renderList, normalizeClass, createCommentVNode, createTextVNode, pushScopeId, popScopeId, toDisplayString, mergeProps, renderSlot, onBeforeMount } from "vue";
-import { ElRow, ElCol, ElButton, ElSubMenu, ElIcon, ElMenuItem, ElMenu, ElConfigProvider, ElDrawer } from "element-plus";
 import { A as AoeBaseArchitecture } from "../base-architecture/base-architecture.js";
+import { ElRow, ElCol, ElButton, ElSubMenu, ElIcon, ElMenuItem, ElMenu, ElConfigProvider, ElDrawer } from "element-plus";
 import { T as TabPanelPro } from "../tab-panel/tab-panel.js";
 import { A as AoeForm } from "../form/form.js";
 import { u as useDefineModel } from "../hooks/hooks.js";
@@ -13,18 +13,19 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
   __name: "Main",
   props: {
     route: {},
-    backgroundColor: { default: "#f9f9f9" }
+    backgroundColor: { default: "#F5F7FA" }
   },
-  emits: ["click-tab"],
+  emits: ["click-tab", "tab-change"],
   setup(__props, { emit: __emit }) {
     useCssVars((_ctx) => ({
-      "1ad5d228": _ctx.backgroundColor
+      "9acbce4e": _ctx.backgroundColor
     }));
     const emits = __emit;
     const tabs = ref([]);
     const tabProps = {
       label: "label",
-      key: "key"
+      key: "key",
+      icon: "icon"
     };
     const activeTabValue = ref("");
     const include = computed(() => {
@@ -32,6 +33,9 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     });
     const handleTabClick = (e, tab) => {
       emits("click-tab", e, tab);
+    };
+    const handlTabChange = (key, tab) => {
+      emits("tab-change", key, tab);
     };
     watch(
       () => __props.route.path,
@@ -63,7 +67,8 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
           height: 25,
           "background-color": "var(--el-color-primary-light-7)",
           "highlight-bg-color": _ctx.backgroundColor,
-          onClick: handleTabClick
+          onClick: handleTabClick,
+          onTabChange: handlTabChange
         }, null, 8, ["tabs", "modelValue", "highlight-bg-color"]),
         createElementVNode("div", _hoisted_2$5, [
           createVNode(_component_router_view, null, {
@@ -92,9 +97,9 @@ const _sfc_main$9 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const Main_vue_vue_type_style_index_0_scoped_06dbcfe5_lang = "";
-const Main = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-06dbcfe5"]]);
-const _withScopeId = (n) => (pushScopeId("data-v-0f816e63"), n = n(), popScopeId(), n);
+const Main_vue_vue_type_style_index_0_scoped_8f7b9e01_lang = "";
+const Main = /* @__PURE__ */ _export_sfc(_sfc_main$9, [["__scopeId", "data-v-8f7b9e01"]]);
+const _withScopeId = (n) => (pushScopeId("data-v-3eea3e67"), n = n(), popScopeId(), n);
 const _hoisted_1$4 = { class: "app-layout-type--wrapper" };
 const _hoisted_2$4 = {
   key: 0,
@@ -260,8 +265,8 @@ const _sfc_main$8 = /* @__PURE__ */ defineComponent({
     };
   }
 });
-const ThemeSetting_vue_vue_type_style_index_0_scoped_0f816e63_lang = "";
-const ThemeSetting = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-0f816e63"]]);
+const ThemeSetting_vue_vue_type_style_index_0_scoped_3eea3e67_lang = "";
+const ThemeSetting = /* @__PURE__ */ _export_sfc(_sfc_main$8, [["__scopeId", "data-v-3eea3e67"]]);
 const iconSize$1 = 18;
 const _sfc_main$7 = /* @__PURE__ */ defineComponent({
   ...{
@@ -739,6 +744,9 @@ const _sfc_main = /* @__PURE__ */ defineComponent({
     const handleTabClick = (_e, tab) => {
       __props.router.push(tab.key);
     };
+    const handleTabChange = (key, _tab) => {
+      __props.router.push(key);
+    };
     watch(
       () => option.value.primary,
       (val) => {
@@ -794,7 +802,8 @@ ${varStyle}
             main: withCtx(() => [
               createVNode(Main, {
                 route: route.value,
-                onClickTab: handleTabClick
+                onClickTab: handleTabClick,
+                onTabChange: handleTabChange
               }, null, 8, ["route"])
             ]),
             _: 3
