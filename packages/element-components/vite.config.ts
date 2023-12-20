@@ -22,6 +22,7 @@ export default defineConfig({
         cssCodeSplit: true,
         chunkSizeWarningLimit: 8 * 1024,
         rollupOptions: {
+            cache: true,
             plugins: [
                 // @ts-expect-error
                 visualizer(),
@@ -57,7 +58,20 @@ export default defineConfig({
                         }
                     },
                     // sourcemap: true,
+                    // globals: {
+                    //     jquery: '$',
+                    // },
+
+                    // sourcemap：是的，                    // exports:'default'
+                    // default，等于最终导出等于 export default xxx，这里适用于单个文件入口
+                    // named，等于 export default {xxx1, xxx2}，适用于多个入口文件
+                    // none，没有 export，适用于打包 web 应用，不需要对外抛出对象
+
+                    // externalLiveBindings: true
+                    //  是否给外部依赖生成动态绑定代码，简单来说就是是否需要将外部依赖的 npm 包通过转义来引入
                 },
+
+                // cjs
                 // {
                 //     format: 'cjs',
                 //     entryFileNames: '[name].js',
@@ -70,6 +84,12 @@ export default defineConfig({
 
                 // 单独打包 ts 类型文件的
                 // {},
+
+                // umd
+                // {
+                //     format: 'umd',
+                //     globals(name) {},
+                // },
             ],
         },
         lib: {

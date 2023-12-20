@@ -134,3 +134,7 @@ ${varStyle}
     },
 );
 </script>
+<!-- 自带element媒体查询 -->
+<style>
+@import url('element-plus/theme-chalk/display.css');
+</style>

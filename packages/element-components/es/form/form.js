@@ -181,7 +181,8 @@ const FormContent = /* @__PURE__ */ defineComponent({
         default:
           return createVNode(ElInput, mergeProps({
             "modelValue": modelValueCopy.value,
-            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event
+            "onUpdate:modelValue": ($event) => modelValueCopy.value = $event,
+            "clearable": true
           }, itemAttrs), null);
       }
     };
@@ -199,6 +200,34 @@ const formProps = {
 };
 function _isSlot(s) {
   return typeof s === "function" || Object.prototype.toString.call(s) === "[object Object]" && !isVNode(s);
+}
+function getSpanModel(n) {
+  return {
+    lg: n,
+    md: n,
+    sm: n,
+    xl: n,
+    xs: n
+  };
+}
+function getSpan(value) {
+  if (typeof value === "number") {
+    return getSpanModel(value);
+  }
+  return value || getSpanModel(24);
+}
+function mergeRules(rules, required, label) {
+  const data = [];
+  if (rules)
+    data.push(...Array.isArray(rules) ? rules : [rules]);
+  if (required) {
+    data.unshift({
+      required: true,
+      message: label ? `${label}是必填项` : "必填项",
+      trigger: "blur"
+    });
+  }
+  return data;
 }
 const Form = /* @__PURE__ */ defineComponent({
   props: formProps,
@@ -221,7 +250,8 @@ const Form = /* @__PURE__ */ defineComponent({
     } = toRefs(props);
     const model = useDefineModel(props, "modelValue", emit);
     onMounted(() => {
-      const defaultModelValues = props.formProps.formItems.reduce((acc, item) => {
+      var _a;
+      const defaultModelValues = (_a = props.formProps.formItems) == null ? void 0 : _a.reduce((acc, item) => {
         if (item.defaultValue !== void 0)
           acc[item.prop] = item.defaultValue;
         return acc;
@@ -289,79 +319,53 @@ const Form = /* @__PURE__ */ defineComponent({
         default: () => [withDirectives(createVNode(ElRow, {
           "gutter": 10
         }, {
-          default: () => [!!insertBeforeVnode && createVNode(ElCol, mergeProps({
-            "key": "insert-before"
-          }, getSpan(24)), {
-            default: () => [" ", insertBeforeVnode({
-              value: props.modelValue
-            }), " "]
-          }), formProps2.value.formItems.reduce((acc, item) => {
-            const {
-              props: props2,
-              type,
-              span,
-              rules,
-              ...rest
-            } = item;
-            if (item.controller && !item.controller({
-              value: modelValue.value,
-              option: item
-            })) {
+          default: () => {
+            var _a;
+            return [!!insertBeforeVnode && createVNode(ElCol, mergeProps({
+              "key": "insert-before"
+            }, getSpan(24)), {
+              default: () => [" ", insertBeforeVnode({
+                value: props.modelValue
+              }), " "]
+            }), (_a = formProps2.value.formItems) == null ? void 0 : _a.reduce((acc, item) => {
+              const {
+                props: props2,
+                type,
+                span,
+                rules,
+                ...rest
+              } = item;
+              if (item.controller && !item.controller({
+                value: modelValue.value,
+                option: item
+              })) {
+                return acc;
+              }
+              const sp = span || formProps2.value.spans;
+              acc.push(createVNode(ElCol, mergeProps({
+                "key": item.prop
+              }, getSpan(isInlined ? sp : 24)), {
+                default: () => [createVNode(ElFormItem, mergeProps(rest, {
+                  "rules": mergeRules(rules, item.required, item.label)
+                }), {
+                  default: () => defaultItemVnode(item, rest.prop),
+                  label: () => itemLabelVnode(item)
+                })]
+              }));
               return acc;
-            }
-            acc.push(createVNode(ElCol, mergeProps({
-              "key": item.prop
-            }, getSpan(isInlined ? 24 : span || formProps2.value.spans)), {
-              default: () => [createVNode(ElFormItem, mergeProps(rest, {
-                "rules": mergeRules(rules, item.required, item.label)
-              }), {
-                default: () => defaultItemVnode(item, rest.prop),
-                label: () => itemLabelVnode(item)
-              })]
-            }));
-            return acc;
-          }, []), !!insertAfterVnode && createVNode(ElCol, mergeProps({
-            "key": "insert-after"
-          }, getSpan(isInlined ? formProps2.value.spans : 24)), _isSlot(_slot = slots["insert-after"]({
-            value: props.modelValue
-          })) ? _slot : {
-            default: () => [_slot]
-          })]
+            }, []), !!insertAfterVnode && createVNode(ElCol, mergeProps({
+              "key": "insert-after"
+            }, getSpan(isInlined ? formProps2.value.spans : 24)), _isSlot(_slot = slots["insert-after"]({
+              value: props.modelValue
+            })) ? _slot : {
+              default: () => [_slot]
+            })];
+          }
         }), [[resolveDirective("auto-animate"), autoAnimateOption]])]
       });
     };
   }
 });
-function getSpanModel(n) {
-  return {
-    lg: n,
-    md: n,
-    sm: n,
-    xl: n,
-    xs: n
-  };
-}
-function getSpan(value) {
-  if (!value)
-    return getSpanModel(24);
-  if (typeof value === "number") {
-    return getSpanModel(value);
-  }
-  return value;
-}
-function mergeRules(rules, required, label) {
-  const data = [];
-  if (rules)
-    data.push(...Array.isArray(rules) ? rules : [rules]);
-  if (required) {
-    data.unshift({
-      required: true,
-      message: label ? `${label}是必填项` : "必填项",
-      trigger: "blur"
-    });
-  }
-  return data;
-}
 const AoeForm = withInstall(Form);
 export {
   AoeForm as A,

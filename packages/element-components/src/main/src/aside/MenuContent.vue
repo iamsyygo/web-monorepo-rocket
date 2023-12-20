@@ -31,3 +31,24 @@ const { menus } = defineProps<{
 
 const iconSize = 18;
 </script>
+<style>
+.el-menu-item.is-active::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    width: 5px;
+    background-color: var(--el-color-primary);
+    border-radius: 0 4px 4px 0;
+    animation: menu-item-enter 0.6s;
+}
+@keyframes menu-item-enter {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+</style>

@@ -172,7 +172,9 @@ export default defineComponent({
                     return slots['custom']?.(itemAttrs) ?? null;
 
                 default:
-                    return (<ElInput v-model={modelValueCopy.value} {...itemAttrs}></ElInput>) as never;
+                    return (
+                        <ElInput v-model={modelValueCopy.value} clearable={true} {...itemAttrs}></ElInput>
+                    ) as never;
             }
         };
     },

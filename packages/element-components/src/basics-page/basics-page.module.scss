@@ -1,0 +1,65 @@
+$--app-base-gap: 10px;
+$--app-base-radius: 6px;
+$--el-form-item__margin-bottom: 18px;
+$--app-card-shadow: 0 1.3px 1.6px 0 rgba(0, 0, 0, 0.1);
+
+.app-basics-page {
+    display: flex;
+    flex-direction: column;
+    :global {
+        // 查询表单
+        .app-basics-page--search {
+            padding: $--app-base-gap $--app-base-gap 0;
+            border-radius: $--app-base-radius;
+            background-color: #fff;
+            margin-bottom: $--app-base-gap;
+            box-shadow: $--app-card-shadow;
+        }
+
+        .app-basics-page--search .el-form-item {
+            margin-bottom: $--app-base-gap;
+            margin-right: $--app-base-gap;
+            width: 100%;
+        }
+        .app-basics-page--search .el-col {
+            display: flex;
+            align-items: center;
+        }
+        .app-basics-page--search .el-form-item__label {
+            padding: 0;
+        }
+        .app-basics-page--search-append {
+            display: flex;
+        }
+
+        // 表格
+        .app-basics-page--table {
+            border-top-left-radius: $--app-base-radius;
+            border-top-right-radius: $--app-base-radius;
+            background-color: #fff;
+            padding: calc(#{$--app-base-gap}/ 2) calc(#{$--app-base-gap}/ 2) 0;
+            box-shadow: $--app-card-shadow;
+        }
+
+        // 分页
+        .app-basics-page--pagination {
+            padding: calc(#{$--app-base-gap}/ 2) $--app-base-gap;
+            background-color: #fff;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            border-bottom-left-radius: $--app-base-radius;
+            border-bottom-right-radius: $--app-base-radius;
+        }
+        .app-basics-page--pagination-updatetime {
+            font-size: var(--el-pagination-font-size-small, 12px);
+            color: var(--el-text-color-regular);
+            /* flex 左边：将元素推到容器的左侧 */
+            margin-right: auto;
+        }
+        .app-basics-page--pagination-refresh {
+            cursor: pointer;
+            margin-right: $--app-base-gap;
+        }
+    }
+}

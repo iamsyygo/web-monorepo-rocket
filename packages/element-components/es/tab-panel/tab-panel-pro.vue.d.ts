@@ -4,6 +4,15 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<string | number>;
     };
     tabs: import("vue").PropType<Record<string, unknown>[]>;
+    props: {
+        type: import("vue").PropType<{
+            label?: string | undefined;
+            key: string | number;
+            icon?: string | undefined;
+            disabled?: boolean | undefined;
+        }>;
+        required: true;
+    };
     width: {
         type: import("vue").PropType<number>;
         default: number;
@@ -16,16 +25,16 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<string>;
         default: string;
     };
+    fontSize: {
+        type: import("vue").PropType<number>;
+        default: number;
+    };
     highlightBgColor: {
         type: import("vue").PropType<string>;
         default: string;
     };
     highlightFontColor: {
         type: import("vue").PropType<string>;
-    };
-    fontSize: {
-        type: import("vue").PropType<number>;
-        default: number;
     };
     radius: {
         type: import("vue").PropType<number>;
@@ -38,18 +47,9 @@ declare const _default: import("vue").DefineComponent<{
     append: {
         type: import("vue").PropType<"before" | "after">;
     };
-    props: {
-        type: import("vue").PropType<{
-            label?: string | undefined;
-            key: string | number;
-            icon?: string | undefined;
-            disabled?: boolean | undefined;
-        }>;
-        required: true;
-    };
 }, {}, unknown, {}, {}, import("vue").ComponentOptionsMixin, import("vue").ComponentOptionsMixin, {
-    contextmenu: (args_0: MouseEvent, args_1: Record<string, unknown>) => void;
     click: (args_0: MouseEvent, args_1: Record<string, unknown>) => void;
+    contextmenu: (args_0: MouseEvent, args_1: Record<string, unknown>) => void;
     "tab-change": (k: string, tab: Record<string, unknown>) => void;
 }, string, import("vue").VNodeProps & import("vue").AllowedComponentProps & import("vue").ComponentCustomProps, Readonly<import("vue").ExtractPropTypes<{
     modelValue: {
@@ -57,6 +57,15 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<string | number>;
     };
     tabs: import("vue").PropType<Record<string, unknown>[]>;
+    props: {
+        type: import("vue").PropType<{
+            label?: string | undefined;
+            key: string | number;
+            icon?: string | undefined;
+            disabled?: boolean | undefined;
+        }>;
+        required: true;
+    };
     width: {
         type: import("vue").PropType<number>;
         default: number;
@@ -69,16 +78,16 @@ declare const _default: import("vue").DefineComponent<{
         type: import("vue").PropType<string>;
         default: string;
     };
+    fontSize: {
+        type: import("vue").PropType<number>;
+        default: number;
+    };
     highlightBgColor: {
         type: import("vue").PropType<string>;
         default: string;
     };
     highlightFontColor: {
         type: import("vue").PropType<string>;
-    };
-    fontSize: {
-        type: import("vue").PropType<number>;
-        default: number;
     };
     radius: {
         type: import("vue").PropType<number>;
@@ -91,25 +100,16 @@ declare const _default: import("vue").DefineComponent<{
     append: {
         type: import("vue").PropType<"before" | "after">;
     };
-    props: {
-        type: import("vue").PropType<{
-            label?: string | undefined;
-            key: string | number;
-            icon?: string | undefined;
-            disabled?: boolean | undefined;
-        }>;
-        required: true;
-    };
 }>> & {
-    onContextmenu?: ((args_0: MouseEvent, args_1: Record<string, unknown>) => any) | undefined;
     onClick?: ((args_0: MouseEvent, args_1: Record<string, unknown>) => any) | undefined;
+    onContextmenu?: ((args_0: MouseEvent, args_1: Record<string, unknown>) => any) | undefined;
     "onTab-change"?: ((k: string, tab: Record<string, unknown>) => any) | undefined;
 }, {
     width: number;
     height: number;
     backgroundColor: string;
-    highlightBgColor: string;
     fontSize: number;
+    highlightBgColor: string;
     radius: number;
     hoverBg: string;
 }, {}>;

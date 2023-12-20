@@ -5,6 +5,43 @@ import { useDefineModel } from '@/hooks/defineModel.h';
 import FormContent from './items';
 import { FormItemTypeProps, Span, formProps as props } from './props';
 
+/**
+ * 将一个数字转换为span对象
+ * @param {number} n 数字
+ * @returns
+ */
+function getSpanModel(n: number): Span {
+    return { lg: n, md: n, sm: n, xl: n, xs: n };
+}
+
+function getSpan(value?: number | Span): Span {
+    // if (value) return getSpanModel(24);
+    if (typeof value === 'number') {
+        return getSpanModel(value);
+    }
+    return value || getSpanModel(24);
+}
+
+/**
+ * 修复 element required 无法正确显示的问题(显示英文)
+ * @param rules
+ * @param required
+ * @param label
+ * @returns
+ */
+function mergeRules(rules?: FormItemRule[] | FormItemRule, required?: boolean, label?: string) {
+    const data: FormItemRule[] = [];
+    if (rules) data.push(...(Array.isArray(rules) ? rules : [rules]));
+    if (required) {
+        data.unshift({
+            required: true,
+            message: label ? `${label}是必填项` : '必填项',
+            trigger: 'blur',
+        });
+    }
+    return data;
+}
+
 export default defineComponent({
     props,
     emits: { 'update:modelValue': (_val: any) => true },
@@ -30,7 +67,7 @@ export default defineComponent({
 
         onMounted(() => {
             // 默认值处理
-            const defaultModelValues = props.formProps.formItems.reduce((acc, item) => {
+            const defaultModelValues = props.formProps.formItems?.reduce((acc, item) => {
                 if (item.defaultValue !== void 0) acc[item.prop] = item.defaultValue;
                 return acc;
             }, {});
@@ -99,15 +136,17 @@ export default defineComponent({
                             </ElCol>
                         )}
 
-                        {formProps.value.formItems.reduce((acc, item) => {
+                        {formProps.value.formItems?.reduce((acc, item) => {
                             const { props, type, span, rules, ...rest } = item;
 
                             if (item.controller && !item.controller({ value: modelValue.value, option: item })) {
                                 return acc;
                             }
 
+                            const sp = span || formProps.value.spans;
+
                             acc.push(
-                                <ElCol key={item.prop} {...getSpan(isInlined ? 24 : span || formProps.value.spans)}>
+                                <ElCol key={item.prop} {...getSpan(isInlined ? sp : 24)}>
                                     <ElFormItem {...rest} rules={mergeRules(rules, item.required, item.label)}>
                                         {{
                                             default: () => defaultItemVnode(item, rest.prop),
@@ -131,40 +170,3 @@ export default defineComponent({
         };
     },
 });
-
-/**
- * 将一个数字转换为span对象
- * @param {number} n 数字
- * @returns
- */
-function getSpanModel(n: number): Span {
-    return { lg: n, md: n, sm: n, xl: n, xs: n };
-}
-
-function getSpan(value?: number | Span): Span {
-    if (!value) return getSpanModel(24);
-    if (typeof value === 'number') {
-        return getSpanModel(value);
-    }
-    return value;
-}
-
-/**
- * 修复 element required 无法正确显示的问题(显示英文)
- * @param rules
- * @param required
- * @param label
- * @returns
- */
-function mergeRules(rules?: FormItemRule[] | FormItemRule, required?: boolean, label?: string) {
-    const data: FormItemRule[] = [];
-    if (rules) data.push(...(Array.isArray(rules) ? rules : [rules]));
-    if (required) {
-        data.unshift({
-            required: true,
-            message: label ? `${label}是必填项` : '必填项',
-            trigger: 'blur',
-        });
-    }
-    return data;
-}
